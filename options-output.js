@@ -46,6 +46,21 @@ class OptionsOutput {
 				)
 				.append(" <label for='"+id+"'>"+i18n('options.'+option.fullName)+"</label>");
 		});
+		optionClassWriters.set(Option.Select,(option,writeOption,i18n,generateId)=>{
+			const id=generateId();
+			return option.$=$("<div>")
+				.append("<label for='"+id+"'>"+i18n('options.'+option.fullName)+":</label>")
+				.append(" ")
+				.append(
+					$("<select id='"+id+"'>").append(
+						option.availableValues.map(function(availableValue){
+							return $("<option>").val(availableValue).html(i18n('options.'+option.fullName+'.'+availableValue))
+						})
+					).val(option.value).change(function(){
+						option.value=this.value;
+					})
+				);
+		});
 		optionClassWriters.set(Option.Text,(option,writeOption,i18n,generateId)=>{
 			const id=generateId();
 			const listId=generateId();
