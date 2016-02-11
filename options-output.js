@@ -68,7 +68,7 @@ class OptionsOutput {
 				.append("<label for='"+id+"'>"+i18n('options.'+option.fullName)+":</label>")
 				.append(" ")
 				.append(
-					$("<input type='text' id='"+id+"'list='"+listId+"' />")
+					$("<input type='text' id='"+id+"' list='"+listId+"' />")
 						.val(option.value)
 						.on('input change',function(){
 							option.value=this.value;
@@ -80,6 +80,24 @@ class OptionsOutput {
 						.append(
 							option.availableValues.map(availableValue=>$("<option>").text(availableValue))
 						)
+				);
+		});
+		optionClassWriters.set(Option.Int,(option,writeOption,i18n,generateId)=>{
+			const id=generateId();
+			return option.$=$("<div class='option'>")
+				.append("<label for='"+id+"'>"+i18n('options.'+option.fullName)+":</label>")
+				.append(" ")
+				.append(
+					$("<input type='number' id='"+id+"' required />")
+						.val(option.value)
+						.attr('min',option.availableMin)
+						.attr('max',option.availableMax)
+						.attr('step',option.step)
+						.on('input change',function(){
+							if (this.checkValidity()) {
+								option.value=this.value;
+							}
+						})
 				);
 		});
 		optionClassWriters.set(Option.Array,(option,writeOption,i18n,generateId)=>{

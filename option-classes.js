@@ -171,6 +171,8 @@ Option.Select = class extends Option.FactorInput {};
 
 Option.Text = class extends Option.FactorInput {};
 
+Option.Int = class extends Option.RangeInput {};
+
 Option.Root = class extends Option.Collection {};
 
 Option.Group = class extends Option.Collection {};
