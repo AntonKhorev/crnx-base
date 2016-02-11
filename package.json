@@ -1,0 +1,13 @@
+{
+  "name": "crnx-base",
+  "version": "0.0.0-dev",
+  "description": "Common utilities for webaudio-starter, webgl-starter, etc.",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Anton Khorev",
+  "license": "ISC",
+  "devDependencies": {
+    "mocha": "^2.4.5"
+  }
+}
