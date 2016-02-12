@@ -1,104 +1,99 @@
+'use strict';
+
 /*
 .a = add AFTER last line
 .t = add TO last line
 */
 
-var Lines=function(){
-	this.data=[];
-	this.addFlattenedArgs(
-		this.flattenArgs(arguments)
-	);
-};
-
-// private
-Lines.prototype.flattenArgs=function(s){
-	var r=[];
-	for (var i=0;i<s.length;i++) {
-		if (typeof s[i] == 'string') {
-			r.push(s[i]);
-		} else if (Array.isArray(s[i])) {
-			Array.prototype.push.apply(r,s[i]);
-		} else if (s[i] instanceof Lines) {
-			Array.prototype.push.apply(r,s[i].data);
-		}
+class Lines {
+	constructor() {
+		this.data=this.flattenArgs(arguments);
 	}
-	return r;
-};
-Lines.prototype.addFlattenedArgs=function(s){
-	Array.prototype.push.apply(this.data,s);
-};
 
-// public
-Lines.prototype.a=function(){
-	this.addFlattenedArgs(
-		this.flattenArgs(arguments)
-	);
-	return this;
-};
-Lines.prototype.t=function(){
-	var lastLine=this.data.pop();
-	var s=this.flattenArgs(arguments);
-	s[0]=lastLine+s[0];
-	this.addFlattenedArgs(s);
-	return this;
-};
-Lines.prototype.indent=function(level){
-	if (level===undefined) {
-		level=1;
-	}
-	this.data=this.data.map(function(line){
-		return Array(level+1).join('\t')+line;
-	});
-	return this;
-};
-Lines.prototype.isEmpty=function(){
-	return this.data.length<=0;
-};
-Lines.prototype.interleave=function(){
-	var first=true;
-	for (var i=0;i<arguments.length;i++) {
-		var r=this.flattenArgs([arguments[i]]);
-		if (r.length>0) {
-			if (first) {
-				first=false;
-			} else {
-				this.data.push('');
+	// private:
+	flattenArgs(s) {
+		const r=[];
+		for (let i=0;i<s.length;i++) {
+			if (typeof s[i] == 'string') {
+				r.push(s[i]);
+			} else if (Array.isArray(s[i])) {
+				// TODO remove and use lines.a(...array) instead
+				r.push(...s[i]);
+			} else if (s[i] instanceof Lines) {
+				r.push(...s[i].data);
 			}
-			this.addFlattenedArgs(r);
 		}
+		return r;
 	}
-	return this;
-};
-Lines.prototype.wrap=function(begin,end){
-	this.indent();
-	this.data.unshift(begin);
-	this.data.push(end);
-	return this;
-};
-Lines.prototype.wrapIfNotEmpty=function(begin,end){
-	if (!this.isEmpty()) {
-		this.wrap(begin,end);
+
+	// public:
+	a() {
+		this.data.push(...this.flattenArgs(arguments));
+		return this;
 	}
-	return this;
-};
+	t() {
+		const lastLine=this.data.pop();
+		const s=this.flattenArgs(arguments);
+		s[0]=lastLine+s[0];
+		this.data.push(...s);
+		return this;
+	}
+	indent(level) {
+		if (level===undefined) {
+			level=1;
+		}
+		this.data=this.data.map(line=>Array(level+1).join('\t')+line);
+		return this;
+	}
+	isEmpty() {
+		return this.data.length<=0;
+	}
+	interleave() {
+		let first=true;
+		for (let i=0;i<arguments.length;i++) {
+			const r=this.flattenArgs([arguments[i]]);
+			if (r.length>0) {
+				if (first) {
+					first=false;
+				} else {
+					this.data.push('');
+				}
+				this.data.push(...r);
+			}
+		}
+		return this;
+	}
+	wrap(begin,end) {
+		this.indent();
+		this.data.unshift(begin);
+		this.data.push(end);
+		return this;
+	}
+	wrapIfNotEmpty(begin,end) {
+		if (!this.isEmpty()) {
+			this.wrap(begin,end);
+		}
+		return this;
+	}
 /*
-Lines.prototype.wrapEachLine=function(begin,end){
-	this.data=this.data.map(function(line){
-		return begin+line+end;
-	});
-	return this;
-};
-Lines.prototype.map=function(fn){
-	this.data=this.data.map(fn);
-	return this;
-};
-*/
-Lines.prototype.join=function(indent){
-	return this.data.map(function(line){
-		return line.replace(/^(\t)+/,function(match){
-			return Array(match.length+1).join(indent);
+	wrapEachLine(begin,end) {
+		this.data=this.data.map(function(line){
+			return begin+line+end;
 		});
-	}).join('\n');
-};
+		return this;
+	}
+	map(fn) {
+		this.data=this.data.map(fn);
+		return this;
+	}
+*/
+	join(indent) {
+		return this.data.map(function(line){
+			return line.replace(/^(\t)+/,function(match){
+				return Array(match.length+1).join(indent);
+			});
+		}).join('\n');
+	}
+}
 
 module.exports=Lines;

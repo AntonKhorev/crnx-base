@@ -1,24 +1,25 @@
-var assert=require('assert');
+'use strict';
 
-var Lines=require('../lines.js');
+const assert=require('assert');
+const Lines=require('../lines.js');
 
-describe('Lines',function(){
-	it('has no lines at the beginning',function(){
-		var lines=new Lines;
+describe("Lines",()=>{
+	it("has no lines at the beginning",()=>{
+		const lines=new Lines;
 		assert.deepEqual(lines.data,[]);
 	});
-	it('is empty at the beginning',function(){
-		var lines=new Lines;
+	it("is empty at the beginning",()=>{
+		const lines=new Lines;
 		assert(lines.isEmpty());
 	});
-	it('is not empty if lines added',function(){
-		var lines=new Lines(
+	it("is not empty if lines added",()=>{
+		const lines=new Lines(
 			"something"
 		);
 		assert(!lines.isEmpty());
 	});
-	it('adds lines with ctor args',function(){
-		var lines=new Lines(
+	it("adds lines with ctor args",()=>{
+		const lines=new Lines(
 			"foo",
 			"bar"
 		);
@@ -27,8 +28,8 @@ describe('Lines',function(){
 			"bar"
 		]);
 	});
-	it('adds one line',function(){
-		var lines=new Lines;
+	it("adds one line",()=>{
+		const lines=new Lines;
 		lines.a(
 			"Hello World"
 		);
@@ -36,8 +37,8 @@ describe('Lines',function(){
 			"Hello World"
 		]);
 	});
-	it('adds two lines in one call',function(){
-		var lines=new Lines;
+	it("adds two lines in one call",()=>{
+		const lines=new Lines;
 		lines.a(
 			"Hello",
 			"World"
@@ -47,8 +48,8 @@ describe('Lines',function(){
 			"World"
 		]);
 	});
-	it('adds two lines in two calls',function(){
-		var lines=new Lines;
+	it("adds two lines in two calls",()=>{
+		const lines=new Lines;
 		lines.a(
 			"Hello"
 		);
@@ -60,8 +61,8 @@ describe('Lines',function(){
 			"World"
 		]);
 	});
-	it('appends one line to last line',function(){
-		var lines=new Lines;
+	it("appends one line to last line",()=>{
+		const lines=new Lines;
 		lines.a(
 			"Hello"
 		);
@@ -72,8 +73,8 @@ describe('Lines',function(){
 			"Hello,World"
 		]);
 	});
-	it('appends several lines to last line',function(){
-		var lines=new Lines;
+	it("appends several lines to last line",()=>{
+		const lines=new Lines;
 		lines.a(
 			"a"
 		);
@@ -88,8 +89,8 @@ describe('Lines',function(){
 			")"
 		]);
 	});
-	it('indents by one by default',function(){
-		var lines=new Lines;
+	it("indents by one by default",()=>{
+		const lines=new Lines;
 		lines.a(
 			"1",
 			"2",
@@ -102,8 +103,8 @@ describe('Lines',function(){
 			"	3"
 		]);
 	});
-	it('indents by 2',function(){
-		var lines=new Lines;
+	it("indents by 2",()=>{
+		const lines=new Lines;
 		lines.a(
 			"11",
 			"22",
@@ -116,9 +117,9 @@ describe('Lines',function(){
 			"		33"
 		]);
 	});
-	it('adds Lines object',function(){
-		var lines=new Lines;
-		var lines2=new Lines;
+	it("adds Lines object",()=>{
+		const lines=new Lines;
+		const lines2=new Lines;
 		lines2.a(
 			"nested"
 		);
@@ -129,8 +130,8 @@ describe('Lines',function(){
 			"nested"
 		]);
 	});
-	it('adds array of strings',function(){
-		var lines=new Lines;
+	it("adds array of strings",()=>{
+		const lines=new Lines;
 		lines.a([
 			"1","2","3"
 		]);
@@ -138,8 +139,8 @@ describe('Lines',function(){
 			"1","2","3"
 		]);
 	});
-	it('interleaves nonempty line groups',function(){
-		var lines=new Lines;
+	it("interleaves nonempty line groups",()=>{
+		const lines=new Lines;
 		lines.interleave(
 			new Lines('a','b'),
 			new Lines('c'),
@@ -149,8 +150,8 @@ describe('Lines',function(){
 			'a','b','','c','','d'
 		]);
 	});
-	it('interleaves line groups, some of which are empty',function(){
-		var lines=new Lines;
+	it("interleaves line groups, some of which are empty",()=>{
+		const lines=new Lines;
 		lines.interleave(
 			new Lines('a','b'),
 			new Lines(),
@@ -160,8 +161,8 @@ describe('Lines',function(){
 			'a','b','','d'
 		]);
 	});
-	it('wraps nonempty lines',function(){
-		var lines=new Lines;
+	it("wraps nonempty lines",()=>{
+		const lines=new Lines;
 		lines.a(
 			"foo();",
 			"bar();"
@@ -176,8 +177,8 @@ describe('Lines',function(){
 			"}"
 		]);
 	});
-	it('wraps empty lines',function(){
-		var lines=new Lines;
+	it("wraps empty lines",()=>{
+		const lines=new Lines;
 		lines.wrap(
 			"function fubar() {",
 			"}"
@@ -187,8 +188,8 @@ describe('Lines',function(){
 			"}"
 		]);
 	});
-	it('wrapsIfNotEmpty nonempty lines',function(){
-		var lines=new Lines;
+	it("wrapsIfNotEmpty nonempty lines",()=>{
+		const lines=new Lines;
 		lines.a(
 			"foo();",
 			"bar();"
@@ -203,8 +204,8 @@ describe('Lines',function(){
 			"}"
 		]);
 	});
-	it("doesn't wrapIfNotEmpty empty lines",function(){
-		var lines=new Lines;
+	it("doesn't wrapIfNotEmpty empty lines",()=>{
+		const lines=new Lines;
 		lines.wrapIfNotEmpty(
 			"function fubar() {",
 			"}"
@@ -213,8 +214,8 @@ describe('Lines',function(){
 		]);
 	});
 	/*
-	it('wraps each line',function(){
-		var lines=new Lines(
+	it("wraps each line",()=>{
+		const lines=new Lines(
 			"Hello",
 			"World"
 		);
@@ -226,8 +227,8 @@ describe('Lines',function(){
 			"<b>World</b>"
 		]);
 	});
-	it("maps lines",function(){
-		var lines=new Lines(
+	it("maps lines",()=>{
+		const lines=new Lines(
 			"10 print 'hello world'",
 			"20 goto 10"
 		);
@@ -240,48 +241,48 @@ describe('Lines',function(){
 		]);
 	});
 	*/
-	it('returns self after call to .a()',function(){
-		var lines=new Lines;
-		var o=lines.a('123');
+	it("returns self after call to .a()",()=>{
+		const lines=new Lines;
+		const o=lines.a('123');
 		assert(o instanceof Lines);
 	});
-	it('returns self after call to .t()',function(){
-		var lines=new Lines;
+	it("returns self after call to .t()",()=>{
+		const lines=new Lines;
 		lines.a('123');
-		var o=lines.t('456');
+		const o=lines.t('456');
 		assert(o instanceof Lines);
 	});
-	it('returns self after call to .indent()',function(){
-		var lines=new Lines;
+	it("returns self after call to .indent()",()=>{
+		const lines=new Lines;
 		lines.a('123');
-		var o=lines.indent();
+		const o=lines.indent();
 		assert(o instanceof Lines);
 	});
-	it('joins lines',function(){
-		var lines=new Lines(
+	it("joins lines",()=>{
+		const lines=new Lines(
 			"foo",
 			"bar"
 		);
-		var s=lines.join('\t');
+		const s=lines.join('\t');
 		assert.equal(s,"foo\nbar");
 	});
-	it('joins lines with 2 space indent',function(){
-		var lines=new Lines(
+	it("joins lines with 2 space indent",()=>{
+		const lines=new Lines(
 			"foo {",
 			"	bar",
 			"}"
 		);
-		var s=lines.join('  ');
+		const s=lines.join('  ');
 		assert.equal(s,"foo {\n  bar\n}");
 	});
-	it('joins lines with 2 space indent, leaves other tabs intact',function(){
-		var lines=new Lines(
+	it("joins lines with 2 space indent, leaves other tabs intact",()=>{
+		const lines=new Lines(
 			"foo {",
 			"	bar",
 			"	baz(	)",
 			"}"
 		);
-		var s=lines.join('  ');
+		const s=lines.join('  ');
 		assert.equal(s,"foo {\n  bar\n  baz(	)\n}");
 	});
 });
