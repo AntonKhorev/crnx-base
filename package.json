@@ -1,6 +1,6 @@
 {
   "name": "crnx-base",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Common utilities for webaudio-starter, webgl-starter, etc.",
   "scripts": {
     "test": "mocha"
