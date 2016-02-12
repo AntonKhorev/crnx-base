@@ -89,6 +89,27 @@ describe("Lines",()=>{
 			")"
 		]);
 	});
+	it("constructs unescaped html chars",()=>{
+		const lines=new Lines("< &");
+		assert.deepEqual(lines.data,[
+			"< &"
+		]);
+	});
+	it("adds unescaped html chars",()=>{
+		const lines=new Lines;
+		lines.a("< &");
+		assert.deepEqual(lines.data,[
+			"< &"
+		]);
+	});
+	it("appends unescaped html chars",()=>{
+		const lines=new Lines;
+		lines.a("");
+		lines.t("< &");
+		assert.deepEqual(lines.data,[
+			"< &"
+		]);
+	});
 	it("indents by one by default",()=>{
 		const lines=new Lines;
 		lines.a(

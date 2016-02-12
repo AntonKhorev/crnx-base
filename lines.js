@@ -11,14 +11,17 @@ class Lines {
 	}
 
 	// private:
+	preprocessString(str) {
+		return str;
+	}
 	flattenArgs(s) {
 		const r=[];
 		for (let i=0;i<s.length;i++) {
 			if (typeof s[i] == 'string') {
-				r.push(s[i]);
+				r.push(this.preprocessString(s[i]));
 			} else if (Array.isArray(s[i])) {
 				// TODO remove and use lines.a(...array) instead
-				r.push(...s[i]);
+				r.push(...s[i].map(str=>this.preprocessString(str)));
 			} else if (s[i] instanceof Lines) {
 				r.push(...s[i].data);
 			}
@@ -65,8 +68,8 @@ class Lines {
 	}
 	wrap(begin,end) {
 		this.indent();
-		this.data.unshift(begin);
-		this.data.push(end);
+		this.data.unshift(this.preprocessString(begin));
+		this.data.push(this.preprocessString(end));
 		return this;
 	}
 	wrapIfNotEmpty(begin,end) {
