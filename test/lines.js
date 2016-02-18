@@ -5,152 +5,135 @@ const Lines=require('../lines.js');
 
 describe("Lines",()=>{
 	it("has no lines at the beginning",()=>{
-		const lines=new Lines;
-		assert.deepEqual(lines.data,[]);
+		const lines=Lines.bae();
+		assert.deepEqual(lines.get(),[]);
 	});
 	it("is empty at the beginning",()=>{
-		const lines=new Lines;
+		const lines=Lines.bae();
 		assert(lines.isEmpty());
 	});
 	it("is not empty if lines added",()=>{
-		const lines=new Lines(
+		const lines=Lines.bae(
 			"something"
 		);
 		assert(!lines.isEmpty());
 	});
 	it("adds lines with ctor args",()=>{
-		const lines=new Lines(
+		const lines=Lines.bae(
 			"foo",
 			"bar"
 		);
-		assert.deepEqual(lines.data,[
+		assert.deepEqual(lines.get(),[
 			"foo",
 			"bar"
 		]);
 	});
-	it("adds one line",()=>{
-		const lines=new Lines;
-		lines.a(
+	it("adds one line with fn call",()=>{
+		const a=Lines.b();
+		a(
 			"Hello World"
 		);
-		assert.deepEqual(lines.data,[
+		assert.deepEqual(a.e().get(),[
 			"Hello World"
+		]);
+	});
+	it("adds one line with method call",()=>{
+		const a=Lines.b();
+		a.a(
+			"Hello World"
+		);
+		assert.deepEqual(a.e().get(),[
+			"Hello World"
+		]);
+	});
+	it("adds line in .ba() and then in a()",()=>{
+		const a=Lines.ba(
+			"Baa"
+		);
+		a(
+			"!!!"
+		);
+		assert.deepEqual(a.e().get(),[
+			"Baa",
+			"!!!"
 		]);
 	});
 	it("adds two lines in one call",()=>{
-		const lines=new Lines;
-		lines.a(
+		const a=Lines.b();
+		a(
 			"Hello",
 			"World"
 		);
-		assert.deepEqual(lines.data,[
+		assert.deepEqual(a.e().get(),[
 			"Hello",
 			"World"
 		]);
 	});
 	it("adds two lines in two calls",()=>{
-		const lines=new Lines;
-		lines.a(
+		const a=Lines.b();
+		a(
 			"Hello"
 		);
-		lines.a(
+		a(
 			"World"
 		);
-		assert.deepEqual(lines.data,[
+		assert.deepEqual(a.e().get(),[
 			"Hello",
 			"World"
 		]);
 	});
 	it("appends one line to last line",()=>{
-		const lines=new Lines;
-		lines.a(
+		const a=Lines.b();
+		a(
 			"Hello"
 		);
-		lines.t(
+		a.t(
 			",World"
 		);
-		assert.deepEqual(lines.data,[
+		assert.deepEqual(a.e().get(),[
 			"Hello,World"
 		]);
 	});
 	it("appends several lines to last line",()=>{
-		const lines=new Lines;
-		lines.a(
+		const a=Lines.b();
+		a(
 			"a"
 		);
-		lines.t(
+		a.t(
 			"*(",
 			"	b+c",
 			")"
 		);
-		assert.deepEqual(lines.data,[
+		assert.deepEqual(a.e().get(),[
 			"a*(",
 			"	b+c",
 			")"
 		]);
 	});
-	it("constructs unescaped html chars",()=>{
-		const lines=new Lines("< &");
-		assert.deepEqual(lines.data,[
-			"< &"
+	it("gets unescaped html chars",()=>{
+		const lines=Lines.bae("< & >");
+		assert.deepEqual(lines.get(),[
+			"< & >"
 		]);
 	});
-	it("adds unescaped html chars",()=>{
-		const lines=new Lines;
-		lines.a("< &");
-		assert.deepEqual(lines.data,[
-			"< &"
-		]);
-	});
-	it("appends unescaped html chars",()=>{
-		const lines=new Lines;
-		lines.a("");
-		lines.t("< &");
-		assert.deepEqual(lines.data,[
-			"< &"
-		]);
-	});
-	it("indents by one by default",()=>{
-		const lines=new Lines;
-		lines.a(
-			"1",
-			"2",
-			"3"
-		);
-		lines.indent();
-		assert.deepEqual(lines.data,[
-			"	1",
-			"	2",
-			"	3"
-		]);
-	});
-	it("indents by 2",()=>{
-		const lines=new Lines;
-		lines.a(
-			"11",
-			"22",
-			"33"
-		);
-		lines.indent(2);
-		assert.deepEqual(lines.data,[
-			"		11",
-			"		22",
-			"		33"
+	it("gets escaped html chars",()=>{
+		const lines=Lines.bae("< & >");
+		assert.deepEqual(lines.getHtml(),[
+			"&lt; &amp; &gt;"
 		]);
 	});
 	it("adds Lines object",()=>{
-		const lines=new Lines;
-		const lines2=new Lines;
-		lines2.a(
+		const innerLines=Lines.bae(
 			"nested"
 		);
-		lines.a(
-			lines2
+		const lines=Lines.bae(
+			innerLines
 		);
-		assert.deepEqual(lines.data,[
+		assert.deepEqual(lines.get(),[
 			"nested"
 		]);
 	});
+	/* // TODO remove support for this
 	it("adds array of strings",()=>{
 		const lines=new Lines;
 		lines.a([
@@ -160,150 +143,33 @@ describe("Lines",()=>{
 			"1","2","3"
 		]);
 	});
-	it("interleaves nonempty line groups",()=>{
-		const lines=new Lines;
-		lines.interleave(
-			new Lines('a','b'),
-			new Lines('c'),
-			'd'
-		);
-		assert.deepEqual(lines.data,[
-			'a','b','','c','','d'
-		]);
-	});
-	it("interleaves line groups, some of which are empty",()=>{
-		const lines=new Lines;
-		lines.interleave(
-			new Lines('a','b'),
-			new Lines(),
-			'd'
-		);
-		assert.deepEqual(lines.data,[
-			'a','b','','d'
-		]);
-	});
-	it("wraps nonempty lines",()=>{
-		const lines=new Lines;
-		lines.a(
-			"foo();",
-			"bar();"
-		).wrap(
-			"function fooBar() {",
+	*/
+	/* // TODO Code tests
+	it("joins lines with 2 space indent",()=>{
+		const lines=Lines.bae(
+			"foo {",
+			"	bar",
 			"}"
 		);
-		assert.deepEqual(lines.data,[
-			"function fooBar() {",
-			"	foo();",
-			"	bar();",
+		assert.deepEqual(lines.get({indent:'  '}),[
+			"foo {",
+			"  bar",
 			"}"
 		]);
 	});
-	it("wraps empty lines",()=>{
-		const lines=new Lines;
-		lines.wrap(
-			"function fubar() {",
+	it("joins lines with 2 space indent, leaves other tabs intact",()=>{
+		const lines=Lines.bae(
+			"foo {",
+			"	bar",
+			"	baz(\t)",
 			"}"
 		);
-		assert.deepEqual(lines.data,[
-			"function fubar() {",
+		assert.deepEqual(lines.get({indent:'  '}),[
+			"foo {",
+			"  bar",
+			"  baz(\t)",
 			"}"
-		]);
-	});
-	it("wrapsIfNotEmpty nonempty lines",()=>{
-		const lines=new Lines;
-		lines.a(
-			"foo();",
-			"bar();"
-		).wrapIfNotEmpty(
-			"function fooBar() {",
-			"}"
-		);
-		assert.deepEqual(lines.data,[
-			"function fooBar() {",
-			"	foo();",
-			"	bar();",
-			"}"
-		]);
-	});
-	it("doesn't wrapIfNotEmpty empty lines",()=>{
-		const lines=new Lines;
-		lines.wrapIfNotEmpty(
-			"function fubar() {",
-			"}"
-		);
-		assert.deepEqual(lines.data,[
-		]);
-	});
-	/*
-	it("wraps each line",()=>{
-		const lines=new Lines(
-			"Hello",
-			"World"
-		);
-		lines.wrapEachLine(
-			"<b>","</b>"
-		);
-		assert.deepEqual(lines.data,[
-			"<b>Hello</b>",
-			"<b>World</b>"
-		]);
-	});
-	it("maps lines",()=>{
-		const lines=new Lines(
-			"10 print 'hello world'",
-			"20 goto 10"
-		);
-		lines.map(function(line){
-			return line+" // !!!";
-		});
-		assert.deepEqual(lines.data,[
-			"10 print 'hello world' // !!!",
-			"20 goto 10 // !!!"
 		]);
 	});
 	*/
-	it("returns self after call to .a()",()=>{
-		const lines=new Lines;
-		const o=lines.a('123');
-		assert(o instanceof Lines);
-	});
-	it("returns self after call to .t()",()=>{
-		const lines=new Lines;
-		lines.a('123');
-		const o=lines.t('456');
-		assert(o instanceof Lines);
-	});
-	it("returns self after call to .indent()",()=>{
-		const lines=new Lines;
-		lines.a('123');
-		const o=lines.indent();
-		assert(o instanceof Lines);
-	});
-	it("joins lines",()=>{
-		const lines=new Lines(
-			"foo",
-			"bar"
-		);
-		const s=lines.join('\t');
-		assert.equal(s,"foo\nbar");
-	});
-	it("joins lines with 2 space indent",()=>{
-		const lines=new Lines(
-			"foo {",
-			"	bar",
-			"}"
-		);
-		const s=lines.join('  ');
-		assert.equal(s,"foo {\n  bar\n}");
-	});
-	it("joins lines with 2 space indent, leaves other tabs intact",()=>{
-		const lines=new Lines(
-			"foo {",
-			"	bar",
-			"	baz(	)",
-			"}"
-		);
-		const s=lines.join('  ');
-		assert.equal(s,"foo {\n  bar\n  baz(	)\n}");
-	});
 });

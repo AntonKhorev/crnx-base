@@ -1,95 +1,131 @@
 'use strict';
 
 /*
-.a = add AFTER last line
-.t = add TO last line
+Create lines - short version:
+	return Lines.bae(
+		line1,
+		line2,
+		...
+	);
+
+	return SubclassOfLines.b(
+		ctorArgs
+	).ae(
+		line1,
+		line2,
+		...
+	);
+
+Create lines - long version:
+	const a=Lines.b();
+	a( // shorthand for a.a()
+		lineAddedAfterLastLine
+	);
+	a.a(
+		lineAddedAfterLastLine
+	);
+	a.t(
+		lineAppendedToLastLine
+	);
+	return a.e();
+
+Read lines:
+	formatting={indent:...,refs:...} // optional arg for some code formatting/annotation things
+	lines.get(formatting) // get array of plaintext lines - need array to possibly put it line by line inside an <ol>
+	lines.getHtml(formatting) // get array of html lines
 */
+
+const TO={}; // TODO Symbol
 
 class Lines {
-	constructor() {
-		this.data=this.flattenArgs(arguments);
+	// lines private interface:
+	constructor(data) {
+		this.data=data;
 	}
-
-	// private:
-	preprocessString(str) {
-		return str;
-	}
-	flattenArgs(s) {
-		const r=[];
-		for (let i=0;i<s.length;i++) {
-			if (typeof s[i] == 'string') {
-				r.push(this.preprocessString(s[i]));
-			} else if (Array.isArray(s[i])) {
-				// TODO remove and use lines.a(...array) instead
-				r.push(...s[i].map(str=>this.preprocessString(str)));
-			} else if (s[i] instanceof Lines) {
-				r.push(...s[i].data);
+	isDataEmpty() {
+		for (let i=0;i<this.data.length;i++) {
+			const item=this.data[i];
+			if (item instanceof Lines) {
+				if (!item.isEmpty()) {
+					return false;
+				}
+			} else if (typeof item == 'string') {
+				return false;
 			}
 		}
-		return r;
+		return true;
 	}
 
-	// public:
-	a() {
-		this.data.push(...this.flattenArgs(arguments));
-		return this;
+	// lines public interface:
+	static b() {
+		const data=[];
+		const makeLines=()=>new this(data,...arguments);
+		const a=function(){
+			return a.a(...arguments);
+		};
+		a.a=function(){
+			data.push(...arguments);
+			return this;
+		};
+		a.t=function(){
+			data.push(TO,...arguments);
+			return this;
+		};
+		a.e=makeLines;
+		a.ae=function(){
+			return this.a(...arguments).e();
+		};
+		return a;
 	}
-	t() {
-		const lastLine=this.data.pop();
-		const s=this.flattenArgs(arguments);
-		s[0]=lastLine+s[0];
-		this.data.push(...s);
-		return this;
+	static ba() {
+		return this.b().a(...arguments);
 	}
-	indent(level) {
-		if (level===undefined) {
-			level=1;
-		}
-		this.data=this.data.map(line=>Array(level+1).join('\t')+line);
-		return this;
+	static bae() {
+		return this.b().a(...arguments).e();
 	}
 	isEmpty() {
-		return this.data.length<=0;
+		return this.isDataEmpty();
 	}
-	interleave() {
-		let first=true;
-		for (let i=0;i<arguments.length;i++) {
-			const r=this.flattenArgs([arguments[i]]);
-			if (r.length>0) {
-				if (first) {
-					first=false;
-				} else {
-					this.data.push('');
+	get(formatting,html) {
+		const out=[];
+		let addTo=false;
+		this.data.forEach(item=>{
+			if (item===TO) {
+				addTo=true;
+			} else if (item instanceof Lines) {
+				const subOut=item.get(formatting,html);
+				if (addTo) {
+					out.push(out.pop()+subOut.unshift());
 				}
-				this.data.push(...r);
+				out.push(...subOut);
+				addTo=false;
+			} else if (typeof item == 'string') {
+				const s=(html ? Lines.strHtmlEscape(item) : item);
+				if (addTo) {
+					out.push(out.pop()+s);
+				} else {
+					out.push(s);
+				}
+				addTo=false;
 			}
-		}
-		return this;
-	}
-	wrap(begin,end) {
-		this.indent();
-		this.data.unshift(this.preprocessString(begin));
-		this.data.push(this.preprocessString(end));
-		return this;
-	}
-	wrapIfNotEmpty(begin,end) {
-		if (!this.isEmpty()) {
-			this.wrap(begin,end);
-		}
-		return this;
-	}
-/*
-	wrapEachLine(begin,end) {
-		this.data=this.data.map(function(line){
-			return begin+line+end;
 		});
-		return this;
+		return out;
 	}
-	map(fn) {
-		this.data=this.data.map(fn);
-		return this;
+	getHtml(formatting) {
+		return this.get(formatting,true);
 	}
-*/
+
+	// string utilities:
+	static strRepeat(s,n) {
+		return Array(n+1).join(s);
+	}
+	static strHtmlEscape(s) {
+		return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+	}
+}
+
+/*
+	// TODO put this into Code class
 	join(indent) {
 		return this.data.map(function(line){
 			return line.replace(/^(\t)+/,function(match){
@@ -97,6 +133,6 @@ class Lines {
 			});
 		}).join('\n');
 	}
-}
+*/
 
 module.exports=Lines;
