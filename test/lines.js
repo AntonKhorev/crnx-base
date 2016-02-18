@@ -5,11 +5,11 @@ const Lines=require('../lines.js');
 
 describe("Lines",()=>{
 	it("has no lines at the beginning",()=>{
-		const lines=Lines.bae();
+		const lines=Lines.be();
 		assert.deepEqual(lines.get(),[]);
 	});
 	it("is empty at the beginning",()=>{
-		const lines=Lines.bae();
+		const lines=Lines.be();
 		assert(lines.isEmpty());
 	});
 	it("is not empty if lines added",()=>{
@@ -110,16 +110,34 @@ describe("Lines",()=>{
 			")"
 		]);
 	});
+	it("appends Lines object to last line",()=>{
+		const a=Lines.b();
+		a(
+			"x"
+		);
+		a.t(
+			Lines.bae(
+				"*vec3(",
+				"	1,2,3",
+				")"
+			)
+		);
+		assert.deepEqual(a.e().get(),[
+			"x*vec3(",
+			"	1,2,3",
+			")"
+		]);
+	});
 	it("gets unescaped html chars",()=>{
-		const lines=Lines.bae("< & >");
+		const lines=Lines.bae("< & > ' \"");
 		assert.deepEqual(lines.get(),[
-			"< & >"
+			"< & > ' \""
 		]);
 	});
 	it("gets escaped html chars",()=>{
-		const lines=Lines.bae("< & >");
+		const lines=Lines.bae("< & > ' \"");
 		assert.deepEqual(lines.getHtml(),[
-			"&lt; &amp; &gt;"
+			"&lt; &amp; &gt; &#39; &quot;"
 		]);
 	});
 	it("adds Lines object",()=>{

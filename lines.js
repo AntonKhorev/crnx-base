@@ -80,6 +80,9 @@ class Lines {
 	static ba() {
 		return this.b().a(...arguments);
 	}
+	static be() {
+		return this.b().e();
+	}
 	static bae() {
 		return this.b().a(...arguments).e();
 	}
@@ -95,7 +98,7 @@ class Lines {
 			} else if (item instanceof Lines) {
 				const subOut=item.get(formatting,html);
 				if (addTo) {
-					out.push(out.pop()+subOut.unshift());
+					out.push(out.pop()+subOut.shift());
 				}
 				out.push(...subOut);
 				addTo=false;
@@ -120,7 +123,14 @@ class Lines {
 		return Array(n+1).join(s);
 	}
 	static strHtmlEscape(s) {
-		return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+		const entityMap={
+			'&': '&amp;',
+			'<': '&lt;',
+			'>': '&gt;',
+			'"': '&quot;',
+			"'": '&#39;',
+		};
+		return String(s).replace(/[&<>"']/g,m=>entityMap[m]);
 	}
 }
 

@@ -28,4 +28,21 @@ describe("RefLines",()=>{
 			"// create stereo panner node"
 		]);
 	});
+	it("parses markdown-style reference with text at end",()=>{
+		const lines=RefLines.parse("// create [gain node][gain] now");
+		assert.deepEqual(lines.getHtml({refs:{
+			gain: 'http://example.com/gain/'
+		}}),[
+			"// create <a href='http://example.com/gain/'>gain node</a> now"
+		]);
+	});
+	it("parses 2 markdown-style references",()=>{
+		const lines=RefLines.parse("// create [gain node][gain] and [panner node][panner]");
+		assert.deepEqual(lines.getHtml({refs:{
+			gain: 'http://example.com/gain/',
+			panner: 'http://example.com/panner/'
+		}}),[
+			"// create <a href='http://example.com/gain/'>gain node</a> and <a href='http://example.com/panner/'>panner node</a>"
+		]);
+	});
 });
