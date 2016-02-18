@@ -2,6 +2,7 @@
 
 const Lines=require('./lines.js');
 const NoseWrapLines=require('./nose-wrap-lines.js');
+const CodeSection=require('./code-section.js');
 
 class WebCode {
 	constructor() {
@@ -17,6 +18,42 @@ class WebCode {
 		return this.basename+'.html';
 	}
 	get(formatting) {
+		return this.getHtmlSectionLines(
+			NoseWrapLines.b("<style>","</style>").ae(this._styleLines),
+			NoseWrapLines.b("<script>","</script>").ae(this._scriptLines)
+		).get(formatting);
+	}
+	extractSections(sectionModes) {
+		if (sectionModes===undefined) {
+			sectionModes={};
+		}
+		let stylePlaceLines=NoseWrapLines.b("<style>","</style>").ae(this._styleLines);
+		let styleExtractLines=Lines.be();
+		if (sectionModes.css=='paste') {
+			stylePlaceLines=Lines.bae("<!-- <style> "+this.getSectionPasteComment('css')+" </style> -->");
+			styleExtractLines=this._styleLines;
+		} else if (sectionModes.css=='file') {
+			stylePlaceLines=Lines.bae("<link rel='stylesheet' href='"+this.basename+".css'>");
+			styleExtractLines=this._styleLines;
+		}
+		let scriptPlaceLines=NoseWrapLines.b("<script>","</script>").ae(this._scriptLines);
+		let scriptExtractLines=Lines.be();
+		if (sectionModes.js=='paste') {
+			scriptPlaceLines=Lines.bae("<!-- <script> "+this.getSectionPasteComment('js')+" </script> -->");
+			scriptExtractLines=this._scriptLines;
+		} else if (sectionModes.js=='file') {
+			scriptPlaceLines=Lines.bae("<script src='"+this.basename+".js'></script>");
+			scriptExtractLines=this._scriptLines;
+		}
+		return {
+			html: new CodeSection(this.filename,this.getHtmlSectionLines(stylePlaceLines,scriptPlaceLines)),
+			css: new CodeSection(this.basename+'.css',styleExtractLines),
+			js: new CodeSection(this.basename+'.js',scriptExtractLines),
+		};
+	}
+
+	// private:
+	getHtmlSectionLines(stylePlaceLines,scriptPlaceLines) {
 		const a=Lines.b();
 		a("<!DOCTYPE html>");
 		if (this.lang!==null) {
@@ -26,22 +63,22 @@ class WebCode {
 		}
 		a(
 			"<head>",
-			"<meta charset='utf-8' />"
+			"<meta charset='utf-8'>"
 		);
 		if (this.title!==null) {
 			a("<title>"+this.title+"</title>");
 		}
 		a(
-			NoseWrapLines.b("<style>","</style>").ae(this._styleLines),
+			stylePlaceLines,
 			this._headLines,
 			"</head>",
 			"<body>",
 			this._bodyLines,
-			NoseWrapLines.b("<script>","</script>").ae(this._scriptLines),
+			scriptPlaceLines,
 			"</body>",
 			"</html>"
 		);
-		return a.e().get(formatting);
+		return a.e();
 	}
 
 	// to be redefined in subclasses:

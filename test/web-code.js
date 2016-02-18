@@ -12,7 +12,7 @@ describe("WebCode",()=>{
 				"<!DOCTYPE html>",
 				"<html>",
 				"<head>",
-				"<meta charset='utf-8' />",
+				"<meta charset='utf-8'>",
 				"</head>",
 				"<body>",
 				"</body>",
@@ -31,6 +31,25 @@ describe("WebCode",()=>{
 			});
 		});
 		*/
+		it("gives sections w/o extraction",()=>{
+			const code=new WebCode;
+			const sections=code.extractSections({
+			});
+			assert.deepEqual(sections.html.get(),[
+				"<!DOCTYPE html>",
+				"<html>",
+				"<head>",
+				"<meta charset='utf-8'>",
+				"</head>",
+				"<body>",
+				"</body>",
+				"</html>",
+			]);
+			assert.deepEqual(sections.css.get(),[
+			]);
+			assert.deepEqual(sections.js.get(),[
+			]);
+		});
 		it("gives sections in paste mode",()=>{
 			const code=new WebCode;
 			const sections=code.extractSections({
@@ -41,7 +60,7 @@ describe("WebCode",()=>{
 				"<!DOCTYPE html>",
 				"<html>",
 				"<head>",
-				"<meta charset='utf-8' />",
+				"<meta charset='utf-8'>",
 				"<!-- <style> css goes here </style> -->",
 				"</head>",
 				"<body>",
@@ -64,7 +83,7 @@ describe("WebCode",()=>{
 				"<!DOCTYPE html>",
 				"<html>",
 				"<head>",
-				"<meta charset='utf-8' />",
+				"<meta charset='utf-8'>",
 				"<link rel='stylesheet' href='source.css'>",
 				"</head>",
 				"<body>",
@@ -132,7 +151,7 @@ describe("WebCode",()=>{
 				"<!DOCTYPE html>",
 				"<html lang='ru'>",
 				"<head>",
-				"<meta charset='utf-8' />",
+				"<meta charset='utf-8'>",
 				"<title>Пример</title>",
 				"<style>",
 				"	div {",
@@ -150,6 +169,36 @@ describe("WebCode",()=>{
 				"</html>",
 			]);
 		});
+		it("gives sections w/o extracting",()=>{
+			const code=new MyWebCode;
+			const sections=code.extractSections({
+			});
+			assert.deepEqual(sections.html.get(),[
+				"<!DOCTYPE html>",
+				"<html lang='ru'>",
+				"<head>",
+				"<meta charset='utf-8'>",
+				"<title>Пример</title>",
+				"<style>",
+				"	div {",
+				"		background: red;",
+				"	}",
+				"</style>",
+				"<meta name='robots' content='index, follow'>",
+				"</head>",
+				"<body>",
+				"<div>Див</div>",
+				"<script>",
+				"	console.log('загрузилось');",
+				"</script>",
+				"</body>",
+				"</html>",
+			]);
+			assert.deepEqual(sections.css.get(),[
+			]);
+			assert.deepEqual(sections.js.get(),[
+			]);
+		});
 		it("gives sections in paste mode",()=>{
 			const code=new MyWebCode;
 			const sections=code.extractSections({
@@ -160,7 +209,7 @@ describe("WebCode",()=>{
 				"<!DOCTYPE html>",
 				"<html lang='ru'>",
 				"<head>",
-				"<meta charset='utf-8' />",
+				"<meta charset='utf-8'>",
 				"<title>Пример</title>",
 				"<!-- <style> сюда вставляется css </style> -->",
 				"<meta name='robots' content='index, follow'>",
@@ -188,9 +237,9 @@ describe("WebCode",()=>{
 			});
 			assert.deepEqual(sections.html.get(),[
 				"<!DOCTYPE html>",
-				"<html>",
 				"<html lang='ru'>",
-				"<meta charset='utf-8' />",
+				"<head>",
+				"<meta charset='utf-8'>",
 				"<title>Пример</title>",
 				"<link rel='stylesheet' href='my.css'>",
 				"<meta name='robots' content='index, follow'>",

@@ -1,10 +1,13 @@
 'use strict';
 
 class CodeSection {
-	construct(filename,lines) {
-		this.filename
+	constructor(filename,lines) {
+		this.filename=filename;
+		this.lines=lines;
 	}
-	get(formatting)
+	get(formatting) {
+		return this.lines.get(formatting);
+	}
 }
 
 module.exports=CodeSection;
