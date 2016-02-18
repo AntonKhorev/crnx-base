@@ -18,10 +18,10 @@ class WebCode {
 		return this.basename+'.html';
 	}
 	get(formatting) {
-		return this.getHtmlSectionLines(
-			NoseWrapLines.b("<style>","</style>").ae(this._styleLines),
-			NoseWrapLines.b("<script>","</script>").ae(this._scriptLines)
-		).get(formatting);
+		return this.getLines().get(formatting);
+	}
+	getHtml(formatting) {
+		return this.getLines().getHtml(formatting);
 	}
 	extractSections(sectionModes) {
 		if (sectionModes===undefined) {
@@ -53,6 +53,12 @@ class WebCode {
 	}
 
 	// private:
+	getLines() {
+		return this.getHtmlSectionLines(
+			NoseWrapLines.b("<style>","</style>").ae(this._styleLines),
+			NoseWrapLines.b("<script>","</script>").ae(this._scriptLines)
+		);
+	}
 	getHtmlSectionLines(stylePlaceLines,scriptPlaceLines) {
 		const a=Lines.b();
 		a("<!DOCTYPE html>");

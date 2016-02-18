@@ -6,7 +6,7 @@ const WebCode=require('../web-code.js');
 
 describe("WebCode",()=>{
 	context("base class",()=>{
-		it("gives lines",()=>{
+		it("gives plaintext",()=>{
 			const code=new WebCode;
 			assert.deepEqual(code.get(),[
 				"<!DOCTYPE html>",
@@ -145,7 +145,7 @@ describe("WebCode",()=>{
 			assert.equal(sections.css.filename,'my.css');
 			assert.equal(sections.js.filename,'my.js');
 		});
-		it("gives lines",()=>{
+		it("gives plaintext",()=>{
 			const code=new MyWebCode;
 			assert.deepEqual(code.get(),[
 				"<!DOCTYPE html>",
@@ -167,6 +167,30 @@ describe("WebCode",()=>{
 				"</script>",
 				"</body>",
 				"</html>",
+			]);
+		});
+		it("gives html",()=>{
+			const code=new MyWebCode;
+			assert.deepEqual(code.getHtml(),[
+				"&lt;!DOCTYPE html&gt;",
+				"&lt;html lang=&#39;ru&#39;&gt;",
+				"&lt;head&gt;",
+				"&lt;meta charset=&#39;utf-8&#39;&gt;",
+				"&lt;title&gt;Пример&lt;/title&gt;",
+				"&lt;style&gt;",
+				"	div {",
+				"		background: red;",
+				"	}",
+				"&lt;/style&gt;",
+				"&lt;meta name=&#39;robots&#39; content=&#39;index, follow&#39;&gt;",
+				"&lt;/head&gt;",
+				"&lt;body&gt;",
+				"&lt;div&gt;Див&lt;/div&gt;",
+				"&lt;script&gt;",
+				"	console.log(&#39;загрузилось&#39;);",
+				"&lt;/script&gt;",
+				"&lt;/body&gt;",
+				"&lt;/html&gt;",
 			]);
 		});
 		it("gives sections w/o extracting",()=>{
@@ -257,6 +281,36 @@ describe("WebCode",()=>{
 			]);
 			assert.deepEqual(sections.js.get(),[
 				"console.log('загрузилось');",
+			]);
+		});
+		it("gives sections in file mode with html",()=>{
+			const code=new MyWebCode;
+			const sections=code.extractSections({
+				'css': 'file',
+				'js': 'file',
+			});
+			assert.deepEqual(sections.html.getHtml(),[
+				"&lt;!DOCTYPE html&gt;",
+				"&lt;html lang=&#39;ru&#39;&gt;",
+				"&lt;head&gt;",
+				"&lt;meta charset=&#39;utf-8&#39;&gt;",
+				"&lt;title&gt;Пример&lt;/title&gt;",
+				"&lt;link rel=&#39;stylesheet&#39; href=&#39;my.css&#39;&gt;",
+				"&lt;meta name=&#39;robots&#39; content=&#39;index, follow&#39;&gt;",
+				"&lt;/head&gt;",
+				"&lt;body&gt;",
+				"&lt;div&gt;Див&lt;/div&gt;",
+				"&lt;script src=&#39;my.js&#39;&gt;&lt;/script&gt;",
+				"&lt;/body&gt;",
+				"&lt;/html&gt;",
+			]);
+			assert.deepEqual(sections.css.getHtml(),[
+				"div {",
+				"	background: red;",
+				"}",
+			]);
+			assert.deepEqual(sections.js.getHtml(),[
+				"console.log(&#39;загрузилось&#39;);",
 			]);
 		});
 	});
