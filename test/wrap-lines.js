@@ -51,4 +51,29 @@ describe("WrapLines",()=>{
 			"}"
 		]);
 	});
+	it("multiline wrap",()=>{
+		const lines=WrapLines.b(
+			Lines.bae(
+				"// declare fooBar() and call it",
+				"function fooBar() {"
+			),
+			Lines.bae(
+				"}",
+				"fooBar();"
+			)
+		).ae(
+			Lines.bae(
+				"foo();",
+				"bar();"
+			)
+		);
+		assert.deepEqual(lines.get(),[
+			"// declare fooBar() and call it",
+			"function fooBar() {",
+			"	foo();",
+			"	bar();",
+			"}",
+			"fooBar();"
+		]);
+	});
 });

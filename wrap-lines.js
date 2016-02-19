@@ -17,8 +17,14 @@ class WrapLines extends Lines {
 		const out=[];
 		let i=0;
 		const pushWrapper=()=>{
-			const s=this.wrappers[i];
-			out.push(html ? Lines.strHtmlEscape(s) : s);
+			const item=this.wrappers[i];
+			if (item instanceof Lines) {
+				const subOut=item.get(formatting,html);
+				out.push(...subOut);
+			} else if (typeof item == 'string') {
+				const s=(html ? Lines.strHtmlEscape(item) : item);
+				out.push(s);
+			}
 			i++;
 		};
 		pushWrapper();
