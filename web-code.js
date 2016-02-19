@@ -110,4 +110,15 @@ class WebCode {
 	}
 }
 
+/*
+	// TODO implement indent reformatting like this:
+	join(indent) {
+		return this.data.map(function(line){
+			return line.replace(/^(\t)+/,function(match){
+				return Array(match.length+1).join(indent);
+			});
+		}).join('\n');
+	}
+*/
+
 module.exports=WebCode;

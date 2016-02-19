@@ -135,17 +135,29 @@ class Lines {
 		};
 		return String(s).replace(/[&<>"']/g,m=>entityMap[m]);
 	}
-}
-
-/*
-	// TODO put this into Code class
-	join(indent) {
-		return this.data.map(function(line){
-			return line.replace(/^(\t)+/,function(match){
-				return Array(match.length+1).join(indent);
-			});
-		}).join('\n');
+	static html(strings/*,...values*/) {
+		// html attribute-substituting template tag
+		// usage example: Lines.html`<input type=text value=${value}>`
+		return strings.reduce((r,s,i)=>{
+			let v=arguments[i];
+			if (v===false) {
+				return r.replace(/\s+[a-zA-Z0-9-]+=$/,'')+s; // TODO more permitting attr name regexp
+			} else if (v===true) {
+				return r.replace(/=$/,'')+s;
+			}
+			v=String(v).replace(/&/g,'&amp;');
+			if (v=='') {
+				return r.replace(/=$/,'')+s;
+			} else if (!/[\s"'=<>`]/.test(v)) {
+				return r+v+s;
+			} else if (!/'/.test(v)) {
+				return r+"'"+v+"'"+s;
+			} else {
+				v=v.replace(/"/g,'&quot;');
+				return r+'"'+v+'"'+s;
+			}
+		});
 	}
-*/
+}
 
 module.exports=Lines;
