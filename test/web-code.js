@@ -12,7 +12,7 @@ describe("WebCode",()=>{
 				"<!DOCTYPE html>",
 				"<html>",
 				"<head>",
-				"<meta charset='utf-8'>",
+				"<meta charset=utf-8>",
 				"</head>",
 				"<body>",
 				"</body>",
@@ -39,7 +39,7 @@ describe("WebCode",()=>{
 				"<!DOCTYPE html>",
 				"<html>",
 				"<head>",
-				"<meta charset='utf-8'>",
+				"<meta charset=utf-8>",
 				"</head>",
 				"<body>",
 				"</body>",
@@ -60,7 +60,7 @@ describe("WebCode",()=>{
 				"<!DOCTYPE html>",
 				"<html>",
 				"<head>",
-				"<meta charset='utf-8'>",
+				"<meta charset=utf-8>",
 				"<!-- <style> css goes here </style> -->",
 				"</head>",
 				"<body>",
@@ -83,11 +83,11 @@ describe("WebCode",()=>{
 				"<!DOCTYPE html>",
 				"<html>",
 				"<head>",
-				"<meta charset='utf-8'>",
-				"<link rel='stylesheet' href='source.css'>",
+				"<meta charset=utf-8>",
+				"<link rel=stylesheet href=source.css>",
 				"</head>",
 				"<body>",
-				"<script src='source.js'></script>",
+				"<script src=source.js></script>",
 				"</body>",
 				"</html>",
 			]);
@@ -122,7 +122,7 @@ describe("WebCode",()=>{
 			}
 			get headLines() {
 				return Lines.bae(
-					"<meta name='robots' content='index, follow'>"
+					"<meta name=robots content='index, follow'>"
 				);
 			}
 			get bodyLines() {
@@ -149,16 +149,16 @@ describe("WebCode",()=>{
 			const code=new MyWebCode;
 			assert.deepEqual(code.get(),[
 				"<!DOCTYPE html>",
-				"<html lang='ru'>",
+				"<html lang=ru>",
 				"<head>",
-				"<meta charset='utf-8'>",
+				"<meta charset=utf-8>",
 				"<title>Пример</title>",
 				"<style>",
 				"	div {",
 				"		background: red;",
 				"	}",
 				"</style>",
-				"<meta name='robots' content='index, follow'>",
+				"<meta name=robots content='index, follow'>",
 				"</head>",
 				"<body>",
 				"<div>Див</div>",
@@ -173,16 +173,16 @@ describe("WebCode",()=>{
 			const code=new MyWebCode;
 			assert.deepEqual(code.getHtml(),[
 				"&lt;!DOCTYPE html&gt;",
-				"&lt;html lang=&#39;ru&#39;&gt;",
+				"&lt;html lang=ru&gt;",
 				"&lt;head&gt;",
-				"&lt;meta charset=&#39;utf-8&#39;&gt;",
+				"&lt;meta charset=utf-8&gt;",
 				"&lt;title&gt;Пример&lt;/title&gt;",
 				"&lt;style&gt;",
 				"	div {",
 				"		background: red;",
 				"	}",
 				"&lt;/style&gt;",
-				"&lt;meta name=&#39;robots&#39; content=&#39;index, follow&#39;&gt;",
+				"&lt;meta name=robots content=&#39;index, follow&#39;&gt;",
 				"&lt;/head&gt;",
 				"&lt;body&gt;",
 				"&lt;div&gt;Див&lt;/div&gt;",
@@ -199,16 +199,16 @@ describe("WebCode",()=>{
 			});
 			assert.deepEqual(sections.html.get(),[
 				"<!DOCTYPE html>",
-				"<html lang='ru'>",
+				"<html lang=ru>",
 				"<head>",
-				"<meta charset='utf-8'>",
+				"<meta charset=utf-8>",
 				"<title>Пример</title>",
 				"<style>",
 				"	div {",
 				"		background: red;",
 				"	}",
 				"</style>",
-				"<meta name='robots' content='index, follow'>",
+				"<meta name=robots content='index, follow'>",
 				"</head>",
 				"<body>",
 				"<div>Див</div>",
@@ -231,12 +231,12 @@ describe("WebCode",()=>{
 			});
 			assert.deepEqual(sections.html.get(),[
 				"<!DOCTYPE html>",
-				"<html lang='ru'>",
+				"<html lang=ru>",
 				"<head>",
-				"<meta charset='utf-8'>",
+				"<meta charset=utf-8>",
 				"<title>Пример</title>",
 				"<!-- <style> сюда вставляется css </style> -->",
-				"<meta name='robots' content='index, follow'>",
+				"<meta name=robots content='index, follow'>",
 				"</head>",
 				"<body>",
 				"<div>Див</div>",
@@ -261,16 +261,16 @@ describe("WebCode",()=>{
 			});
 			assert.deepEqual(sections.html.get(),[
 				"<!DOCTYPE html>",
-				"<html lang='ru'>",
+				"<html lang=ru>",
 				"<head>",
-				"<meta charset='utf-8'>",
+				"<meta charset=utf-8>",
 				"<title>Пример</title>",
-				"<link rel='stylesheet' href='my.css'>",
-				"<meta name='robots' content='index, follow'>",
+				"<link rel=stylesheet href=my.css>",
+				"<meta name=robots content='index, follow'>",
 				"</head>",
 				"<body>",
 				"<div>Див</div>",
-				"<script src='my.js'></script>",
+				"<script src=my.js></script>",
 				"</body>",
 				"</html>",
 			]);
@@ -291,16 +291,16 @@ describe("WebCode",()=>{
 			});
 			assert.deepEqual(sections.html.getHtml(),[
 				"&lt;!DOCTYPE html&gt;",
-				"&lt;html lang=&#39;ru&#39;&gt;",
+				"&lt;html lang=ru&gt;",
 				"&lt;head&gt;",
-				"&lt;meta charset=&#39;utf-8&#39;&gt;",
+				"&lt;meta charset=utf-8&gt;",
 				"&lt;title&gt;Пример&lt;/title&gt;",
-				"&lt;link rel=&#39;stylesheet&#39; href=&#39;my.css&#39;&gt;",
-				"&lt;meta name=&#39;robots&#39; content=&#39;index, follow&#39;&gt;",
+				"&lt;link rel=stylesheet href=my.css&gt;",
+				"&lt;meta name=robots content=&#39;index, follow&#39;&gt;",
 				"&lt;/head&gt;",
 				"&lt;body&gt;",
 				"&lt;div&gt;Див&lt;/div&gt;",
-				"&lt;script src=&#39;my.js&#39;&gt;&lt;/script&gt;",
+				"&lt;script src=my.js&gt;&lt;/script&gt;",
 				"&lt;/body&gt;",
 				"&lt;/html&gt;",
 			]);

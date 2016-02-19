@@ -25,7 +25,7 @@ class WebCode {
 			stylePlaceLines=Lines.bae("<!-- <style> "+this.getSectionPasteComment('css')+" </style> -->");
 			styleExtractLines=this.cachedStyleLines;
 		} else if (sectionModes.css=='file') {
-			stylePlaceLines=Lines.bae("<link rel='stylesheet' href='"+this.basename+".css'>");
+			stylePlaceLines=Lines.bae(Lines.html`<link rel=stylesheet href=${this.basename+'.css'}>`);
 			styleExtractLines=this.cachedStyleLines;
 		}
 		let scriptPlaceLines=NoseWrapLines.b("<script>","</script>").ae(this.cachedScriptLines);
@@ -34,7 +34,7 @@ class WebCode {
 			scriptPlaceLines=Lines.bae("<!-- <script> "+this.getSectionPasteComment('js')+" </script> -->");
 			scriptExtractLines=this.cachedScriptLines;
 		} else if (sectionModes.js=='file') {
-			scriptPlaceLines=Lines.bae("<script src='"+this.basename+".js'></script>");
+			scriptPlaceLines=Lines.bae(Lines.html`<script src=${this.basename+'.js'}></script>`);
 			scriptExtractLines=this.cachedScriptLines;
 		}
 		return {
@@ -55,13 +55,13 @@ class WebCode {
 		const a=Lines.b();
 		a("<!DOCTYPE html>");
 		if (this.lang!==null) {
-			a("<html lang='"+this.lang+"'>");
+			a(Lines.html`<html lang=${this.lang}>`);
 		} else {
 			a("<html>");
 		}
 		a(
 			"<head>",
-			"<meta charset='utf-8'>"
+			"<meta charset=utf-8>"
 		);
 		if (this.title!==null) {
 			a("<title>"+this.title+"</title>");
