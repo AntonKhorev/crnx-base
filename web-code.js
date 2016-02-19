@@ -88,7 +88,7 @@ class WebCode {
 	}
 
 	// to be redefined in subclasses:
-	get basename() {
+	get basename() { // filename base
 		return 'source';
 	}
 	get lang() { // language tag for <html lang='xx'> or null to skip it - likely read from i18n
@@ -100,13 +100,13 @@ class WebCode {
 	get styleLines() { // contents of <style>
 		return Lines.be();
 	}
-	get scriptLines() { // contents of <script>
-		return Lines.be();
-	}
 	get headLines() { // contents of <head> following <style>
 		return Lines.be();
 	}
 	get bodyLines() { // contents of <body> preceding <script>
+		return Lines.be();
+	}
+	get scriptLines() { // contents of <script>
 		return Lines.be();
 	}
 	getSectionPasteComment(sectionName) { // section placeholder comment in paste mode - likely to be overridden with i18n
