@@ -5,14 +5,6 @@ const NoseWrapLines=require('./nose-wrap-lines.js');
 const CodeSection=require('./code-section.js');
 
 class WebCode {
-	constructor() {
-		// precompute lines:
-		this._styleLines=this.styleLines;
-		this._headLines=this.headLines;
-		this._bodyLines=this.bodyLines;
-		this._scriptLines=this.scriptLines;
-	}
-
 	// public:
 	get filename() {
 		return this.basename+'.html';
@@ -27,36 +19,36 @@ class WebCode {
 		if (sectionModes===undefined) {
 			sectionModes={};
 		}
-		let stylePlaceLines=NoseWrapLines.b("<style>","</style>").ae(this._styleLines);
+		let stylePlaceLines=NoseWrapLines.b("<style>","</style>").ae(this.cachedStyleLines);
 		let styleExtractLines=Lines.be();
 		if (sectionModes.css=='paste') {
 			stylePlaceLines=Lines.bae("<!-- <style> "+this.getSectionPasteComment('css')+" </style> -->");
-			styleExtractLines=this._styleLines;
+			styleExtractLines=this.cachedStyleLines;
 		} else if (sectionModes.css=='file') {
 			stylePlaceLines=Lines.bae("<link rel='stylesheet' href='"+this.basename+".css'>");
-			styleExtractLines=this._styleLines;
+			styleExtractLines=this.cachedStyleLines;
 		}
-		let scriptPlaceLines=NoseWrapLines.b("<script>","</script>").ae(this._scriptLines);
+		let scriptPlaceLines=NoseWrapLines.b("<script>","</script>").ae(this.cachedScriptLines);
 		let scriptExtractLines=Lines.be();
 		if (sectionModes.js=='paste') {
 			scriptPlaceLines=Lines.bae("<!-- <script> "+this.getSectionPasteComment('js')+" </script> -->");
-			scriptExtractLines=this._scriptLines;
+			scriptExtractLines=this.cachedScriptLines;
 		} else if (sectionModes.js=='file') {
 			scriptPlaceLines=Lines.bae("<script src='"+this.basename+".js'></script>");
-			scriptExtractLines=this._scriptLines;
+			scriptExtractLines=this.cachedScriptLines;
 		}
 		return {
 			html: new CodeSection(this.filename,this.getHtmlSectionLines(stylePlaceLines,scriptPlaceLines)),
-			css: new CodeSection(this.basename+'.css',styleExtractLines),
-			js: new CodeSection(this.basename+'.js',scriptExtractLines),
+			css:  new CodeSection(this.basename+'.css',styleExtractLines),
+			js:   new CodeSection(this.basename+'.js',scriptExtractLines),
 		};
 	}
 
 	// private:
 	getLines() {
 		return this.getHtmlSectionLines(
-			NoseWrapLines.b("<style>","</style>").ae(this._styleLines),
-			NoseWrapLines.b("<script>","</script>").ae(this._scriptLines)
+			NoseWrapLines.b("<style>","</style>").ae(this.cachedStyleLines),
+			NoseWrapLines.b("<script>","</script>").ae(this.cachedScriptLines)
 		);
 	}
 	getHtmlSectionLines(stylePlaceLines,scriptPlaceLines) {
@@ -76,16 +68,20 @@ class WebCode {
 		}
 		a(
 			stylePlaceLines,
-			this._headLines,
+			this.cachedHeadLines,
 			"</head>",
 			"<body>",
-			this._bodyLines,
+			this.cachedBodyLines,
 			scriptPlaceLines,
 			"</body>",
 			"</html>"
 		);
 		return a.e();
 	}
+	get cachedStyleLines()  { if (!this._styleLines)  this._styleLines =this.styleLines;  return this._styleLines;  }
+	get cachedHeadLines()   { if (!this._headLines)   this._headLines  =this.headLines;   return this._headLines;   }
+	get cachedBodyLines()   { if (!this._bodyLines)   this._bodyLines  =this.bodyLines;   return this._bodyLines;   }
+	get cachedScriptLines() { if (!this._scriptLines) this._scriptLines=this.scriptLines; return this._scriptLines; }
 
 	// to be redefined in subclasses:
 	get basename() { // filename base

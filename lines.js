@@ -40,6 +40,9 @@ const TO={}; // TODO Symbol
 class Lines {
 	// lines private interface:
 	constructor(data) {
+		if (!Array.isArray(data)) {
+			throw new TypeError("attempted to construct Lines with non-array data argument");
+		}
 		this.data=data;
 	}
 	isDataEmpty() {
