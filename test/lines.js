@@ -230,4 +230,17 @@ describe("Lines",()=>{
 			"<input type=text value=\"' &quot; `\">"
 		);
 	});
+	it("substitutes html element contents",()=>{
+		const id='my.input';
+		const label='whatever < > & \' "';
+		const s=Lines.html`<label for=${id}>${label}</label>`;
+		assert.equal(s,
+			"<label for=my.input>whatever &lt; > &amp; ' \"</label>"
+		);
+	});
+	it("throws when character before subst is neither = nor >",()=>{
+		assert.throws(
+			()=>Lines.html`the answer is ${42}`
+		);
+	});
 });
