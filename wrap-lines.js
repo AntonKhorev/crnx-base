@@ -32,13 +32,20 @@ class WrapLines extends Lines {
 			if (item instanceof Lines) {
 				const subOut=item.get(formatting,html);
 				out.push(...subOut.map(s=>'\t'+s));
-				pushWrapper();
+				if (this.wrappers.length!=2) {
+					pushWrapper();
+				}
 			} else if (typeof item == 'string') {
 				const s=(html ? Lines.strHtmlEscape(item) : item);
 				out.push('\t'+s);
-				pushWrapper();
+				if (this.wrappers.length!=2) {
+					pushWrapper();
+				}
 			}
 		});
+		if (this.wrappers.length==2) {
+			pushWrapper();
+		}
 		return out;
 	}
 }

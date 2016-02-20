@@ -34,6 +34,21 @@ describe("WrapLines",()=>{
 			"}"
 		]);
 	});
+	it("special case - double wrap",()=>{
+		const lines=WrapLines.b(
+			"function fooBar() {",
+			"}"
+		).ae(
+			"foo();",
+			"bar();"
+		);
+		assert.deepEqual(lines.get(),[
+			"function fooBar() {",
+			"	foo();",
+			"	bar();",
+			"}"
+		]);
+	});
 	it("triple wrap",()=>{
 		const lines=WrapLines.b(
 			"if (cond) {",
