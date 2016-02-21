@@ -1,8 +1,9 @@
 'use strict';
 
 class CodeSection {
-	constructor(filename,lines) {
+	constructor(filename,mimeType,lines) {
 		this.filename=filename;
+		this.mimeType=mimeType;
 		this.lines=lines;
 	}
 	get(formatting) {

@@ -7,33 +7,6 @@ class CodeOutput {
 		const getHtmlDataUri=(html)=>'data:text/html;charset=utf-8,'+encodeURIComponent(html);
 		const writeControls=()=>{
 			return $("<div>").append(
-				/*
-				// doesn't work in IE
-				$("<a download='"+code.filename+"'><button type='button'>"+i18n('code-output.save')+"</button></a>").click(function(){
-					// yes I want a button, but download attr is only available for links
-					$(this).attr('href',getHtmlDataUri(
-						code.get(this.formatting).join("\n")
-					));
-				})
-				*/
-				$("<button type='button'>"+i18n('code-output.save')+"</button>").click(function(){
-					// http://stackoverflow.com/a/24354303
-					const blob=new Blob(
-						[code.get(this.formatting).join("\n")],
-						{type:'text/html'}
-					);
-					if (navigator.msSaveOrOpenBlob) {
-						navigator.msSaveOrOpenBlob(blob,code.filename);
-					} else {
-						const $a=$("<a>")
-							.attr('download',code.filename)
-							.attr('href',URL.createObjectURL(blob))
-							.appendTo('body');
-						$a.get(0).click();
-						$a.remove();
-					}
-				})
-			).append(" ").append(
 				$("<button type='button'>"+i18n('code-output.run')+"</button>").click(function(){
 					/*
 					// doesn't work in IE
@@ -65,11 +38,12 @@ class CodeOutput {
 				})
 			)
 		};
+		const getSectionModes=()=>({
+			css: $sectionModeInput['css'].val(),
+			js:  $sectionModeInput['js' ].val(),
+		});
 		const extractCode=()=>{
-			const sectionModes={
-				css: $sectionModeInput['css'].val(),
-				js:  $sectionModeInput['js' ].val(),
-			};
+			const sectionModes=getSectionModes();
 			const sections=code.extractSections(sectionModes);
 			for (let sectionName in sections) {
 				if (sectionModes[sectionName]=='embed') {
@@ -98,6 +72,35 @@ class CodeOutput {
 				$sectionModeInput[sectionName]=$("<select>").append(['embed','paste','file'].map(mode=>
 					$("<option>").val(mode).html(i18n('code-output.mode.'+mode))
 				)).change(extractCode)
+			);
+			$summary.append(" ").append(
+				/*
+				// doesn't work in IE
+				$("<a download='"+section.filename+"'><button type='button'>"+i18n('code-output.save')+"</button></a>").click(function(){
+					// yes I want a button, but download attr is only available for links
+					$(this).attr('href',getHtmlDataUri(
+						section.get(this.formatting).join("\n")
+					));
+				})
+				*/
+				$("<button type='button'>"+i18n('code-output.save')+"</button>").click(function(){
+					const section=code.extractSections(getSectionModes())[sectionName];
+					// http://stackoverflow.com/a/24354303
+					const blob=new Blob(
+						[section.get(this.formatting).join("\n")],
+						{type:section.mimeType}
+					);
+					if (navigator.msSaveOrOpenBlob) {
+						navigator.msSaveOrOpenBlob(blob,section.filename);
+					} else {
+						const $a=$("<a>")
+							.attr('download',section.filename)
+							.attr('href',URL.createObjectURL(blob))
+							.appendTo('body');
+						$a.get(0).click();
+						$a.remove();
+					}
+				})
 			);
 			return $("<details>")
 				.append($summary)

@@ -9,6 +9,9 @@ class WebCode {
 	get filename() {
 		return this.basename+'.html';
 	}
+	get mimeType() {
+		return 'text/html';
+	}
 	get(formatting) {
 		return this.getLines().get(formatting);
 	}
@@ -37,10 +40,11 @@ class WebCode {
 			scriptPlaceLines=Lines.bae(Lines.html`<script src=${this.basename+'.js'}></script>`);
 			scriptExtractLines=this.cachedScriptLines;
 		}
+		const type=sectionName=>'text/'+(sectionName=='js'?'javascript':sectionName);
 		return {
-			html: new CodeSection(this.filename,this.getHtmlSectionLines(stylePlaceLines,scriptPlaceLines)),
-			css:  new CodeSection(this.basename+'.css',styleExtractLines),
-			js:   new CodeSection(this.basename+'.js',scriptExtractLines),
+			html: new CodeSection(this.filename,type('html'),this.getHtmlSectionLines(stylePlaceLines,scriptPlaceLines)),
+			css:  new CodeSection(this.basename+'.css',type('css'),styleExtractLines),
+			js:   new CodeSection(this.basename+'.js',type('js'),scriptExtractLines),
 		};
 	}
 
