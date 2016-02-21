@@ -3,67 +3,75 @@
 class CodeOutput {
 	constructor(generateCode,i18n) {
 		let code=generateCode();
-		const $code={}, $extract={};
+		const $sectionCode={}, $sectionModeInput={};
 		const getHtmlDataUri=(html)=>'data:text/html;charset=utf-8,'+encodeURIComponent(html);
 		const writeControls=()=>{
 			return $("<div>").append(
 				$("<a download='"+code.filename+"'><button type='button'>"+i18n('code-output.save')+"</button></a>").click(function(){
 					// yes I want a button, but download attr is only available for links
-					$(this).attr('href',getHtmlDataUri($code.text()));
+					$(this).attr('href',getHtmlDataUri(
+						code.get(this.formatting).join("\n")
+					));
 				})
 			).append(
 				" "
 			).append(
 				$("<button type='button'>"+i18n('code-output.run')+"</button>").click(function(){
-					window.open(getHtmlDataUri(code.get().join("\n")),"generatedCode");
+					window.open(getHtmlDataUri(
+						code.get().join("\n")
+					),"generatedCode");
 				})
 			).append(
 				" <span class='tip-warn'><span class='tip-content'>"+i18n('code-output.warning.ie')+"</span></span>"
 			)
 		};
 		const extractCode=()=>{
-			const sections=code.extractSections({
-				css: $extract['css'].prop('checked') ? 'paste' : 'inline',
-				js:  $extract['js' ].prop('checked') ? 'paste' : 'inline',
-			});
-			for (let name in sections) {
-				$code[name].html(sections[name].getHtml(this.formatting).join("\n"));
-				if (window.hljs) {
-					hljs.highlightBlock($code[name][0]);
+			const sectionModes={
+				css: $sectionModeInput['css'].val(),
+				js:  $sectionModeInput['js' ].val(),
+			};
+			const sections=code.extractSections(sectionModes);
+			for (let sectionName in sections) {
+				if (sectionModes[sectionName]=='embed') {
+					$sectionCode[sectionName].empty().append(
+						"<p>"+i18n('code-output.embedded')+"</p>"
+					);
+				} else {
+					let $code;
+					$sectionCode[sectionName].empty().append(
+						$("<pre>").append(
+							$code=$("<code>")
+						)
+					);
+					$code.html(
+						sections[sectionName].getHtml(this.formatting).join("\n")
+					);
+					if (window.hljs) {
+						hljs.highlightBlock($code[0]);
+					}
 				}
 			}
 		};
-		const writeExtractableSection=(name)=>{
-			return $("<details>").append(
-				$("<summary>"+i18n('code-output.section.'+name)+"</summary>").append(
-					" "
-				).append(
-					$("<label>").append(
-						$extract[name]=$("<input type=checkbox>").change(extractCode)
-					).append(
-						" extract"
-					)
-				)
-			).append(
-				$("<pre>").append($code[name]=$("<code>"))
+		const writeSection=(sectionName,extractable)=>{
+			const $summary=$("<summary>"+i18n('code-output.section.'+sectionName)+"</summary>");
+			if (extractable) $summary.append(" ").append(
+				$sectionModeInput[sectionName]=$("<select>").append(['embed','paste','file'].map(mode=>
+					$("<option>").val(mode).html(i18n('code-output.mode.'+mode))
+				)).change(extractCode)
 			);
+			return $("<details>")
+				.append($summary)
+				.append($sectionCode[sectionName]=$("<div>"));
 		};
-		const $output=$("<div class='code-output'>").append(writeControls()).append(
-			$("<details>").append(
-				$("<summary>"+i18n('code-output.section.html')+"</summary>")
-			).append(
-				$("<pre>").append($code.html=$("<code>").html(code.getHtml(this.formatting).join("\n")))
-			)
-		).append(
-			writeExtractableSection('css')
-		).append(
-			writeExtractableSection('js')
-		);
+		const $output=$("<div class='code-output'>").append(writeControls())
+			.append(writeSection('html',false))
+			.append(writeSection('css',true))
+			.append(writeSection('js',true));
 		if (!window.hljs) {
 			$output.append("<p>"+i18n('code-output.warning.no-hljs')+"</p>");
 		}
-		extractCode();
 		$output.append(writeControls());
+		extractCode();
 
 		const delay=200;
 		let timeoutId=null;

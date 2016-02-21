@@ -53,9 +53,9 @@ class OptionsOutput {
 				.append(" ")
 				.append(
 					$("<select id='"+id+"'>").append(
-						option.availableValues.map(function(availableValue){
-							return $("<option>").val(availableValue).html(i18n('options.'+option.fullName+'.'+availableValue))
-						})
+						option.availableValues.map(availableValue=>
+							$("<option>").val(availableValue).html(i18n('options.'+option.fullName+'.'+availableValue))
+						)
 					).val(option.value).change(function(){
 						option.value=this.value;
 					})
