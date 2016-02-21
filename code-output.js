@@ -14,15 +14,24 @@ class CodeOutput {
 					));
 				})
 			).append(
-				" "
+				" <span class='tip-warn'><span class='tip-content'>"+i18n('code-output.warning.ie')+"</span></span> "
 			).append(
 				$("<button type='button'>"+i18n('code-output.run')+"</button>").click(function(){
+					/*
+					// doesn't work in IE
 					window.open(getHtmlDataUri(
 						code.get(this.formatting).join("\n")
 					),"generatedCode");
+					*/
+					const w=window.open("","generatedCode");
+					w.document.open();
+					w.document.write(
+						code.get(this.formatting).join("\n")
+					);
+					w.document.close();
 				})
 			).append(
-				" <span class='tip-warn'><span class='tip-content'>"+i18n('code-output.warning.ie')+"</span></span> "
+				" "
 			).append(
 				$("<button type='button'>Open in JSFiddle</button>").click(function(){
 					const sections=code.extractSections({css:'paste',js:'paste'});
