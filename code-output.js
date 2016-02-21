@@ -3,7 +3,7 @@
 class CodeOutput {
 	constructor(generateCode,i18n) {
 		let code=generateCode();
-		let $code;
+		const $code={}, $extract={};
 		const getHtmlDataUri=(html)=>'data:text/html;charset=utf-8,'+encodeURIComponent(html);
 		const writeControls=()=>{
 			return $("<div>").append(
@@ -21,14 +21,48 @@ class CodeOutput {
 				" <span class='tip-warn'><span class='tip-content'>"+i18n('code-output.warning.ie')+"</span></span>"
 			)
 		};
+		const extractCode=()=>{
+			const sections=code.extractSections({
+				css: $extract['css'].prop('checked') ? 'paste' : 'inline',
+				js:  $extract['js' ].prop('checked') ? 'paste' : 'inline',
+			});
+			for (let name in sections) {
+				$code[name].html(sections[name].getHtml(this.formatting).join("\n"));
+				if (window.hljs) {
+					hljs.highlightBlock($code[name][0]);
+				}
+			}
+		};
+		const writeExtractableSection=(name)=>{
+			return $("<details>").append(
+				$("<summary>"+i18n('code-output.section.'+name)+"</summary>").append(
+					" "
+				).append(
+					$("<label>").append(
+						$extract[name]=$("<input type=checkbox>").change(extractCode)
+					).append(
+						" extract"
+					)
+				)
+			).append(
+				$("<pre>").append($code[name]=$("<code>"))
+			);
+		};
 		const $output=$("<div class='code-output'>").append(writeControls()).append(
-			$("<pre>").append($code=$("<code>").html(code.getHtml(this.formatting).join("\n")))
+			$("<details>").append(
+				$("<summary>"+i18n('code-output.section.html')+"</summary>")
+			).append(
+				$("<pre>").append($code.html=$("<code>").html(code.getHtml(this.formatting).join("\n")))
+			)
+		).append(
+			writeExtractableSection('css')
+		).append(
+			writeExtractableSection('js')
 		);
-		if (window.hljs) {
-			hljs.highlightBlock($code[0]);
-		} else {
+		if (!window.hljs) {
 			$output.append("<p>"+i18n('code-output.warning.no-hljs')+"</p>");
 		}
+		extractCode();
 		$output.append(writeControls());
 
 		const delay=200;
@@ -37,8 +71,7 @@ class CodeOutput {
 			clearTimeout(timeoutId);
 			timeoutId=setTimeout(()=>{
 				code=generateCode();
-				$code.html(code.getHtml(this.formatting).join("\n"));
-				if (window.hljs) hljs.highlightBlock($code[0]);
+				extractCode();
 			},delay);
 		};
 
