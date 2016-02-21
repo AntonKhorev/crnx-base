@@ -68,11 +68,17 @@ class CodeOutput {
 		};
 		const writeSection=(sectionName,extractable)=>{
 			const $summary=$("<summary>"+i18n('code-output.section.'+sectionName)+"</summary>");
-			if (extractable) $summary.append(" ").append(
-				$sectionModeInput[sectionName]=$("<select>").append(['embed','paste','file'].map(mode=>
-					$("<option>").val(mode).html(i18n('code-output.mode.'+mode))
-				)).change(extractCode)
-			);
+			let $saveButton;
+			if (extractable) {
+				$summary.append(" ").append(
+					$sectionModeInput[sectionName]=$("<select>").append(['embed','paste','file'].map(mode=>
+						$("<option>").val(mode).html(i18n('code-output.mode.'+mode))
+					)).change(function(){
+						$saveButton.prop('disabled',this.value=='embed');
+						extractCode();
+					})
+				);
+			}
 			$summary.append(" ").append(
 				/*
 				// doesn't work in IE
@@ -83,7 +89,7 @@ class CodeOutput {
 					));
 				})
 				*/
-				$("<button type='button'>"+i18n('code-output.save')+"</button>").click(function(){
+				$saveButton=$("<button type='button'>"+i18n('code-output.save')+"</button>").click(function(){
 					const section=code.extractSections(getSectionModes())[sectionName];
 					// http://stackoverflow.com/a/24354303
 					const blob=new Blob(
@@ -102,6 +108,9 @@ class CodeOutput {
 					}
 				})
 			);
+			if (extractable) {
+				$saveButton.prop('disabled',$sectionModeInput[sectionName].val()=='embed');
+			}
 			return $("<details>")
 				.append($summary)
 				.append($sectionCode[sectionName]=$("<div class='code'>"));
