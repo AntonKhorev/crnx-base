@@ -18,11 +18,26 @@ class CodeOutput {
 			).append(
 				$("<button type='button'>"+i18n('code-output.run')+"</button>").click(function(){
 					window.open(getHtmlDataUri(
-						code.get().join("\n")
+						code.get(this.formatting).join("\n")
 					),"generatedCode");
 				})
 			).append(
-				" <span class='tip-warn'><span class='tip-content'>"+i18n('code-output.warning.ie')+"</span></span>"
+				" <span class='tip-warn'><span class='tip-content'>"+i18n('code-output.warning.ie')+"</span></span> "
+			).append(
+				$("<button type='button'>Open in JSFiddle</button>").click(function(){
+					const sections=code.extractSections({css:'paste',js:'paste'});
+					const writeSection=sectionName=>
+						$("<input type='hidden'>")
+							.attr('name',sectionName)
+							.val(sections[sectionName].get(this.formatting).join("\n"));
+					$("<form method='post' action='http://jsfiddle.net/api/post/library/pure/'>")
+						.append(writeSection('html'))
+						.append(writeSection('css'))
+						.append(writeSection('js'))
+						.append("<input type='hidden' name='wrap' value='b'>")
+						.appendTo('body')
+						.submit();
+				})
 			)
 		};
 		const extractCode=()=>{
