@@ -18,7 +18,7 @@ class CodeOutput {
 					window.open(getHtmlDataUri(code.get().join("\n")),"generatedCode");
 				})
 			).append(
-				" "+i18n('code-output.warning.ie')
+				" <span class='tip-warn'>"+i18n('code-output.warning.ie')+"</span>"
 			)
 		};
 		const $output=$("<div class='code-output'>").append(writeControls()).append(
