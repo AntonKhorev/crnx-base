@@ -61,7 +61,7 @@ class CodeOutput {
 			);
 			return $("<details>")
 				.append($summary)
-				.append($sectionCode[sectionName]=$("<div>"));
+				.append($sectionCode[sectionName]=$("<div class='code'>"));
 		};
 		const $output=$("<div class='code-output'>").append(writeControls())
 			.append(writeSection('html',false))
