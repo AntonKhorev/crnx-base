@@ -55,7 +55,7 @@ class CodeOutput {
 					let $code;
 					$sectionCode[sectionName].empty().append(
 						$("<pre>").append(
-							$code=$("<code>")
+							$code=$("<code class='"+sectionName+"'>")
 						)
 					);
 					$code.html(
