@@ -23,7 +23,7 @@ class CodeOutput {
 				})
 			).append(" ").append(
 				$("<button type='button'>Open in JSFiddle</button>").click(function(){
-					const sections=code.extractSections({css:'paste',js:'paste'});
+					const sections=code.extractSections({html:'body',css:'paste',js:'paste'});
 					const writeSection=sectionName=>
 						$("<input type='hidden'>")
 							.attr('name',sectionName)
@@ -36,7 +36,7 @@ class CodeOutput {
 						.appendTo('body')
 						.submit();
 				})
-			)
+			).append(" <span class='tip-warn'><span class='tip-content'>"+i18n('code-output.warning.jsfiddle-run')+"</span></span>")
 		};
 		const getSectionModes=()=>({
 			html: $sectionModeInput['html'].val(),
