@@ -25,7 +25,11 @@ class WebCode {
 		let stylePlaceLines=NoseWrapLines.b("<style>","</style>").ae(this.cachedStyleLines);
 		let styleExtractLines=Lines.be();
 		if (sectionModes.css=='paste') {
-			stylePlaceLines=Lines.bae("<!-- <style> "+this.getSectionPasteComment('css')+" </style> -->");
+			if (sectionModes.html=='body') {
+				stylePlaceLines=Lines.be();
+			} else {
+				stylePlaceLines=Lines.bae("<!-- <style> "+this.getSectionPasteComment('css')+" </style> -->");
+			}
 			styleExtractLines=this.cachedStyleLines;
 		} else if (sectionModes.css=='file') {
 			stylePlaceLines=Lines.bae(Lines.html`<link rel=stylesheet href=${this.basename+'.css'}>`);
@@ -34,15 +38,25 @@ class WebCode {
 		let scriptPlaceLines=NoseWrapLines.b("<script>","</script>").ae(this.cachedScriptLines);
 		let scriptExtractLines=Lines.be();
 		if (sectionModes.js=='paste') {
-			scriptPlaceLines=Lines.bae("<!-- <script> "+this.getSectionPasteComment('js')+" </script> -->");
+			if (sectionModes.html=='body') {
+				scriptPlaceLines=Lines.be();
+			} else {
+				scriptPlaceLines=Lines.bae("<!-- <script> "+this.getSectionPasteComment('js')+" </script> -->");
+			}
 			scriptExtractLines=this.cachedScriptLines;
 		} else if (sectionModes.js=='file') {
 			scriptPlaceLines=Lines.bae(Lines.html`<script src=${this.basename+'.js'}></script>`);
 			scriptExtractLines=this.cachedScriptLines;
 		}
+		let htmlExtractLines;
+		if (sectionModes.html=='body') {
+			htmlExtractLines=this.getBodyHtmlSectionLines(stylePlaceLines,scriptPlaceLines);
+		} else {
+			htmlExtractLines=this.getFullHtmlSectionLines(stylePlaceLines,scriptPlaceLines);
+		}
 		const type=sectionName=>'text/'+(sectionName=='js'?'javascript':sectionName);
 		return {
-			html: new CodeSection(this.filename,type('html'),this.getHtmlSectionLines(stylePlaceLines,scriptPlaceLines)),
+			html: new CodeSection(this.filename,type('html'),htmlExtractLines),
 			css:  new CodeSection(this.basename+'.css',type('css'),styleExtractLines),
 			js:   new CodeSection(this.basename+'.js',type('js'),scriptExtractLines),
 		};
@@ -50,12 +64,12 @@ class WebCode {
 
 	// private:
 	getLines() {
-		return this.getHtmlSectionLines(
+		return this.getFullHtmlSectionLines(
 			NoseWrapLines.b("<style>","</style>").ae(this.cachedStyleLines),
 			NoseWrapLines.b("<script>","</script>").ae(this.cachedScriptLines)
 		);
 	}
-	getHtmlSectionLines(stylePlaceLines,scriptPlaceLines) {
+	getFullHtmlSectionLines(stylePlaceLines,scriptPlaceLines) {
 		const a=Lines.b();
 		a("<!DOCTYPE html>");
 		if (this.lang!==null) {
@@ -81,6 +95,13 @@ class WebCode {
 			"</html>"
 		);
 		return a.e();
+	}
+	getBodyHtmlSectionLines(stylePlaceLines,scriptPlaceLines) {
+		return Lines.bae(
+			stylePlaceLines,
+			this.cachedBodyLines,
+			scriptPlaceLines
+		);
 	}
 	get cachedStyleLines()  { if (!this._styleLines)  this._styleLines =this.styleLines;  return this._styleLines;  }
 	get cachedHeadLines()   { if (!this._headLines)   this._headLines  =this.headLines;   return this._headLines;   }

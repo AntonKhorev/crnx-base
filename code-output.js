@@ -39,8 +39,9 @@ class CodeOutput {
 			)
 		};
 		const getSectionModes=()=>({
-			css: $sectionModeInput['css'].val(),
-			js:  $sectionModeInput['js' ].val(),
+			html: $sectionModeInput['html'].val(),
+			css:  $sectionModeInput['css' ].val(),
+			js:   $sectionModeInput['js'  ].val(),
 		});
 		const extractCode=()=>{
 			const sectionModes=getSectionModes();
@@ -66,19 +67,25 @@ class CodeOutput {
 				}
 			}
 		};
-		const writeSection=(sectionName,extractable)=>{
+		const writeSection=(sectionName)=>{
+			const extractable=sectionName!='html';
 			const $summary=$("<summary>"+i18n('code-output.section.'+sectionName)+"</summary>");
 			let $saveButton;
-			if (extractable) {
-				$summary.append(" ").append(
-					$sectionModeInput[sectionName]=$("<select>").append(['embed','paste','file'].map(mode=>
+			$summary.append(" ").append(
+				$sectionModeInput[sectionName]=$("<select>").append(
+					(sectionName=='html'
+						? ['full','body']
+						: ['embed','paste','file']
+					).map(mode=>
 						$("<option>").val(mode).html(i18n('code-output.mode.'+mode))
-					)).change(function(){
+					)
+				).change(function(){
+					if (extractable) {
 						$saveButton.prop('disabled',this.value=='embed');
-						extractCode();
-					})
-				);
-			}
+					}
+					extractCode();
+				})
+			);
 			$summary.append(" ").append(
 				/*
 				// doesn't work in IE
@@ -116,9 +123,9 @@ class CodeOutput {
 				.append($sectionCode[sectionName]=$("<div class='code'>"));
 		};
 		const $output=$("<div class='code-output'>").append(writeControls())
-			.append(writeSection('html',false))
-			.append(writeSection('css',true))
-			.append(writeSection('js',true));
+			.append(writeSection('html'))
+			.append(writeSection('css'))
+			.append(writeSection('js'));
 		if (!window.hljs) {
 			$output.append("<p>"+i18n('code-output.warning.no-hljs')+"</p>");
 		}

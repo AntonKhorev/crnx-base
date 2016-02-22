@@ -313,6 +313,46 @@ describe("WebCode",()=>{
 				"console.log(&#39;загрузилось&#39;);",
 			]);
 		});
+		it("gives sections in html body mode",()=>{
+			const code=new MyWebCode;
+			const sections=code.extractSections({
+				'html': 'body',
+			});
+			assert.deepEqual(sections.html.get(),[
+				"<style>",
+				"	div {",
+				"		background: red;",
+				"	}",
+				"</style>",
+				"<div>Див</div>",
+				"<script>",
+				"	console.log('загрузилось');",
+				"</script>",
+			]);
+			assert.deepEqual(sections.css.get(),[
+			]);
+			assert.deepEqual(sections.js.get(),[
+			]);
+		});
+		it("gives sections in html body + paste mode",()=>{
+			const code=new MyWebCode;
+			const sections=code.extractSections({
+				'html': 'body',
+				'css': 'paste',
+				'js': 'paste',
+			});
+			assert.deepEqual(sections.html.get(),[
+				"<div>Див</div>",
+			]);
+			assert.deepEqual(sections.css.get(),[
+				"div {",
+				"	background: red;",
+				"}",
+			]);
+			assert.deepEqual(sections.js.get(),[
+				"console.log('загрузилось');",
+			]);
+		});
 	});
 
 	/* // TODO Code tests - formatting options
