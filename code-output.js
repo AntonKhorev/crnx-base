@@ -32,6 +32,7 @@ class CodeOutput {
 						.append(writeSection('html'))
 						.append(writeSection('css'))
 						.append(writeSection('js'))
+						.append($("<input type='hidden' name='title'>").val(code.title))
 						.append("<input type='hidden' name='wrap' value='b'>")
 						.appendTo('body')
 						.submit();

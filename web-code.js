@@ -61,6 +61,7 @@ class WebCode {
 			js:   new CodeSection(this.basename+'.js',type('js'),scriptExtractLines),
 		};
 	}
+	// get title()
 
 	// private:
 	getLines() {
