@@ -22,7 +22,24 @@ class CodeOutput {
 					w.document.close();
 				})
 			).append(" ").append(
+				$("<button type='button'>Open in CodePen</button>").click(function(){
+					// http://blog.codepen.io/documentation/api/prefill/
+					const sections=code.extractSections({html:'body',css:'paste',js:'paste'});
+					const getSection=sectionName=>
+						sections[sectionName].get(this.formatting).join("\n");
+					$("<form method='post' action='http://codepen.io/pen/define/'>")
+						.append($("<input type='hidden' name='data'>").val(JSON.stringify({
+							html: getSection('html'),
+							css: getSection('css'),
+							js: getSection('js'),
+							title: code.title,
+						})))
+						.appendTo('body')
+						.submit();
+				})
+			).append(" ").append(
 				$("<button type='button'>Open in JSFiddle</button>").click(function(){
+					// http://doc.jsfiddle.net/api/post.html
 					const sections=code.extractSections({html:'body',css:'paste',js:'paste'});
 					const writeSection=sectionName=>
 						$("<input type='hidden'>")
