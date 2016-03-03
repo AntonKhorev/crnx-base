@@ -3,7 +3,7 @@
 const Lines=require('./lines.js');
 
 class InterleaveLines extends Lines {
-	get(formatting,html) {
+	doGet(formatting,html) {
 		const out=[];
 		let first=true;
 		const fp=()=>{
@@ -15,7 +15,7 @@ class InterleaveLines extends Lines {
 		}
 		this.data.forEach(item=>{
 			if (item instanceof Lines) {
-				const subOut=item.get(formatting,html);
+				const subOut=item.doGet(formatting,html);
 				if (subOut.length>0) {
 					fp();
 					out.push(...subOut);

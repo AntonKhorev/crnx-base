@@ -6,11 +6,11 @@ class NoseWrapLines extends WrapLines {
 	isEmpty() {
 		return this.isDataEmpty();
 	}
-	get(formatting,html) {
+	doGet(formatting,html) {
 		if (this.isEmpty()) {
 			return [];
 		} else {
-			return super.get(formatting,html);
+			return super.doGet(formatting,html);
 		}
 	}
 }

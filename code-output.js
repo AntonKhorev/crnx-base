@@ -4,7 +4,14 @@ class CodeOutput {
 	constructor(generateCode,i18n) {
 		let code=generateCode();
 		const $sectionCode={}, $sectionModeInput={};
+		let $jsSemicolonsCheckbox;
 		const getHtmlDataUri=(html)=>'data:text/html;charset=utf-8,'+encodeURIComponent(html);
+		const getFormatting=()=>{
+			return {
+				refs: this.refs,
+				jsSemicolons: $jsSemicolonsCheckbox.prop('checked'),
+			};
+		}
 		const writeControls=()=>{
 			return $("<div>").append(
 				$("<button type='button'>"+i18n('code-output.run')+"</button>").click(function(){
@@ -17,7 +24,7 @@ class CodeOutput {
 					const w=window.open("","generatedCode");
 					w.document.open();
 					w.document.write(
-						code.get(this.formatting).join("\n")
+						code.get(getFormatting()).join("\n")
 					);
 					w.document.close();
 				})
@@ -26,7 +33,7 @@ class CodeOutput {
 					// http://blog.codepen.io/documentation/api/prefill/
 					const sections=code.extractSections({html:'body',css:'paste',js:'paste'});
 					const getSection=sectionName=>
-						sections[sectionName].get(this.formatting).join("\n");
+						sections[sectionName].get(getFormatting()).join("\n");
 					$("<form method='post' action='http://codepen.io/pen/define/'>")
 						.append($("<input type='hidden' name='data'>").val(JSON.stringify({
 							html: getSection('html'),
@@ -44,7 +51,7 @@ class CodeOutput {
 					const writeSection=sectionName=>
 						$("<input type='hidden'>")
 							.attr('name',sectionName)
-							.val(sections[sectionName].get(this.formatting).join("\n"));
+							.val(sections[sectionName].get(getFormatting()).join("\n"));
 					$("<form method='post' action='http://jsfiddle.net/api/post/library/pure/'>")
 						.append(writeSection('html'))
 						.append(writeSection('css'))
@@ -77,13 +84,23 @@ class CodeOutput {
 						)
 					);
 					$code.html(
-						sections[sectionName].getHtml(this.formatting).join("\n")
+						sections[sectionName].getHtml(getFormatting()).join("\n")
 					);
 					if (window.hljs) {
 						hljs.highlightBlock($code[0]);
 					}
 				}
 			}
+		};
+		const writeFormattingControls=()=>{
+			return $("<details>")
+				.append("<summary>Formatting</summary>")
+				.append($("<div>")
+					.append($("<label>")
+						.append($jsSemicolonsCheckbox=$("<input type='checkbox'>").change(extractCode))
+						.append(" JavaScript semicolons")
+					)
+				);
 		};
 		const writeSection=(sectionName)=>{
 			const extractable=sectionName!='html';
@@ -118,7 +135,7 @@ class CodeOutput {
 					const section=code.extractSections(getSectionModes())[sectionName];
 					// http://stackoverflow.com/a/24354303
 					const blob=new Blob(
-						[section.get(this.formatting).join("\n")],
+						[section.get(getFormatting()).join("\n")],
 						{type:section.mimeType}
 					);
 					if (navigator.msSaveOrOpenBlob) {
@@ -141,6 +158,7 @@ class CodeOutput {
 				.append($sectionCode[sectionName]=$("<div class='code'>"));
 		};
 		const $output=$("<div class='code-output'>").append(writeControls())
+			.append(writeFormattingControls())
 			.append(writeSection('html'))
 			.append(writeSection('css'))
 			.append(writeSection('js'));
@@ -166,7 +184,7 @@ class CodeOutput {
 	}
 
 	// private interface:
-	get formatting() {
+	get refs() {
 		return {};
 	}
 }

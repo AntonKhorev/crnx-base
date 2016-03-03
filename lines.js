@@ -58,6 +58,35 @@ class Lines {
 		}
 		return true;
 	}
+	processStringInGet(s,formatting) {
+		return s;
+	}
+	doGet(formatting,html) {
+		const out=[];
+		let addTo=false;
+		this.data.forEach(item=>{
+			if (item===TO) {
+				addTo=true;
+			} else if (item instanceof Lines) {
+				const subOut=item.doGet(formatting,html);
+				if (addTo) {
+					out.push(out.pop()+subOut.shift());
+				}
+				out.push(...subOut);
+				addTo=false;
+			} else if (typeof item == 'string') {
+				item=this.processStringInGet(item,formatting);
+				const s=(html ? Lines.strHtmlEscape(item) : item);
+				if (addTo) {
+					out.push(out.pop()+s);
+				} else {
+					out.push(s);
+				}
+				addTo=false;
+			}
+		});
+		return out;
+	}
 
 	// lines public interface:
 	static b() {
@@ -92,33 +121,13 @@ class Lines {
 	isEmpty() {
 		return this.isDataEmpty();
 	}
-	get(formatting,html) {
-		const out=[];
-		let addTo=false;
-		this.data.forEach(item=>{
-			if (item===TO) {
-				addTo=true;
-			} else if (item instanceof Lines) {
-				const subOut=item.get(formatting,html);
-				if (addTo) {
-					out.push(out.pop()+subOut.shift());
-				}
-				out.push(...subOut);
-				addTo=false;
-			} else if (typeof item == 'string') {
-				const s=(html ? Lines.strHtmlEscape(item) : item);
-				if (addTo) {
-					out.push(out.pop()+s);
-				} else {
-					out.push(s);
-				}
-				addTo=false;
-			}
-		});
-		return out;
+	get(formatting) {
+		if (formatting===undefined) formatting={};
+		return this.doGet(formatting,false);
 	}
 	getHtml(formatting) {
-		return this.get(formatting,true);
+		if (formatting===undefined) formatting={};
+		return this.doGet(formatting,true);
 	}
 
 	// string utilities:

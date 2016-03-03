@@ -11,9 +11,9 @@ class IndentLines extends Lines {
 			this.level=1;
 		}
 	}
-	get(formatting,html) {
+	doGet(formatting,html) {
 		const indentStr=Lines.strRepeat("\t",this.level);
-		return super.get(formatting,html).map(s=>indentStr+s);
+		return super.doGet(formatting,html).map(s=>indentStr+s);
 	}
 }
 

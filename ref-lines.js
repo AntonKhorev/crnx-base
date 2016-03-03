@@ -23,10 +23,10 @@ class RefLines extends Lines {
 		}
 		return a.e();
 	}
-	get(formatting,html) {
-		const plainOut=super.get(formatting,html);
+	doGet(formatting,html) {
+		const plainOut=super.doGet(formatting,html);
 		let href;
-		if (html && typeof formatting == 'object' && typeof formatting.refs == 'object') {
+		if (html && typeof formatting.refs == 'object') {
 			href=formatting.refs[this.ref];
 		}
 		if (href!==undefined) {

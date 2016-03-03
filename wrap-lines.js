@@ -13,13 +13,13 @@ class WrapLines extends Lines {
 	isEmpty() {
 		return false;
 	}
-	get(formatting,html) {
+	doGet(formatting,html) {
 		const out=[];
 		let i=0;
 		const pushWrapper=()=>{
 			const item=this.wrappers[i];
 			if (item instanceof Lines) {
-				const subOut=item.get(formatting,html);
+				const subOut=item.doGet(formatting,html);
 				out.push(...subOut);
 			} else if (typeof item == 'string') {
 				const s=(html ? Lines.strHtmlEscape(item) : item);
@@ -30,7 +30,7 @@ class WrapLines extends Lines {
 		pushWrapper();
 		this.data.forEach(item=>{
 			if (item instanceof Lines) {
-				const subOut=item.get(formatting,html);
+				const subOut=item.doGet(formatting,html);
 				out.push(...subOut.map(s=>'\t'+s));
 				if (this.wrappers.length!=2) {
 					pushWrapper();
