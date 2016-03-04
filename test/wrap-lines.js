@@ -1,8 +1,8 @@
-'use strict';
+'use strict'
 
-const assert=require('assert');
-const Lines=require('../lines.js');
-const WrapLines=require('../wrap-lines.js');
+const assert=require('assert')
+const Lines=require('../lines.js')
+const WrapLines=require('../wrap-lines.js')
 
 describe("WrapLines",()=>{
 	it("wraps nonempty lines",()=>{
@@ -14,26 +14,26 @@ describe("WrapLines",()=>{
 				"foo();",
 				"bar();"
 			)
-		);
+		)
 		assert.deepEqual(lines.get(),[
 			"function fooBar() {",
 			"	foo();",
 			"	bar();",
 			"}"
-		]);
-	});
+		])
+	})
 	it("wraps empty lines",()=>{
 		const lines=WrapLines.b(
 			"function fubar() {",
 			"}"
 		).ae(
 			Lines.bae()
-		);
+		)
 		assert.deepEqual(lines.get(),[
 			"function fubar() {",
 			"}"
-		]);
-	});
+		])
+	})
 	it("special case - double wrap",()=>{
 		const lines=WrapLines.b(
 			"function fooBar() {",
@@ -41,14 +41,14 @@ describe("WrapLines",()=>{
 		).ae(
 			"foo();",
 			"bar();"
-		);
+		)
 		assert.deepEqual(lines.get(),[
 			"function fooBar() {",
 			"	foo();",
 			"	bar();",
 			"}"
-		]);
-	});
+		])
+	})
 	it("triple wrap",()=>{
 		const lines=WrapLines.b(
 			"if (cond) {",
@@ -57,15 +57,15 @@ describe("WrapLines",()=>{
 		).ae(
 			"thenPart();",
 			"elsePart();"
-		);
+		)
 		assert.deepEqual(lines.get(),[
 			"if (cond) {",
 			"	thenPart();",
 			"} else {",
 			"	elsePart();",
 			"}"
-		]);
-	});
+		])
+	})
 	it("multiline wrap",()=>{
 		const lines=WrapLines.b(
 			Lines.bae(
@@ -81,7 +81,7 @@ describe("WrapLines",()=>{
 				"foo();",
 				"bar();"
 			)
-		);
+		)
 		assert.deepEqual(lines.get(),[
 			"// declare fooBar() and call it",
 			"function fooBar() {",
@@ -89,6 +89,6 @@ describe("WrapLines",()=>{
 			"	bar();",
 			"}",
 			"fooBar();"
-		]);
-	});
-});
+		])
+	})
+})

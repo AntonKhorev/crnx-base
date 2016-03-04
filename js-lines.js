@@ -1,15 +1,15 @@
-'use strict';
+'use strict'
 
-const Lines=require('./lines.js');
+const Lines=require('./lines.js')
 
 class JsLines extends Lines {
 	processStringInGet(s,formatting) {
 		if (formatting.jsSemicolons) {
-			return s.replace(/^;/,'');
+			return s.replace(/^;/,'')
 		} else {
-			return s.replace(/;$/,'');
+			return s.replace(/;$/,'')
 		}
 	}
 }
 
-module.exports=JsLines;
+module.exports=JsLines

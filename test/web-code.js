@@ -1,13 +1,13 @@
-'use strict';
+'use strict'
 
-const assert=require('assert');
-const Lines=require('../lines.js');
-const WebCode=require('../web-code.js');
+const assert=require('assert')
+const Lines=require('../lines.js')
+const WebCode=require('../web-code.js')
 
 describe("WebCode",()=>{
 	context("base class",()=>{
 		it("gives plaintext",()=>{
-			const code=new WebCode;
+			const code=new WebCode
 			assert.deepEqual(code.get(),[
 				"<!DOCTYPE html>",
 				"<html>",
@@ -17,24 +17,24 @@ describe("WebCode",()=>{
 				"<body>",
 				"</body>",
 				"</html>",
-			]);
-		});
+			])
+		})
 		/*
 		// TODO will need this for subclasses with more sections
 		it("gives available sections",()=>{
-			const code=new WebCode;
-			const vs=[];
-			const ks=[];
+			const code=new WebCode
+			const vs=[]
+			const ks=[]
 			code.availableSections.forEach((v,k)=>{
-				vs.push(v);
-				ks.push(k);
-			});
-		});
+				vs.push(v)
+				ks.push(k)
+			})
+		})
 		*/
 		it("gives sections w/o extraction",()=>{
-			const code=new WebCode;
+			const code=new WebCode
 			const sections=code.extractSections({
-			});
+			})
 			assert.deepEqual(sections.html.get(),[
 				"<!DOCTYPE html>",
 				"<html>",
@@ -44,18 +44,18 @@ describe("WebCode",()=>{
 				"<body>",
 				"</body>",
 				"</html>",
-			]);
+			])
 			assert.deepEqual(sections.css.get(),[
-			]);
+			])
 			assert.deepEqual(sections.js.get(),[
-			]);
-		});
+			])
+		})
 		it("gives sections in paste mode",()=>{
-			const code=new WebCode;
+			const code=new WebCode
 			const sections=code.extractSections({
 				'css': 'paste',
 				'js': 'paste',
-			});
+			})
 			assert.deepEqual(sections.html.get(),[
 				"<!DOCTYPE html>",
 				"<html>",
@@ -67,18 +67,18 @@ describe("WebCode",()=>{
 				"<!-- <script> js goes here </script> -->",
 				"</body>",
 				"</html>",
-			]);
+			])
 			assert.deepEqual(sections.css.get(),[
-			]);
+			])
 			assert.deepEqual(sections.js.get(),[
-			]);
-		});
+			])
+		})
 		it("gives sections in file mode",()=>{
-			const code=new WebCode;
+			const code=new WebCode
 			const sections=code.extractSections({
 				'css': 'file',
 				'js': 'file',
-			});
+			})
 			assert.deepEqual(sections.html.get(),[
 				"<!DOCTYPE html>",
 				"<html>",
@@ -90,63 +90,63 @@ describe("WebCode",()=>{
 				"<script src=source.js></script>",
 				"</body>",
 				"</html>",
-			]);
+			])
 			assert.deepEqual(sections.css.get(),[
-			]);
+			])
 			assert.deepEqual(sections.js.get(),[
-			]);
-		});
-	});
+			])
+		})
+	})
 	context("subclass",()=>{
 		class MyWebCode extends WebCode {
 			get basename() {
-				return 'my';
+				return 'my'
 			}
 			get lang() {
-				return 'ru';
+				return 'ru'
 			}
 			get title() {
-				return "Пример";
+				return "Пример"
 			}
 			get styleLines() {
 				return Lines.bae(
 					"div {",
 					"	background: red;",
 					"}"
-				);
+				)
 			}
 			get scriptLines() {
 				return Lines.bae(
 					"console.log('загрузилось');"
-				);
+				)
 			}
 			get headLines() {
 				return Lines.bae(
 					"<meta name=robots content='index, follow'>"
-				);
+				)
 			}
 			get bodyLines() {
 				return Lines.bae(
 					"<div>Див</div>"
-				);
+				)
 			}
 			getSectionPasteComment(sectionName) {
-				return "сюда вставляется "+sectionName;
+				return "сюда вставляется "+sectionName
 			}
 		}
 		it("gives filename",()=>{
-			const code=new MyWebCode;
-			assert.equal(code.filename,'my.html');
-		});
+			const code=new MyWebCode
+			assert.equal(code.filename,'my.html')
+		})
 		it("gives section filenames",()=>{
-			const code=new MyWebCode;
-			const sections=code.extractSections();
-			assert.equal(sections.html.filename,'my.html');
-			assert.equal(sections.css.filename,'my.css');
-			assert.equal(sections.js.filename,'my.js');
-		});
+			const code=new MyWebCode
+			const sections=code.extractSections()
+			assert.equal(sections.html.filename,'my.html')
+			assert.equal(sections.css.filename,'my.css')
+			assert.equal(sections.js.filename,'my.js')
+		})
 		it("gives plaintext",()=>{
-			const code=new MyWebCode;
+			const code=new MyWebCode
 			assert.deepEqual(code.get(),[
 				"<!DOCTYPE html>",
 				"<html lang=ru>",
@@ -167,10 +167,10 @@ describe("WebCode",()=>{
 				"</script>",
 				"</body>",
 				"</html>",
-			]);
-		});
+			])
+		})
 		it("gives html",()=>{
-			const code=new MyWebCode;
+			const code=new MyWebCode
 			assert.deepEqual(code.getHtml(),[
 				"&lt;!DOCTYPE html&gt;",
 				"&lt;html lang=ru&gt;",
@@ -191,12 +191,12 @@ describe("WebCode",()=>{
 				"&lt;/script&gt;",
 				"&lt;/body&gt;",
 				"&lt;/html&gt;",
-			]);
-		});
+			])
+		})
 		it("gives sections w/o extracting",()=>{
-			const code=new MyWebCode;
+			const code=new MyWebCode
 			const sections=code.extractSections({
-			});
+			})
 			assert.deepEqual(sections.html.get(),[
 				"<!DOCTYPE html>",
 				"<html lang=ru>",
@@ -217,18 +217,18 @@ describe("WebCode",()=>{
 				"</script>",
 				"</body>",
 				"</html>",
-			]);
+			])
 			assert.deepEqual(sections.css.get(),[
-			]);
+			])
 			assert.deepEqual(sections.js.get(),[
-			]);
-		});
+			])
+		})
 		it("gives sections in paste mode",()=>{
-			const code=new MyWebCode;
+			const code=new MyWebCode
 			const sections=code.extractSections({
 				'css': 'paste',
 				'js': 'paste',
-			});
+			})
 			assert.deepEqual(sections.html.get(),[
 				"<!DOCTYPE html>",
 				"<html lang=ru>",
@@ -243,22 +243,22 @@ describe("WebCode",()=>{
 				"<!-- <script> сюда вставляется js </script> -->",
 				"</body>",
 				"</html>",
-			]);
+			])
 			assert.deepEqual(sections.css.get(),[
 				"div {",
 				"	background: red;",
 				"}",
-			]);
+			])
 			assert.deepEqual(sections.js.get(),[
 				"console.log('загрузилось');",
-			]);
-		});
+			])
+		})
 		it("gives sections in file mode",()=>{
-			const code=new MyWebCode;
+			const code=new MyWebCode
 			const sections=code.extractSections({
 				'css': 'file',
 				'js': 'file',
-			});
+			})
 			assert.deepEqual(sections.html.get(),[
 				"<!DOCTYPE html>",
 				"<html lang=ru>",
@@ -273,22 +273,22 @@ describe("WebCode",()=>{
 				"<script src=my.js></script>",
 				"</body>",
 				"</html>",
-			]);
+			])
 			assert.deepEqual(sections.css.get(),[
 				"div {",
 				"	background: red;",
 				"}",
-			]);
+			])
 			assert.deepEqual(sections.js.get(),[
 				"console.log('загрузилось');",
-			]);
-		});
+			])
+		})
 		it("gives sections in file mode with html",()=>{
-			const code=new MyWebCode;
+			const code=new MyWebCode
 			const sections=code.extractSections({
 				'css': 'file',
 				'js': 'file',
-			});
+			})
 			assert.deepEqual(sections.html.getHtml(),[
 				"&lt;!DOCTYPE html&gt;",
 				"&lt;html lang=ru&gt;",
@@ -303,21 +303,21 @@ describe("WebCode",()=>{
 				"&lt;script src=my.js&gt;&lt;/script&gt;",
 				"&lt;/body&gt;",
 				"&lt;/html&gt;",
-			]);
+			])
 			assert.deepEqual(sections.css.getHtml(),[
 				"div {",
 				"	background: red;",
 				"}",
-			]);
+			])
 			assert.deepEqual(sections.js.getHtml(),[
 				"console.log(&#39;загрузилось&#39;);",
-			]);
-		});
+			])
+		})
 		it("gives sections in html body mode",()=>{
-			const code=new MyWebCode;
+			const code=new MyWebCode
 			const sections=code.extractSections({
 				'html': 'body',
-			});
+			})
 			assert.deepEqual(sections.html.get(),[
 				"<style>",
 				"	div {",
@@ -328,32 +328,32 @@ describe("WebCode",()=>{
 				"<script>",
 				"	console.log('загрузилось');",
 				"</script>",
-			]);
+			])
 			assert.deepEqual(sections.css.get(),[
-			]);
+			])
 			assert.deepEqual(sections.js.get(),[
-			]);
-		});
+			])
+		})
 		it("gives sections in html body + paste mode",()=>{
-			const code=new MyWebCode;
+			const code=new MyWebCode
 			const sections=code.extractSections({
 				'html': 'body',
 				'css': 'paste',
 				'js': 'paste',
-			});
+			})
 			assert.deepEqual(sections.html.get(),[
 				"<div>Див</div>",
-			]);
+			])
 			assert.deepEqual(sections.css.get(),[
 				"div {",
 				"	background: red;",
 				"}",
-			]);
+			])
 			assert.deepEqual(sections.js.get(),[
 				"console.log('загрузилось');",
-			]);
-		});
-	});
+			])
+		})
+	})
 
 	/* // TODO Code tests - formatting options
 	it("joins lines with 2 space indent",()=>{
@@ -361,26 +361,26 @@ describe("WebCode",()=>{
 			"foo {",
 			"	bar",
 			"}"
-		);
+		)
 		assert.deepEqual(lines.get({indent:'  '}),[
 			"foo {",
 			"  bar",
 			"}"
-		]);
-	});
+		])
+	})
 	it("joins lines with 2 space indent, leaves other tabs intact",()=>{
 		const lines=Lines.bae(
 			"foo {",
 			"	bar",
 			"	baz(\t)",
 			"}"
-		);
+		)
 		assert.deepEqual(lines.get({indent:'  '}),[
 			"foo {",
 			"  bar",
 			"  baz(\t)",
 			"}"
-		]);
-	});
+		])
+	})
 	*/
-});
+})

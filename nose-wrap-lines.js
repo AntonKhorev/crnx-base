@@ -1,18 +1,18 @@
-'use strict';
+'use strict'
 
-const WrapLines=require('./wrap-lines.js');
+const WrapLines=require('./wrap-lines.js')
 
 class NoseWrapLines extends WrapLines {
 	isEmpty() {
-		return this.isDataEmpty();
+		return this.isDataEmpty()
 	}
 	doGet(formatting,html) {
 		if (this.isEmpty()) {
-			return [];
+			return []
 		} else {
-			return super.doGet(formatting,html);
+			return super.doGet(formatting,html)
 		}
 	}
 }
 
-module.exports=NoseWrapLines;
+module.exports=NoseWrapLines

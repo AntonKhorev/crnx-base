@@ -1,7 +1,7 @@
-'use strict';
+'use strict'
 
-const assert=require('assert');
-const IndentLines=require('../indent-lines.js');
+const assert=require('assert')
+const IndentLines=require('../indent-lines.js')
 
 describe("IndentLines",()=>{
 	it("indents by one by default",()=>{
@@ -9,23 +9,23 @@ describe("IndentLines",()=>{
 			"1",
 			"2",
 			"3"
-		);
+		)
 		assert.deepEqual(lines.get(),[
 			"	1",
 			"	2",
 			"	3"
-		]);
-	});
+		])
+	})
 	it("indents by 2",()=>{
 		const lines=IndentLines.b(2).ae(
 			"11",
 			"22",
 			"33"
-		);
+		)
 		assert.deepEqual(lines.get(),[
 			"		11",
 			"		22",
 			"		33"
-		]);
-	});
-});
+		])
+	})
+})

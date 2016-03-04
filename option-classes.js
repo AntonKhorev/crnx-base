@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 
 // constructors typically called from Options class
 // to call them manually, use the following args:
@@ -19,231 +19,231 @@ fixed options spec:
 	TODO decide on: boolean option cannot be an array member (where to store it's type?)
 */
 
-const Option={};
+const Option={}
 
 // abstract classes
 
 Option.Base = class {
 	constructor(name,_1,_2,_3,fullName,isVisible,updateCallback) {
-		this.name=name;
-		this.isVisible=isVisible;
-		this.updateCallback=updateCallback;
-		this.fullName=fullName;
-		this._$=null;
+		this.name=name
+		this.isVisible=isVisible
+		this.updateCallback=updateCallback
+		this.fullName=fullName
+		this._$=null
 	}
 	get $() {
-		return this._$;
+		return this._$
 	}
 	set $($) {
-		this._$=$;
-		this.updateVisibility();
+		this._$=$
+		this.updateVisibility()
 	}
 	updateVisibility() {
-		if (this.$) this.$.toggle(this.isVisible());
+		if (this.$) this.$.toggle(this.isVisible())
 	}
 	shortenExport(data) { // used by parent
-		const dataKeys=Object.keys(data);
+		const dataKeys=Object.keys(data)
 		if (dataKeys.length==1 && dataKeys[0]=='value') {
-			return data.value;
+			return data.value
 		} else {
-			return data;
+			return data
 		}
 	}
 	shortenExportAssign(data,parentData,name) {
-		const dataKeys=Object.keys(data);
+		const dataKeys=Object.keys(data)
 		if (dataKeys.length==1 && dataKeys[0]=='value') {
-			parentData[name]=data.value;
+			parentData[name]=data.value
 		} else if (dataKeys.length>0) {
-			parentData[name]=data;
+			parentData[name]=data
 		}
 	}
-};
+}
 
 Option.Input = class extends Option.Base {
 	constructor(name,availableValues,defaultValue,data,fullName,isVisible,updateCallback) {
-		super(...arguments);
+		super(...arguments)
 		if (defaultValue!==undefined) {
-			this.defaultValue=defaultValue;
+			this.defaultValue=defaultValue
 		} else {
-			this.defaultValue=availableValues[0];
+			this.defaultValue=availableValues[0]
 		}
 		if (typeof data == 'object') {
-			data=data.value;
+			data=data.value
 		}
 		if (data!==undefined) {
-			this._value=data;
+			this._value=data
 		} else {
-			this._value=this.defaultValue;
+			this._value=this.defaultValue
 		}
 	}
 	get value() {
-		return this._value;
+		return this._value
 	}
 	set value(value) {
-		this._value=value;
-		this.updateCallback();
+		this._value=value
+		this.updateCallback()
 	}
 	export() {
-		const data={};
-		if (this.value!=this.defaultValue) data.value=this.value;
-		return data;
+		const data={}
+		if (this.value!=this.defaultValue) data.value=this.value
+		return data
 	}
-};
+}
 
 Option.BooleanInput = class extends Option.Input {
 	fix() {
-		return this.value;
+		return this.value
 	}
-};
+}
 
 Option.NonBooleanInput = class extends Option.Input {
 	fix() {
-		const value=this.value;
+		const value=this.value
 		return { // can't use fixed value in boolean context
 			name: this.name,
 			value,
-			valueOf() { return value; },
-			toString() { return String(value); },
-		};
+			valueOf() { return value },
+			toString() { return String(value) },
+		}
 	}
-};
+}
 
 Option.FactorInput = class extends Option.NonBooleanInput {
 	constructor(name,availableValues,defaultValue,data,fullName,isVisible,updateCallback) {
-		super(...arguments);
-		this.availableValues=availableValues;
+		super(...arguments)
+		this.availableValues=availableValues
 	}
-};
+}
 
 Option.RangeInput = class extends Option.NonBooleanInput {
 	constructor(name,availableRange,defaultValue,data,fullName,isVisible,updateCallback) {
-		super(...arguments);
-		this.availableMin=availableRange[0];
-		this.availableMax=availableRange[1];
+		super(...arguments)
+		this.availableMin=availableRange[0]
+		this.availableMax=availableRange[1]
 	}
-};
+}
 
 Option.Collection = class extends Option.Base {
 	constructor(name,entries,_1,_2,fullName,isVisible,updateCallback) {
-		super(...arguments);
-		this.entries=entries;
+		super(...arguments)
+		this.entries=entries
 	}
 	export() {
-		const data={};
+		const data={}
 		this.entries.forEach(entry=>{
-			entry.shortenExportAssign(entry.export(),data,entry.name);
-		});
-		return data;
+			entry.shortenExportAssign(entry.export(),data,entry.name)
+		})
+		return data
 	}
 	fix() {
-		const fixedEntries=[];
+		const fixedEntries=[]
 		const fixed={
 			name: this.name,
 			entries: fixedEntries,
-		};
+		}
 		this.entries.forEach(entry=>{
-			fixedEntries.push(fixed[entry.name]=entry.fix());
-		});
-		return fixed;
+			fixedEntries.push(fixed[entry.name]=entry.fix())
+		})
+		return fixed
 	}
-};
+}
 
 // concrete classes
 
 Option.Void = class extends Option.Base { // useful as array entry w/o settings
 	export() {
-		return {};
+		return {}
 	}
 	fix() {
 		return {
 			name: this.name,
-		};
+		}
 	}
 }
 
 Option.Checkbox = class extends Option.BooleanInput {
 	constructor(name,_,defaultValue,data,fullName,isVisible,updateCallback) {
-		super(name,undefined,!!defaultValue,data,fullName,isVisible,updateCallback);
+		super(name,undefined,!!defaultValue,data,fullName,isVisible,updateCallback)
 	}
-};
+}
 
-Option.Select = class extends Option.FactorInput {};
+Option.Select = class extends Option.FactorInput {}
 
-Option.Text = class extends Option.FactorInput {};
+Option.Text = class extends Option.FactorInput {}
 
-Option.Int = class extends Option.RangeInput {};
+Option.Int = class extends Option.RangeInput {}
 
-Option.Root = class extends Option.Collection {};
+Option.Root = class extends Option.Collection {}
 
-Option.Group = class extends Option.Collection {};
+Option.Group = class extends Option.Collection {}
 
 Option.Array = class extends Option.Base {
 	constructor(name,availableConstructors,typePropertyName,data,fullName,isVisible,updateCallback) {
-		super(name,undefined,undefined,undefined,fullName,isVisible,updateCallback);
-		this.availableConstructors=availableConstructors; // Map {type:constructor}
-		if (typePropertyName===undefined) typePropertyName='type';
-		this.typePropertyName=typePropertyName;
-		this._entries=[];
-		let subDatas=[];
+		super(name,undefined,undefined,undefined,fullName,isVisible,updateCallback)
+		this.availableConstructors=availableConstructors // Map {type:constructor}
+		if (typePropertyName===undefined) typePropertyName='type'
+		this.typePropertyName=typePropertyName
+		this._entries=[]
+		let subDatas=[]
 		if (Array.isArray(data)) {
-			subDatas=data;
+			subDatas=data
 		} else if (typeof data == 'object') {
-			subDatas=data.value;
+			subDatas=data.value
 		}
-		let defaultType=this.availableTypes[0];
+		let defaultType=this.availableTypes[0]
 		for (let i=0;i<subDatas.length;i++) {
-			const subData=subDatas[i];
-			let subType=defaultType;
+			const subData=subDatas[i]
+			let subType=defaultType
 			if (typeof subData == 'object' && subData[typePropertyName]!==undefined) {
-				subType=subData[typePropertyName];
+				subType=subData[typePropertyName]
 			}
-			let subCtor=this.availableConstructors.get(subType);
+			let subCtor=this.availableConstructors.get(subType)
 			if (subCtor) {
-				this._entries.push(subCtor(subData));
+				this._entries.push(subCtor(subData))
 			}
 		}
 	}
 	get availableTypes() {
-		const types=[];
+		const types=[]
 		this.availableConstructors.forEach((_,type)=>{
-			types.push(type);
-		});
-		return types;
+			types.push(type)
+		})
+		return types
 	}
 	get entries() {
-		return this._entries;
+		return this._entries
 	}
 	set entries(entries) {
-		this._entries=entries;
-		this.updateCallback();
+		this._entries=entries
+		this.updateCallback()
 	}
 	addEntry(type) {
-		const entry=this.availableConstructors.get(type)();
-		this._entries.push(entry);
-		this.updateCallback();
-		return entry;
+		const entry=this.availableConstructors.get(type)()
+		this._entries.push(entry)
+		this.updateCallback()
+		return entry
 	}
 	export() {
-		let defaultType=this.availableTypes[0];
+		let defaultType=this.availableTypes[0]
 		return {
 			value: this._entries.map(entry=>{
-				const subData=entry.export();
-				const subType=entry.name;
-				if (subType!=defaultType) subData[this.typePropertyName]=subType;
-				return entry.shortenExport(subData);
+				const subData=entry.export()
+				const subType=entry.name
+				if (subType!=defaultType) subData[this.typePropertyName]=subType
+				return entry.shortenExport(subData)
 			}),
-		};
+		}
 	}
 	fix() {
 		return {
 			name: this.name,
 			entries: this._entries.map(entry=>{
-				const subFixed=entry.fix();
-				if (typeof subFixed == 'object') subFixed[this.typePropertyName]=entry.name;
-				return subFixed;
+				const subFixed=entry.fix()
+				if (typeof subFixed == 'object') subFixed[this.typePropertyName]=entry.name
+				return subFixed
 			}),
-		};
+		}
 	}
-};
+}
 
-module.exports=Option;
+module.exports=Option

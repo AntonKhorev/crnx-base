@@ -1,53 +1,53 @@
-'use strict';
+'use strict'
 
-const Lines=require('./lines.js');
+const Lines=require('./lines.js')
 
 class WrapLines extends Lines {
 	constructor(data) {
-		super(data);
-		this.wrappers=[];
+		super(data)
+		this.wrappers=[]
 		for (let i=1;i<arguments.length;i++) {
-			this.wrappers.push(arguments[i]);
+			this.wrappers.push(arguments[i])
 		}
 	}
 	isEmpty() {
-		return false;
+		return false
 	}
 	doGet(formatting,html) {
-		const out=[];
-		let i=0;
+		const out=[]
+		let i=0
 		const pushWrapper=()=>{
-			const item=this.wrappers[i];
+			const item=this.wrappers[i]
 			if (item instanceof Lines) {
-				const subOut=item.doGet(formatting,html);
-				out.push(...subOut);
+				const subOut=item.doGet(formatting,html)
+				out.push(...subOut)
 			} else if (typeof item == 'string') {
-				const s=(html ? Lines.strHtmlEscape(item) : item);
-				out.push(s);
+				const s=(html ? Lines.strHtmlEscape(item) : item)
+				out.push(s)
 			}
-			i++;
-		};
-		pushWrapper();
+			i++
+		}
+		pushWrapper()
 		this.data.forEach(item=>{
 			if (item instanceof Lines) {
-				const subOut=item.doGet(formatting,html);
-				out.push(...subOut.map(s=>'\t'+s));
+				const subOut=item.doGet(formatting,html)
+				out.push(...subOut.map(s=>'\t'+s))
 				if (this.wrappers.length!=2) {
-					pushWrapper();
+					pushWrapper()
 				}
 			} else if (typeof item == 'string') {
-				const s=(html ? Lines.strHtmlEscape(item) : item);
-				out.push('\t'+s);
+				const s=(html ? Lines.strHtmlEscape(item) : item)
+				out.push('\t'+s)
 				if (this.wrappers.length!=2) {
-					pushWrapper();
+					pushWrapper()
 				}
 			}
-		});
+		})
 		if (this.wrappers.length==2) {
-			pushWrapper();
+			pushWrapper()
 		}
-		return out;
+		return out
 	}
 }
 
-module.exports=WrapLines;
+module.exports=WrapLines

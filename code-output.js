@@ -1,16 +1,16 @@
-'use strict';
+'use strict'
 
 class CodeOutput {
 	constructor(generateCode,i18n) {
-		let code=generateCode();
-		const $sectionCode={}, $sectionModeInput={};
-		let $jsSemicolonsCheckbox;
-		const getHtmlDataUri=(html)=>'data:text/html;charset=utf-8,'+encodeURIComponent(html);
+		let code=generateCode()
+		const $sectionCode={}, $sectionModeInput={}
+		let $jsSemicolonsCheckbox
+		const getHtmlDataUri=(html)=>'data:text/html;charset=utf-8,'+encodeURIComponent(html)
 		const getFormatting=()=>{
 			return {
 				refs: this.refs,
 				jsSemicolons: $jsSemicolonsCheckbox.prop('checked'),
-			};
+			}
 		}
 		const writeControls=()=>{
 			return $("<div>").append(
@@ -19,21 +19,21 @@ class CodeOutput {
 					// doesn't work in IE
 					window.open(getHtmlDataUri(
 						code.get(this.formatting).join("\n")
-					),"generatedCode");
+					),"generatedCode")
 					*/
-					const w=window.open("","generatedCode");
-					w.document.open();
+					const w=window.open("","generatedCode")
+					w.document.open()
 					w.document.write(
 						code.get(getFormatting()).join("\n")
-					);
-					w.document.close();
+					)
+					w.document.close()
 				})
 			).append(" ").append(
 				$("<button type='button'>Open in CodePen</button>").click(function(){
 					// http://blog.codepen.io/documentation/api/prefill/
-					const sections=code.extractSections({html:'body',css:'paste',js:'paste'});
+					const sections=code.extractSections({html:'body',css:'paste',js:'paste'})
 					const getSection=sectionName=>
-						sections[sectionName].get(getFormatting()).join("\n");
+						sections[sectionName].get(getFormatting()).join("\n")
 					$("<form method='post' action='http://codepen.io/pen/define/'>")
 						.append($("<input type='hidden' name='data'>").val(JSON.stringify({
 							html: getSection('html'),
@@ -42,16 +42,16 @@ class CodeOutput {
 							title: code.title,
 						})))
 						.appendTo('body')
-						.submit();
+						.submit()
 				})
 			).append(" ").append(
 				$("<button type='button'>Open in JSFiddle</button>").click(function(){
 					// http://doc.jsfiddle.net/api/post.html
-					const sections=code.extractSections({html:'body',css:'paste',js:'paste'});
+					const sections=code.extractSections({html:'body',css:'paste',js:'paste'})
 					const writeSection=sectionName=>
 						$("<input type='hidden'>")
 							.attr('name',sectionName)
-							.val(sections[sectionName].get(getFormatting()).join("\n"));
+							.val(sections[sectionName].get(getFormatting()).join("\n"))
 					$("<form method='post' action='http://jsfiddle.net/api/post/library/pure/'>")
 						.append(writeSection('html'))
 						.append(writeSection('css'))
@@ -59,39 +59,39 @@ class CodeOutput {
 						.append($("<input type='hidden' name='title'>").val(code.title))
 						.append("<input type='hidden' name='wrap' value='b'>")
 						.appendTo('body')
-						.submit();
+						.submit()
 				})
 			).append(" <span class='tip-warn'><span class='tip-content'>"+i18n('code-output.warning.jsfiddle-run')+"</span></span>")
-		};
+		}
 		const getSectionModes=()=>({
 			html: $sectionModeInput['html'].val(),
 			css:  $sectionModeInput['css' ].val(),
 			js:   $sectionModeInput['js'  ].val(),
-		});
+		})
 		const extractCode=()=>{
-			const sectionModes=getSectionModes();
-			const sections=code.extractSections(sectionModes);
+			const sectionModes=getSectionModes()
+			const sections=code.extractSections(sectionModes)
 			for (let sectionName in sections) {
 				if (sectionModes[sectionName]=='embed') {
 					$sectionCode[sectionName].empty().append(
 						"<p>"+i18n('code-output.embedded')+"</p>"
-					);
+					)
 				} else {
-					let $code;
+					let $code
 					$sectionCode[sectionName].empty().append(
 						$("<pre>").append(
 							$code=$("<code class='"+sectionName+"'>")
 						)
-					);
+					)
 					$code.html(
 						sections[sectionName].getHtml(getFormatting()).join("\n")
-					);
+					)
 					if (window.hljs) {
-						hljs.highlightBlock($code[0]);
+						hljs.highlightBlock($code[0])
 					}
 				}
 			}
-		};
+		}
 		const writeFormattingControls=()=>{
 			return $("<details>")
 				.append("<summary>Formatting</summary>")
@@ -100,12 +100,12 @@ class CodeOutput {
 						.append($jsSemicolonsCheckbox=$("<input type='checkbox'>").change(extractCode))
 						.append(" JavaScript semicolons")
 					)
-				);
-		};
+				)
+		}
 		const writeSection=(sectionName)=>{
-			const extractable=sectionName!='html';
-			const $summary=$("<summary>"+i18n('code-output.section.'+sectionName)+"</summary>");
-			let $saveButton;
+			const extractable=sectionName!='html'
+			const $summary=$("<summary>"+i18n('code-output.section.'+sectionName)+"</summary>")
+			let $saveButton
 			$summary.append(" ").append(
 				$sectionModeInput[sectionName]=$("<select>").append(
 					(sectionName=='html'
@@ -116,11 +116,11 @@ class CodeOutput {
 					)
 				).change(function(){
 					if (extractable) {
-						$saveButton.prop('disabled',this.value=='embed');
+						$saveButton.prop('disabled',this.value=='embed')
 					}
-					extractCode();
+					extractCode()
 				})
-			);
+			)
 			$summary.append(" ").append(
 				/*
 				// doesn't work in IE
@@ -128,65 +128,65 @@ class CodeOutput {
 					// yes I want a button, but download attr is only available for links
 					$(this).attr('href',getHtmlDataUri(
 						section.get(this.formatting).join("\n")
-					));
+					))
 				})
 				*/
 				$saveButton=$("<button type='button'>"+i18n('code-output.save')+"</button>").click(function(){
-					const section=code.extractSections(getSectionModes())[sectionName];
+					const section=code.extractSections(getSectionModes())[sectionName]
 					// http://stackoverflow.com/a/24354303
 					const blob=new Blob(
 						[section.get(getFormatting()).join("\n")],
 						{type:section.mimeType}
-					);
+					)
 					if (navigator.msSaveOrOpenBlob) {
-						navigator.msSaveOrOpenBlob(blob,section.filename);
+						navigator.msSaveOrOpenBlob(blob,section.filename)
 					} else {
 						const $a=$("<a>")
 							.attr('download',section.filename)
 							.attr('href',URL.createObjectURL(blob))
-							.appendTo('body');
-						$a.get(0).click();
-						$a.remove();
+							.appendTo('body')
+						$a.get(0).click()
+						$a.remove()
 					}
 				})
-			);
+			)
 			if (extractable) {
-				$saveButton.prop('disabled',$sectionModeInput[sectionName].val()=='embed');
+				$saveButton.prop('disabled',$sectionModeInput[sectionName].val()=='embed')
 			}
 			return $("<details>")
 				.append($summary)
-				.append($sectionCode[sectionName]=$("<div class='code'>"));
-		};
+				.append($sectionCode[sectionName]=$("<div class='code'>"))
+		}
 		const $output=$("<div class='code-output'>").append(writeControls())
 			.append(writeFormattingControls())
 			.append(writeSection('html'))
 			.append(writeSection('css'))
-			.append(writeSection('js'));
+			.append(writeSection('js'))
 		if (!window.hljs) {
-			$output.append("<p>"+i18n('code-output.warning.no-hljs')+"</p>");
+			$output.append("<p>"+i18n('code-output.warning.no-hljs')+"</p>")
 		}
-		$output.append(writeControls());
-		extractCode();
+		$output.append(writeControls())
+		extractCode()
 
-		const delay=200;
-		let timeoutId=null;
+		const delay=200
+		let timeoutId=null
 		const update=()=>{
-			clearTimeout(timeoutId);
+			clearTimeout(timeoutId)
 			timeoutId=setTimeout(()=>{
-				code=generateCode();
-				extractCode();
-			},delay);
-		};
+				code=generateCode()
+				extractCode()
+			},delay)
+		}
 
 		// public props:
-		this.$output=$output;
-		this.update=update;
+		this.$output=$output
+		this.update=update
 	}
 
 	// private interface:
 	get refs() {
-		return {};
+		return {}
 	}
 }
 
-module.exports=CodeOutput;
+module.exports=CodeOutput

@@ -1,33 +1,33 @@
-'use strict';
+'use strict'
 
-const Lines=require('./lines.js');
+const Lines=require('./lines.js')
 
 class InterleaveLines extends Lines {
 	doGet(formatting,html) {
-		const out=[];
-		let first=true;
+		const out=[]
+		let first=true
 		const fp=()=>{
 			if (first) {
-				first=false;
+				first=false
 			} else {
-				out.push('');
+				out.push('')
 			}
 		}
 		this.data.forEach(item=>{
 			if (item instanceof Lines) {
-				const subOut=item.doGet(formatting,html);
+				const subOut=item.doGet(formatting,html)
 				if (subOut.length>0) {
-					fp();
-					out.push(...subOut);
+					fp()
+					out.push(...subOut)
 				}
 			} else if (typeof item == 'string') {
-				fp();
-				const s=(html ? Lines.strHtmlEscape(item) : item);
-				out.push(s);
+				fp()
+				const s=(html ? Lines.strHtmlEscape(item) : item)
+				out.push(s)
 			}
-		});
-		return out;
+		})
+		return out
 	}
 }
 
-module.exports=InterleaveLines;
+module.exports=InterleaveLines
