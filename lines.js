@@ -35,6 +35,8 @@ Read lines:
 	lines.getHtml(formatting) // get array of html lines
 */
 
+const repeat=require('lodash.repeat')
+
 const TO={} // TODO Symbol
 
 class Lines {
@@ -77,7 +79,7 @@ class Lines {
 			} else if (typeof item == 'string') {
 				let s=this.processStringInGet(item,formatting)
 				if (formatting.indent!==undefined && formatting.indent!='\t') {
-					s=s.replace(/^(\t)+/,match=>Lines.strRepeat(formatting.indent,match.length))
+					s=s.replace(/^(\t)+/,match=>repeat(formatting.indent,match.length))
 				}
 				s=(html ? Lines.strHtmlEscape(s) : s)
 				if (addTo) {
@@ -133,10 +135,7 @@ class Lines {
 		return this.doGet(formatting,true)
 	}
 
-	// string utilities:
-	static strRepeat(s,n) {
-		return Array(n+1).join(s)
-	}
+	// TODO make HtmlLines
 	static strHtmlEscape(s) {
 		const entityMap={
 			'&': '&amp;',

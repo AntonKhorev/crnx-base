@@ -1,5 +1,6 @@
 'use strict'
 
+const repeat=require('lodash.repeat')
 const Lines=require('./lines.js')
 
 class IndentLines extends Lines {
@@ -16,7 +17,7 @@ class IndentLines extends Lines {
 		if (formatting.indent!==undefined) {
 			indent=formatting.indent
 		}
-		const indentStr=Lines.strRepeat(indent,this.level)
+		const indentStr=repeat(indent,this.level)
 		return super.doGet(formatting,html).map(s=>indentStr+s)
 	}
 }

@@ -1,6 +1,6 @@
 'use strict'
 
-const Lines=require('./lines.js') // TODO replace with lodash
+const repeat=require('lodash.repeat')
 
 class CodeOutput {
 	constructor(generateCode,i18n) {
@@ -15,7 +15,7 @@ class CodeOutput {
 				if ($indentNumber[0].checkValidity()) {
 					n=Number($indentNumber.val())
 				}
-				indent=Lines.strRepeat(' ',n)
+				indent=repeat(' ',n)
 			}
 			return {
 				refs: this.refs,
