@@ -1,5 +1,6 @@
 'use strict'
 
+const debounce=require('lodash.debounce')
 const repeat=require('lodash.repeat')
 
 class CodeOutput {
@@ -192,14 +193,10 @@ class CodeOutput {
 		extractCode()
 
 		const delay=200
-		let timeoutId=null
-		const update=()=>{
-			clearTimeout(timeoutId)
-			timeoutId=setTimeout(()=>{
-				code=generateCode()
-				extractCode()
-			},delay)
-		}
+		const update=debounce(()=>{
+			code=generateCode()
+			extractCode()
+		},delay)
 
 		// public props:
 		this.$output=$output
