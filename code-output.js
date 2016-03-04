@@ -1,14 +1,25 @@
 'use strict'
 
+const Lines=require('./lines.js') // TODO replace with lodash
+
 class CodeOutput {
 	constructor(generateCode,i18n) {
 		let code=generateCode()
 		const $sectionCode={}, $sectionModeInput={}
-		let $jsSemicolonsCheckbox
+		let $indentCheckbox, $indentNumber, $jsSemicolonsCheckbox
 		const getHtmlDataUri=(html)=>'data:text/html;charset=utf-8,'+encodeURIComponent(html)
 		const getFormatting=()=>{
+			let indent='\t'
+			if (!$indentCheckbox.prop('checked')) {
+				let n=4
+				if ($indentNumber[0].checkValidity()) {
+					n=Number($indentNumber.val())
+				}
+				indent=Lines.strRepeat(' ',n)
+			}
 			return {
 				refs: this.refs,
+				indent,
 				jsSemicolons: $jsSemicolonsCheckbox.prop('checked'),
 			}
 		}
@@ -95,6 +106,18 @@ class CodeOutput {
 		const writeFormattingControls=()=>{
 			return $("<details>")
 				.append("<summary>Formatting</summary>")
+				.append($("<div>")
+					.append($("<label>")
+						.append($indentCheckbox=$("<input type='checkbox' checked>").change(extractCode))
+						.append(" indent with tabs")
+					)
+				)
+				.append($("<div>")
+					.append($("<label>")
+						.append($indentNumber=$("<input type='number' min='0' max='32' value='4' required>").on('input change',extractCode))
+						.append(" spaces per indent")
+					)
+				)
 				.append($("<div>")
 					.append($("<label>")
 						.append($jsSemicolonsCheckbox=$("<input type='checkbox'>").change(extractCode))

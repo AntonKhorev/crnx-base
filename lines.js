@@ -75,8 +75,11 @@ class Lines {
 				out.push(...subOut)
 				addTo=false
 			} else if (typeof item == 'string') {
-				item=this.processStringInGet(item,formatting)
-				const s=(html ? Lines.strHtmlEscape(item) : item)
+				let s=this.processStringInGet(item,formatting)
+				if (formatting.indent!==undefined && formatting.indent!='\t') {
+					s=s.replace(/^(\t)+/,match=>Lines.strRepeat(formatting.indent,match.length))
+				}
+				s=(html ? Lines.strHtmlEscape(s) : s)
 				if (addTo) {
 					out.push(out.pop()+s)
 				} else {

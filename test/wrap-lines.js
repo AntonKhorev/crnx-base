@@ -91,4 +91,21 @@ describe("WrapLines",()=>{
 			"fooBar();"
 		])
 	})
+	it("wraps nonempty lines with 4-space indent",()=>{
+		const lines=WrapLines.b(
+			"function fooBar() {",
+			"}"
+		).ae(
+			Lines.bae(
+				"foo();",
+				"bar();"
+			)
+		)
+		assert.deepEqual(lines.get({indent:"    "}),[
+			"function fooBar() {",
+			"    foo();",
+			"    bar();",
+			"}"
+		])
+	})
 })

@@ -14,6 +14,10 @@ class WrapLines extends Lines {
 		return false
 	}
 	doGet(formatting,html) {
+		let indent='\t'
+		if (formatting.indent!==undefined) {
+			indent=formatting.indent
+		}
 		const out=[]
 		let i=0
 		const pushWrapper=()=>{
@@ -31,13 +35,13 @@ class WrapLines extends Lines {
 		this.data.forEach(item=>{
 			if (item instanceof Lines) {
 				const subOut=item.doGet(formatting,html)
-				out.push(...subOut.map(s=>'\t'+s))
+				out.push(...subOut.map(s=>indent+s))
 				if (this.wrappers.length!=2) {
 					pushWrapper()
 				}
 			} else if (typeof item == 'string') {
 				const s=(html ? Lines.strHtmlEscape(item) : item)
-				out.push('\t'+s)
+				out.push(indent+s)
 				if (this.wrappers.length!=2) {
 					pushWrapper()
 				}

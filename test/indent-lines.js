@@ -28,4 +28,16 @@ describe("IndentLines",()=>{
 			"		33"
 		])
 	})
+	it("indents by 2 with 3-space indent",()=>{
+		const lines=IndentLines.b(2).ae(
+			"11",
+			"22",
+			"33"
+		)
+		assert.deepEqual(lines.get({indent:"   "}),[
+			"      11",
+			"      22",
+			"      33"
+		])
+	})
 })

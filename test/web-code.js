@@ -354,33 +354,4 @@ describe("WebCode",()=>{
 			])
 		})
 	})
-
-	/* // TODO Code tests - formatting options
-	it("joins lines with 2 space indent",()=>{
-		const lines=Lines.bae(
-			"foo {",
-			"	bar",
-			"}"
-		)
-		assert.deepEqual(lines.get({indent:'  '}),[
-			"foo {",
-			"  bar",
-			"}"
-		])
-	})
-	it("joins lines with 2 space indent, leaves other tabs intact",()=>{
-		const lines=Lines.bae(
-			"foo {",
-			"	bar",
-			"	baz(\t)",
-			"}"
-		)
-		assert.deepEqual(lines.get({indent:'  '}),[
-			"foo {",
-			"  bar",
-			"  baz(\t)",
-			"}"
-		])
-	})
-	*/
 })

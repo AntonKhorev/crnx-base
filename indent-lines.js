@@ -12,7 +12,11 @@ class IndentLines extends Lines {
 		}
 	}
 	doGet(formatting,html) {
-		const indentStr=Lines.strRepeat("\t",this.level)
+		let indent='\t'
+		if (formatting.indent!==undefined) {
+			indent=formatting.indent
+		}
+		const indentStr=Lines.strRepeat(indent,this.level)
 		return super.doGet(formatting,html).map(s=>indentStr+s)
 	}
 }

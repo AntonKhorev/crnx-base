@@ -151,6 +151,32 @@ describe("Lines",()=>{
 			"nested"
 		])
 	})
+	it("indents lines with 2 spaces",()=>{
+		const lines=Lines.bae(
+			"foo {",
+			"	bar",
+			"}"
+		)
+		assert.deepEqual(lines.get({indent:'  '}),[
+			"foo {",
+			"  bar",
+			"}"
+		])
+	})
+	it("indents lines with 2 spaces, leaves other tabs intact",()=>{
+		const lines=Lines.bae(
+			"foo {",
+			"	bar",
+			"	baz(\t)",
+			"}"
+		)
+		assert.deepEqual(lines.get({indent:'  '}),[
+			"foo {",
+			"  bar",
+			"  baz(\t)",
+			"}"
+		])
+	})
 
 	// utility fns:
 	it("substitutes no html attrs",()=>{
