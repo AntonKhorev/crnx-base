@@ -176,7 +176,7 @@ class CodeOutput {
 			if (extractable) {
 				$saveButton.prop('disabled',$sectionModeInput[sectionName].val()=='embed')
 			}
-			return $("<details>")
+			return $("<details open>")
 				.append($summary)
 				.append($sectionCode[sectionName]=$("<div class='code'>"))
 		}
