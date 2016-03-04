@@ -35,6 +35,7 @@ Read lines:
 	lines.getHtml(formatting) // get array of html lines
 */
 
+const escape=require('lodash.escape')
 const repeat=require('lodash.repeat')
 
 const TO={} // TODO Symbol
@@ -81,7 +82,7 @@ class Lines {
 				if (formatting.indent!==undefined && formatting.indent!='\t') {
 					s=s.replace(/^(\t)+/,match=>repeat(formatting.indent,match.length))
 				}
-				s=(html ? Lines.strHtmlEscape(s) : s)
+				s=(html ? escape(s) : s)
 				if (addTo) {
 					out.push(out.pop()+s)
 				} else {
@@ -136,16 +137,6 @@ class Lines {
 	}
 
 	// TODO make HtmlLines
-	static strHtmlEscape(s) {
-		const entityMap={
-			'&': '&amp;',
-			'<': '&lt;',
-			'>': '&gt;',
-			'"': '&quot;',
-			"'": '&#39;',
-		}
-		return String(s).replace(/[&<>"']/g,m=>entityMap[m])
-	}
 	static html(strings/*,...values*/) {
 		// html template tag
 		// usage example for attributes: Lines.html`<input type=text value=${value}>`

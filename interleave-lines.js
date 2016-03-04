@@ -1,5 +1,6 @@
 'use strict'
 
+const escape=require('lodash.escape')
 const Lines=require('./lines.js')
 
 class InterleaveLines extends Lines {
@@ -22,7 +23,7 @@ class InterleaveLines extends Lines {
 				}
 			} else if (typeof item == 'string') {
 				fp()
-				const s=(html ? Lines.strHtmlEscape(item) : item)
+				const s=(html ? escape(item) : item)
 				out.push(s)
 			}
 		})

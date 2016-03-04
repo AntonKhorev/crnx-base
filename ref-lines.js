@@ -1,5 +1,6 @@
 'use strict'
 
+const escape=require('lodash.escape')
 const Lines=require('./lines.js')
 
 class RefLines extends Lines {
@@ -30,7 +31,7 @@ class RefLines extends Lines {
 			href=formatting.refs[this.ref]
 		}
 		if (href!==undefined) {
-			return plainOut.map(s=>"<a href='"+Lines.strHtmlEscape(href)+"'>"+s+"</a>")
+			return plainOut.map(s=>"<a href='"+escape(href)+"'>"+s+"</a>")
 		} else {
 			return plainOut
 		}

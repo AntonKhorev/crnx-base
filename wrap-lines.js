@@ -1,5 +1,6 @@
 'use strict'
 
+const escape=require('lodash.escape')
 const Lines=require('./lines.js')
 
 class WrapLines extends Lines {
@@ -26,7 +27,7 @@ class WrapLines extends Lines {
 				const subOut=item.doGet(formatting,html)
 				out.push(...subOut)
 			} else if (typeof item == 'string') {
-				const s=(html ? Lines.strHtmlEscape(item) : item)
+				const s=(html ? escape(item) : item)
 				out.push(s)
 			}
 			i++
@@ -40,7 +41,7 @@ class WrapLines extends Lines {
 					pushWrapper()
 				}
 			} else if (typeof item == 'string') {
-				const s=(html ? Lines.strHtmlEscape(item) : item)
+				const s=(html ? escape(item) : item)
 				out.push(indent+s)
 				if (this.wrappers.length!=2) {
 					pushWrapper()
