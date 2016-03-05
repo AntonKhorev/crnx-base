@@ -1,7 +1,7 @@
 'use strict'
 
 const repeat=require('./fake-lodash/repeat')
-const Lines=require('./lines.js')
+const Lines=require('./lines')
 
 class IndentLines extends Lines {
 	constructor(data,level) {

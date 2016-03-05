@@ -1,7 +1,7 @@
 'use strict'
 
 const escape=require('./fake-lodash/escape')
-const Lines=require('./lines.js')
+const Lines=require('./lines')
 
 class WrapLines extends Lines {
 	constructor(data) {

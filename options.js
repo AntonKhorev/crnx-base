@@ -115,7 +115,7 @@ class Options {
 	// methods to be redefined by subclasses
 	// TODO make them static?
 	get optionClasses() {
-		return require('./option-classes.js')
+		return require('./option-classes')
 	}
 	get entriesDescription() {
 		return []

@@ -1,8 +1,8 @@
 'use strict'
 
-const Lines=require('./lines.js')
-const NoseWrapLines=require('./nose-wrap-lines.js')
-const CodeSection=require('./code-section.js')
+const Lines=require('./lines')
+const NoseWrapLines=require('./nose-wrap-lines')
+const CodeSection=require('./code-section')
 
 class WebCode {
 	// public:

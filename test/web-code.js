@@ -1,8 +1,8 @@
 'use strict'
 
 const assert=require('assert')
-const Lines=require('../lines.js')
-const WebCode=require('../web-code.js')
+const Lines=require('../lines')
+const WebCode=require('../web-code')
 
 describe("WebCode",()=>{
 	context("base class",()=>{

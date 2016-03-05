@@ -1,7 +1,7 @@
 'use strict'
 
 const assert=require('assert')
-const JsLines=require('../js-lines.js')
+const JsLines=require('../js-lines')
 
 describe("JsLines",()=>{
 	context("in no-semicolons mode",()=>{

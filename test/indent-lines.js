@@ -1,7 +1,7 @@
 'use strict'
 
 const assert=require('assert')
-const IndentLines=require('../indent-lines.js')
+const IndentLines=require('../indent-lines')
 
 describe("IndentLines",()=>{
 	it("indents by one by default",()=>{

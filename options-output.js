@@ -1,6 +1,6 @@
 'use strict'
 
-const Option=require('./option-classes.js')
+const Option=require('./option-classes')
 
 class OptionsOutput {
 	constructor(options,generateId,i18n) {

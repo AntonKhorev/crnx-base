@@ -1,6 +1,6 @@
 'use strict'
 
-const WrapLines=require('./wrap-lines.js')
+const WrapLines=require('./wrap-lines')
 
 class NoseWrapLines extends WrapLines {
 	isEmpty() {

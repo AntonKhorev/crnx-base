@@ -1,7 +1,7 @@
 'use strict'
 
 const assert=require('assert')
-const RefLines=require('../ref-lines.js')
+const RefLines=require('../ref-lines')
 
 describe("RefLines",()=>{
 	it("parses markdown-style reference but drops it in plaintext",()=>{

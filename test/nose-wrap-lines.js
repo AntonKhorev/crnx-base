@@ -1,8 +1,8 @@
 'use strict'
 
 const assert=require('assert')
-const Lines=require('../lines.js')
-const NoseWrapLines=require('../nose-wrap-lines.js')
+const Lines=require('../lines')
+const NoseWrapLines=require('../nose-wrap-lines')
 
 describe("NoseWrapLines",()=>{
 	it("wraps nonempty lines",()=>{

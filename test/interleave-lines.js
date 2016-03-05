@@ -1,8 +1,8 @@
 'use strict'
 
 const assert=require('assert')
-const Lines=require('../lines.js')
-const InterleaveLines=require('../interleave-lines.js')
+const Lines=require('../lines')
+const InterleaveLines=require('../interleave-lines')
 
 describe("InterleaveLines",()=>{
 	it("interleaves nonempty line groups",()=>{

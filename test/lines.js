@@ -1,7 +1,7 @@
 'use strict'
 
 const assert=require('assert')
-const Lines=require('../lines.js')
+const Lines=require('../lines')
 
 describe("Lines",()=>{
 	it("has no lines at the beginning",()=>{

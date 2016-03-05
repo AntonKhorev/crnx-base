@@ -1,6 +1,6 @@
 'use strict'
 
-const Lines=require('./lines.js')
+const Lines=require('./lines')
 
 class JsLines extends Lines {
 	processStringInGet(s,formatting) {

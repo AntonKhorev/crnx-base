@@ -1,8 +1,8 @@
 'use strict'
 
 const assert=require('assert')
-const Option=require('../option-classes.js')
-const Options=require('../options.js')
+const Option=require('../option-classes')
+const Options=require('../options')
 
 /*
 // unused for now
