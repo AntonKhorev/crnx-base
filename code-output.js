@@ -1,6 +1,6 @@
 'use strict'
 
-const debounce=require('lodash.debounce')
+const debounce=require('./fake-lodash/debounce')
 const repeat=require('./fake-lodash/repeat')
 
 class CodeOutput {
