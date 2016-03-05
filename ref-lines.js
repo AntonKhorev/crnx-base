@@ -1,6 +1,6 @@
 'use strict'
 
-const escape=require('lodash.escape')
+const escape=require('./fake-lodash/escape')
 const Lines=require('./lines.js')
 
 class RefLines extends Lines {

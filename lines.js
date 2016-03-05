@@ -35,8 +35,8 @@ Read lines:
 	lines.getHtml(formatting) // get array of html lines
 */
 
-const escape=require('lodash.escape')
-const repeat=require('lodash.repeat')
+const escape=require('./fake-lodash/escape')
+const repeat=require('./fake-lodash/repeat')
 
 const TO={} // TODO Symbol
 

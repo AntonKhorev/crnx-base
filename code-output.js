@@ -1,7 +1,7 @@
 'use strict'
 
 const debounce=require('lodash.debounce')
-const repeat=require('lodash.repeat')
+const repeat=require('./fake-lodash/repeat')
 
 class CodeOutput {
 	constructor(generateCode,i18n) {
