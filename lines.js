@@ -135,6 +135,9 @@ class Lines {
 		if (formatting===undefined) formatting={}
 		return this.doGet(formatting,true)
 	}
+	count() {
+		return this.doGet({},false).length // can be faster b/c don't need to output stuff
+	}
 
 	// TODO make HtmlLines
 	static html(strings/*,...values*/) {

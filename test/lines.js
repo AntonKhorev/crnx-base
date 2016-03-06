@@ -177,6 +177,26 @@ describe("Lines",()=>{
 			"}"
 		])
 	})
+	it("counts strings",()=>{
+		const lines=Lines.bae(
+			"foo {",
+			"	bar()",
+			"}"
+		)
+		assert.equal(lines.count(),3)
+	})
+	it("counts strings and Lines objects",()=>{
+		const lines=Lines.bae(
+			"foo {",
+			"	bar()",
+			"}",
+			Lines.bae(
+				"hello()",
+				"world()"
+			)
+		)
+		assert.equal(lines.count(),5)
+	})
 
 	// utility fns:
 	it("substitutes no html attrs",()=>{
