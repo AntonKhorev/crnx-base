@@ -72,7 +72,7 @@ class Lines {
 				addTo=true
 			} else if (item instanceof Lines) {
 				const subOut=item.doGet(formatting,html)
-				if (addTo) {
+				if (addTo && subOut.length>0) {
 					out.push(out.pop()+subOut.shift())
 				}
 				out.push(...subOut)

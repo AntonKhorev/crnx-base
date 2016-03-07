@@ -128,6 +128,18 @@ describe("Lines",()=>{
 			")"
 		])
 	})
+	it("appends empty Lines object to last line",()=>{
+		const a=Lines.b()
+		a(
+			"x"
+		)
+		a.t(
+			Lines.be()
+		)
+		assert.deepEqual(a.e().get(),[
+			"x"
+		])
+	})
 	it("gets unescaped html chars",()=>{
 		const lines=Lines.bae("< & > ' \"")
 		assert.deepEqual(lines.get(),[
