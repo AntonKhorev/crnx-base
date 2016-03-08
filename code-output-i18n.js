@@ -15,7 +15,6 @@ module.exports=function(strings){
 		'mode.paste': "extract to paste into HTML later",
 		'mode.file': "extract to load as external resource",
 		'warning.no-hljs': "<a href='https://highlightjs.org/'>highlight.js</a> (hosted on cdnjs.cloudflare.com) is not loaded. Syntax highlighting is disabled.",
-		'warning.jsfiddle-run': "You may have to click <kbd>Run</kbd> in JSFiddle to get sound output working",
 	}
 	for (let id in additionalStrings) {
 		strings[additionalStringsPrefix+'.'+id]=additionalStrings[id]

@@ -9,6 +9,7 @@ class CodeOutput {
 		const $sectionCode={}, $sectionModeInput={}
 		let $indentCheckbox, $indentNumber, $jsSemicolonsCheckbox
 		const getHtmlDataUri=(html)=>'data:text/html;charset=utf-8,'+encodeURIComponent(html)
+		const getCode=()=>code
 		const getFormatting=()=>{
 			let indent='\t'
 			if (!$indentCheckbox.prop('checked')) {
@@ -23,57 +24,6 @@ class CodeOutput {
 				indent,
 				jsSemicolons: $jsSemicolonsCheckbox.prop('checked'),
 			}
-		}
-		const writeControls=()=>{
-			return $("<div>").append(
-				$("<button type='button'>"+i18n('code-output.run')+"</button>").click(function(){
-					/*
-					// doesn't work in IE
-					window.open(getHtmlDataUri(
-						code.get(this.formatting).join("\n")
-					),"generatedCode")
-					*/
-					const w=window.open("","generatedCode")
-					w.document.open()
-					w.document.write(
-						code.get(getFormatting()).join("\n")
-					)
-					w.document.close()
-				})
-			).append(" ").append(
-				$("<button type='button'>Open in CodePen</button>").click(function(){
-					// http://blog.codepen.io/documentation/api/prefill/
-					const sections=code.extractSections({html:'body',css:'paste',js:'paste'})
-					const getSection=sectionName=>
-						sections[sectionName].get(getFormatting()).join("\n")
-					$("<form method='post' action='http://codepen.io/pen/define/'>")
-						.append($("<input type='hidden' name='data'>").val(JSON.stringify({
-							html: getSection('html'),
-							css: getSection('css'),
-							js: getSection('js'),
-							title: code.title,
-						})))
-						.appendTo('body')
-						.submit()
-				})
-			).append(" ").append(
-				$("<button type='button'>Open in JSFiddle</button>").click(function(){
-					// http://doc.jsfiddle.net/api/post.html
-					const sections=code.extractSections({html:'body',css:'paste',js:'paste'})
-					const writeSection=sectionName=>
-						$("<input type='hidden'>")
-							.attr('name',sectionName)
-							.val(sections[sectionName].get(getFormatting()).join("\n"))
-					$("<form method='post' action='http://jsfiddle.net/api/post/library/pure/'>")
-						.append(writeSection('html'))
-						.append(writeSection('css'))
-						.append(writeSection('js'))
-						.append($("<input type='hidden' name='title'>").val(code.title))
-						.append("<input type='hidden' name='wrap' value='b'>")
-						.appendTo('body')
-						.submit()
-				})
-			).append(" <span class='tip-warn'><span class='tip-content'>"+i18n('code-output.warning.jsfiddle-run')+"</span></span>")
 		}
 		const getSectionModes=()=>({
 			html: $sectionModeInput['html'].val(),
@@ -181,7 +131,7 @@ class CodeOutput {
 				.append($summary)
 				.append($sectionCode[sectionName]=$("<div class='code'>"))
 		}
-		const $output=$("<div class='code-output'>").append(writeControls())
+		const $output=$("<div class='code-output'>").append(this.writeButtons(getCode,getFormatting,i18n))
 			.append(writeFormattingControls())
 			.append(writeSection('html'))
 			.append(writeSection('css'))
@@ -189,7 +139,7 @@ class CodeOutput {
 		if (!window.hljs) {
 			$output.append("<p>"+i18n('code-output.warning.no-hljs')+"</p>")
 		}
-		$output.append(writeControls())
+		$output.append(this.writeButtons(getCode,getFormatting,i18n))
 		extractCode()
 
 		const delay=200
@@ -206,6 +156,62 @@ class CodeOutput {
 	// private interface:
 	get refs() {
 		return {}
+	}
+	writeButtons(getCode,getFormatting,i18n) {
+		return $("<div>").append(
+			$("<button type='button'>"+i18n('code-output.run')+"</button>").click(function(){
+				/*
+				// doesn't work in IE
+				window.open(getHtmlDataUri(
+					code.get(this.formatting).join("\n")
+				),"generatedCode")
+				*/
+				const code=getCode()
+				const w=window.open("","generatedCode")
+				w.document.open()
+				w.document.write(
+					code.get(getFormatting()).join("\n")
+				)
+				w.document.close()
+			})
+		).append(" ").append(
+			$("<button type='button'>Open in CodePen</button>").click(function(){
+				// http://blog.codepen.io/documentation/api/prefill/
+				const code=getCode()
+				const sections=code.extractSections({html:'body',css:'paste',js:'paste'})
+				const getSection=sectionName=>
+					sections[sectionName].get(getFormatting()).join("\n")
+				$("<form method='post' action='http://codepen.io/pen/define/'>")
+					.append($("<input type='hidden' name='data'>").val(JSON.stringify({
+						html: getSection('html'),
+						css: getSection('css'),
+						js: getSection('js'),
+						title: code.title,
+					})))
+					.appendTo('body')
+					.submit()
+			})
+		).append(" ").append(
+			$("<button type='button'>Open in JSFiddle</button>").click(function(){
+				// http://doc.jsfiddle.net/api/post.html
+				const code=getCode()
+				const sections=code.extractSections({html:'body',css:'paste',js:'paste'})
+				const getSection=sectionName=>
+					sections[sectionName].get(getFormatting()).join("\n")
+				const writeSection=sectionName=>
+					$("<input type='hidden'>")
+						.attr('name',sectionName)
+						.val(getSection(sectionName))
+				$("<form method='post' action='http://jsfiddle.net/api/post/library/pure/'>")
+					.append(writeSection('html'))
+					.append(writeSection('css'))
+					.append(writeSection('js'))
+					.append($("<input type='hidden' name='title'>").val(code.title))
+					.append("<input type='hidden' name='wrap' value='b'>")
+					.appendTo('body')
+					.submit()
+			})
+		)
 	}
 }
 
