@@ -31,12 +31,12 @@ class OptionsOutput {
 			)
 		})
 		optionClassWriters.set(Option.Void,(option,writeOption,i18n,generateId)=>{
-			return option.$=$("<div class='option void'>")
+			return option.$=$("<div class='option no-lead'>")
 				.html(i18n('options.'+option.fullName))
 		})
 		optionClassWriters.set(Option.Checkbox,(option,writeOption,i18n,generateId)=>{
 			const id=generateId()
-			return option.$=$("<div class='option'>")
+			return option.$=$("<div class='option no-lead'>")
 				.append(
 					$("<input type='checkbox' id='"+id+"'>")
 						.prop('checked',option.value)
