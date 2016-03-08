@@ -48,7 +48,7 @@ class OptionsOutput {
 		})
 		optionClassWriters.set(Option.Select,(option,writeOption,i18n,generateId)=>{
 			const id=generateId()
-			return option.$=$("<div>")
+			return option.$=$("<div class='option'>")
 				.append("<label for='"+id+"'>"+i18n('options.'+option.fullName)+":</label>")
 				.append(" ")
 				.append(
