@@ -100,6 +100,7 @@ class WebCode {
 	getBodyHtmlSectionLines(stylePlaceLines,scriptPlaceLines) {
 		return Lines.bae(
 			stylePlaceLines,
+			this.cachedHeadLines,
 			this.cachedBodyLines,
 			scriptPlaceLines
 		)
@@ -113,7 +114,7 @@ class WebCode {
 	get basename() { // filename base
 		return 'source'
 	}
-	get lang() { // language tag for <html lang='xx'> or null to skip it - likely read from i18n
+	get lang() { // language tag for <html lang=xx> or null to skip it - likely read from i18n
 		return null
 	}
 	get title() { // page title or null to skip it
@@ -122,7 +123,7 @@ class WebCode {
 	get styleLines() { // contents of <style>
 		return Lines.be()
 	}
-	get headLines() { // contents of <head> following <style>
+	get headLines() { // contents of <head> following <style>, goes to <body> in html body mode
 		return Lines.be()
 	}
 	get bodyLines() { // contents of <body> preceding <script>
@@ -135,16 +136,5 @@ class WebCode {
 		return sectionName+" goes here"
 	}
 }
-
-/*
-	// TODO implement indent reformatting like this:
-	join(indent) {
-		return this.data.map(function(line){
-			return line.replace(/^(\t)+/,function(match){
-				return Array(match.length+1).join(indent)
-			})
-		}).join('\n')
-	}
-*/
 
 module.exports=WebCode

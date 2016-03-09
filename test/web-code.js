@@ -324,6 +324,7 @@ describe("WebCode",()=>{
 				"		background: red;",
 				"	}",
 				"</style>",
+				"<meta name=robots content='index, follow'>",
 				"<div>Див</div>",
 				"<script>",
 				"	console.log('загрузилось');",
@@ -342,6 +343,7 @@ describe("WebCode",()=>{
 				'js': 'paste',
 			})
 			assert.deepEqual(sections.html.get(),[
+				"<meta name=robots content='index, follow'>",
 				"<div>Див</div>",
 			])
 			assert.deepEqual(sections.css.get(),[
