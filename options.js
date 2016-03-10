@@ -9,13 +9,16 @@ class Options {
 		const Option=this.optionClasses
 		const optionByFullName={}
 		const optionsWithVisibilityAffectedByFullName={}
-		const makeEntry=(description,fullNamePath,data,isInsideArray)=>{
+		const makeEntry=(description,parentfullName,data,isInsideArray)=>{
 			const className=description[0]
 			if (Option[className]===undefined) {
 				throw new Error(`invalid option type '${className}'`)
 			}
 			const name=description[1]
-			const fullName=fullNamePath+name
+			let fullName=name
+			if (parentfullName!==null) {
+				fullName=parentfullName+'.'+name
+			}
 			const ctorArgsDescription=description.slice(2)
 			let contents=[]
 			let defaultValue
@@ -38,7 +41,7 @@ class Options {
 							contents=new Map
 							arg.forEach(x=>{
 								const type=x[1]
-								const ctor=subData=>makeEntry(x,fullName+'.',subData,true)
+								const ctor=subData=>makeEntry(x,fullName,subData,true)
 								contents.set(type,ctor)
 							})
 						} else {

@@ -127,15 +127,11 @@ Option.RangeInput = class extends Option.NonBooleanInput {
 Option.Collection = class extends Option.Base {
 	constructor(name,descriptions,_1,data,fullName,isVisible,updateCallback,makeEntry,isInsideArray) {
 		super(...arguments)
-		let fullNamePath='';
-		if (fullName!==null) {
-			fullNamePath=fullName+'.'
-		}
 		this.entries=descriptions.map(x=>{
 			const subName=x[1]
 			let subData
 			if (typeof data == 'object') subData=data[subName]
-			return makeEntry(x,fullNamePath,subData,isInsideArray) // nested option
+			return makeEntry(x,fullName,subData,isInsideArray) // nested option
 		})
 	}
 	export() {
