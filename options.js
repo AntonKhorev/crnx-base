@@ -42,16 +42,7 @@ class Options {
 								contents.set(type,ctor)
 							})
 						} else {
-							contents=arg.map(x=>{
-								if (Array.isArray(x)) {
-									const subName=x[1]
-									let subData
-									if (typeof data == 'object') subData=data[subName]
-									return makeEntry(x,fullName+'.',subData,isInsideArray) // nested option
-								} else {
-									return x // available value / value range boundary
-								}
-							})
+							contents=arg
 						}
 					} else {
 						throw new Error("too many array arguments")
@@ -91,7 +82,7 @@ class Options {
 					if (this.updateCallback) this.updateCallback()
 				}
 			}
-			const option=new Option[className](name,contents,defaultValue,data,fullName,isVisible,updateCallback)
+			const option=new Option[className](name,contents,defaultValue,data,fullName,isVisible,updateCallback,makeEntry,isInsideArray)
 			if (!isInsideArray) {
 				optionByFullName[fullName]=option
 				for (let testName in visibilityData) {
@@ -103,14 +94,7 @@ class Options {
 			}
 			return option
 		}
-		this.root=new Option.Root(
-			null,this.entriesDescription.map(description=>{
-				const subName=description[1]
-				let subData
-				if (typeof data == 'object') subData=data[subName]
-				return makeEntry(description,'',subData,false)
-			}),undefined,data,null,()=>true,simpleUpdateCallback
-		)
+		this.root=new Option.Root(null,this.entriesDescription,undefined,data,null,()=>true,simpleUpdateCallback,makeEntry,false)
 	}
 	// methods to be redefined by subclasses
 	// TODO make them static?

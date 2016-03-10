@@ -5,6 +5,7 @@
 //	name,contents/availableValues,defaultValue,data - similar to entriesDescription()
 // the rest of arguments' order is not settled, don't use them
 // 	+ TODO not sure about data
+// THIS WON'T WORK WITH Arrays/Groups!
 
 /*
 fixed options spec:
@@ -124,9 +125,18 @@ Option.RangeInput = class extends Option.NonBooleanInput {
 }
 
 Option.Collection = class extends Option.Base {
-	constructor(name,entries,_1,_2,fullName,isVisible,updateCallback) {
+	constructor(name,descriptions,_1,data,fullName,isVisible,updateCallback,makeEntry,isInsideArray) {
 		super(...arguments)
-		this.entries=entries
+		let fullNamePath='';
+		if (fullName!==null) {
+			fullNamePath=fullName+'.'
+		}
+		this.entries=descriptions.map(x=>{
+			const subName=x[1]
+			let subData
+			if (typeof data == 'object') subData=data[subName]
+			return makeEntry(x,fullNamePath,subData,isInsideArray) // nested option
+		})
 	}
 	export() {
 		const data={}
