@@ -184,9 +184,14 @@ Option.Root = class extends Option.Collection {}
 Option.Group = class extends Option.Collection {}
 
 Option.Array = class extends Option.Base {
-	constructor(name,availableConstructors,typePropertyName,data,fullName,isVisible,updateCallback) {
-		super(name,undefined,undefined,undefined,fullName,isVisible,updateCallback)
-		this.availableConstructors=availableConstructors // Map {type:constructor}
+	constructor(name,descriptions,typePropertyName,data,fullName,isVisible,updateCallback,makeEntry,isInsideArray) {
+		super(...arguments)
+		this.availableConstructors=new Map
+		descriptions.forEach(x=>{ // TODO test array inside array
+			const type=x[1]
+			const ctor=subData=>makeEntry(x,fullName,subData,true)
+			this.availableConstructors.set(type,ctor)
+		})
 		if (typePropertyName===undefined) typePropertyName='type'
 		this.typePropertyName=typePropertyName
 		this._entries=[]

@@ -37,16 +37,7 @@ class Options {
 					nScalars++
 				} else if (Array.isArray(arg)) {
 					if (nArrays==0) {
-						if (!isInsideArray && className=='Array') { // TODO test array inside array
-							contents=new Map
-							arg.forEach(x=>{
-								const type=x[1]
-								const ctor=subData=>makeEntry(x,fullName,subData,true)
-								contents.set(type,ctor)
-							})
-						} else {
-							contents=arg
-						}
+						contents=arg
 					} else {
 						throw new Error("too many array arguments")
 					}
