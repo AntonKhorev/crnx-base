@@ -20,9 +20,7 @@ class Options {
 				fullName=parentfullName+'.'+name
 			}
 			const ctorArgsDescription=description.slice(2)
-			let contents=[]
-			let defaultValue
-			let visibilityData={}
+			let scalarArg,arrayArg,objectArg
 			let nScalars=0
 			let nArrays=0
 			let nObjects=0
@@ -30,21 +28,21 @@ class Options {
 				let arg=ctorArgsDescription[i]
 				if (typeof arg == 'string' || typeof arg == 'number' || typeof arg == 'boolean') {
 					if (nScalars==0) {
-						defaultValue=arg
+						scalarArg=arg
 					} else {
 						throw new Error("too many scalar arguments")
 					}
 					nScalars++
 				} else if (Array.isArray(arg)) {
 					if (nArrays==0) {
-						contents=arg
+						arrayArg=arg
 					} else {
 						throw new Error("too many array arguments")
 					}
 					nArrays++
-				} else if (!isInsideArray && (arg instanceof Object)) {
+				} else if (arg instanceof Object) {
 					if (nObjects==0) {
-						visibilityData=arg
+						objectArg=arg
 					} else {
 						throw new Error("too many array arguments")
 					}
@@ -53,20 +51,10 @@ class Options {
 					throw new Error("unknown argument type")
 				}
 			}
-			let isVisible,updateCallback
+			let updateCallback
 			if (isInsideArray) {
 				updateCallback=simpleUpdateCallback
-				isVisible=()=>true
 			} else {
-				isVisible=()=>{
-					for (let testName in visibilityData) {
-						const value=optionByFullName[testName].value
-						if (visibilityData[testName].indexOf(value)<0) {
-							return false
-						}
-					}
-					return true
-				}
 				updateCallback=()=>{
 					if (optionsWithVisibilityAffectedByFullName[fullName]!==undefined) {
 						optionsWithVisibilityAffectedByFullName[fullName].forEach(option=>{
@@ -76,19 +64,25 @@ class Options {
 					if (this.updateCallback) this.updateCallback()
 				}
 			}
-			const option=new Option[className](name,contents,defaultValue,data,fullName,isVisible,updateCallback,makeEntry,isInsideArray)
+			const option=new Option[className](
+				name,arrayArg,scalarArg,objectArg,data,
+				fullName,optionByFullName,updateCallback,makeEntry,isInsideArray
+			)
 			if (!isInsideArray) {
 				optionByFullName[fullName]=option
-				for (let testName in visibilityData) {
+				option.fullNamesAffectingVisibility.forEach(testName=>{
 					if (optionsWithVisibilityAffectedByFullName[testName]===undefined) {
 						optionsWithVisibilityAffectedByFullName[testName]=[]
 					}
 					optionsWithVisibilityAffectedByFullName[testName].push(option)
-				}
+				})
 			}
 			return option
 		}
-		this.root=new Option.Root(null,this.entriesDescription,undefined,data,null,()=>true,simpleUpdateCallback,makeEntry,false)
+		this.root=new Option.Root(
+			null,this.entriesDescription,undefined,{},data,
+			null,optionByFullName,simpleUpdateCallback,makeEntry,false
+		)
 	}
 	// methods to be redefined by subclasses
 	// TODO make them static?

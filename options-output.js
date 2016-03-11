@@ -82,8 +82,9 @@ class OptionsOutput {
 						)
 				)
 		})
-		optionClassWriters.set(Option.Int,(option,writeOption,i18n,generateId)=>{
+		optionClassWriters.set(Option.NumberInput,(option,writeOption,i18n,generateId)=>{
 			const id=generateId()
+			const p=option.precision
 			return option.$=$("<div class='option'>")
 				.append("<label for='"+id+"'>"+i18n('options.'+option.fullName)+":</label>")
 				.append(" ")
@@ -92,7 +93,7 @@ class OptionsOutput {
 						.val(option.value)
 						.attr('min',option.availableMin)
 						.attr('max',option.availableMax)
-						.attr('step',option.step)
+						.attr('step',Math.pow(0.1,p).toFixed(p))
 						.on('input change',function(){
 							if (this.checkValidity()) {
 								option.value=this.value
