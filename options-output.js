@@ -82,7 +82,7 @@ class OptionsOutput {
 						)
 				)
 		})
-		optionClassWriters.set(Option.NumberInput,(option,writeOption,i18n,generateId)=>{
+		optionClassWriters.set(Option.Number,(option,writeOption,i18n,generateId)=>{
 			const id=generateId()
 			const p=option.precision
 			return option.$=$("<div class='option'>")

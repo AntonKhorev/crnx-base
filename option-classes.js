@@ -119,13 +119,13 @@ Option.Input = class extends Option.Base {
 	}
 }
 
-Option.BooleanInput = class extends Option.Input {
+Option.Boolean = class extends Option.Input {
 	fix() {
 		return this.value
 	}
 }
 
-Option.NonBooleanInput = class extends Option.Input {
+Option.NonBoolean = class extends Option.Input {
 	fix() {
 		const value=this.value
 		return { // can't use fixed value in boolean context
@@ -137,7 +137,7 @@ Option.NonBooleanInput = class extends Option.Input {
 	}
 }
 
-Option.FactorInput = class extends Option.NonBooleanInput {
+Option.Factor = class extends Option.NonBoolean {
 	constructor(
 		name,arrayArg,scalarArg,objectArg,data,
 		fullName,optionByFullName,updateCallback,makeEntry,isInsideArray
@@ -153,7 +153,7 @@ Option.FactorInput = class extends Option.NonBooleanInput {
 	}
 }
 
-Option.NumberInput = class extends Option.NonBooleanInput { // requires precision, gives step = Math.pow(0.1,precision).toFixed(precision)
+Option.Number = class extends Option.NonBoolean { // requires precision, gives step = Math.pow(0.1,precision).toFixed(precision)
 	constructor(
 		name,arrayArg,scalarArg,objectArg,data,
 		fullName,optionByFullName,updateCallback,makeEntry,isInsideArray
@@ -230,7 +230,7 @@ Option.Void = class extends Option.Base { // useful as array entry w/o settings
 	}
 }
 
-Option.Checkbox = class extends Option.BooleanInput {
+Option.Checkbox = class extends Option.Boolean {
 	constructor(
 		name,arrayArg,scalarArg,objectArg,data,
 		fullName,optionByFullName,updateCallback,makeEntry,isInsideArray
@@ -250,17 +250,17 @@ Option.Checkbox = class extends Option.BooleanInput {
 	}
 }
 
-Option.Select = class extends Option.FactorInput {}
+Option.Select = class extends Option.Factor {}
 
-Option.Text = class extends Option.FactorInput {}
+Option.Text = class extends Option.Factor {}
 
-Option.Int = class extends Option.NumberInput {
+Option.Int = class extends Option.Number {
 	get precision() {
 		return 0
 	}
 }
 
-Option.Float = class extends Option.NumberInput {
+Option.Float = class extends Option.Number {
 	constructor(
 		name,arrayArg,scalarArg,objectArg,data,
 		fullName,optionByFullName,updateCallback,makeEntry,isInsideArray
