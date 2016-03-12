@@ -449,4 +449,19 @@ describe("Options",()=>{
 			])
 		})
 	})
+	context("int",()=>{
+		class TestOptions extends Options {
+			get entriesDescription() {
+				return [
+					['Int','knob',[-4,+11]],
+				]
+			}
+		}
+		it("has correct available min/max",()=>{
+			const options=new TestOptions
+			const intEntry=options.root.entries[0]
+			assert.equal(intEntry.availableMin,-4)
+			assert.equal(intEntry.availableMax,+11)
+		})
+	})
 })

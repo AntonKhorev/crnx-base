@@ -1,13 +1,9 @@
 'use strict'
 
-// constructors typically called from Options class
-// to call them manually, use the following args:
-//	name,arrayArg,scalarArg,objectArg,data - similar to entriesDescription()
-// the rest of arguments' order is not settled, don't use them
-// 	+ TODO not sure about data
-// THIS WON'T WORK WITH Arrays/Groups!
-
 /*
+use Option.<Class>.make(<description w/o className>)(data) to create Option object
+	THIS WON'T WORK WITH Arrays/Groups!
+
 fixed options spec:
 	input option returns its value in primitive context (possibly with valueOf() method)
 		value has primitive type
@@ -25,28 +21,46 @@ const Option={}
 // abstract classes
 
 Option.Base = class {
-	constructor(
-		name,arrayArg,scalarArg,objectArg,data,
-		fullName,optionByFullName,updateCallback,makeEntry,isInsideArray
-	) {
-		if (objectArg===undefined) objectArg={}
+	static make(name) {
+		let nScalars=0, nArrays=0, nObjects=0
+		let scalarArg, arrayArg=[], objectArg={}
+		for (let i=1;i<arguments.length;i++) {
+			let arg=arguments[i]
+			if (typeof arg == 'string' || typeof arg == 'number' || typeof arg == 'boolean') {
+				if (nScalars++==0) scalarArg=arg
+			} else if (Array.isArray(arg)) {
+				if (nArrays++==0) arrayArg=arg
+			} else if (arg instanceof Object) {
+				if (nObjects++==0) objectArg=arg
+			}
+		}
+		const optionClass=this
+		const settings=this.collectArgs(scalarArg,arrayArg,objectArg)
+		return function(){
+			return new optionClass(name,settings,...arguments)
+		}
+	}
+	static collectArgs(scalarArg,arrayArg,settings) {
+		return settings
+	}
+	constructor(name,settings,data,fullName,optionByFullName,updateCallback,makeEntry,isInsideArray) {
 		this.name=name
 		this.updateCallback=updateCallback
 		this.fullName=fullName
 		this._$=null
 		this.isVisible=()=>true
 		this.fullNamesAffectingVisibility=[]
-		if (objectArg.visibilityData!==undefined) {
+		if (settings.visibilityData!==undefined) {
 			this.isVisible=()=>{
-				for (let testName in objectArg.visibilityData) {
+				for (let testName in settings.visibilityData) {
 					const value=optionByFullName[testName].value
-					if (objectArg.visibilityData[testName].indexOf(value)<0) {
+					if (settings.visibilityData[testName].indexOf(value)<0) {
 						return false
 					}
 				}
 				return true
 			}
-			for (let testName in objectArg.visibilityData) {
+			for (let testName in settings.visibilityData) {
 				this.fullNamesAffectingVisibility.push(testName)
 			}
 		}
@@ -80,22 +94,14 @@ Option.Base = class {
 }
 
 Option.Input = class extends Option.Base {
-	constructor(
-		name,arrayArg,scalarArg,objectArg,data,
-		fullName,optionByFullName,updateCallback,makeEntry,isInsideArray
-	) {
+	static collectArgs(scalarArg,arrayArg,settings) {
+		settings=Object.create(settings)
+		if (settings.defaultValue===undefined) settings.defaultValue=scalarArg
+		return super.collectArgs(scalarArg,arrayArg,settings)
+	}
+	constructor(name,settings,data,fullName,optionByFullName,updateCallback,makeEntry,isInsideArray) {
 		super(...arguments)
-		if (objectArg===undefined) objectArg={}
-		if (arrayArg===undefined) arrayArg=[]
-		if (objectArg.defaultValue!==undefined) {
-			this.defaultValue=objectArg.defaultValue
-		} else if (scalarArg!==undefined) {
-			this.defaultValue=scalarArg
-		} else if (arrayArg.length>0) {
-			this.defaultValue=arrayArg[0]
-		} else {
-			throw new Error(`No default value provided for Input option ${fullName}`)
-		}
+		this.defaultValue=settings.defaultValue
 		if (typeof data == 'object') {
 			data=data.value
 		}
@@ -120,6 +126,9 @@ Option.Input = class extends Option.Base {
 }
 
 Option.Boolean = class extends Option.Input {
+	static collectArgs(scalarArg,arrayArg,settings) {
+		return super.collectArgs(!!scalarArg,arrayArg,settings)
+	}
 	fix() {
 		return this.value
 	}
@@ -138,59 +147,42 @@ Option.NonBoolean = class extends Option.Input {
 }
 
 Option.Factor = class extends Option.NonBoolean {
-	constructor(
-		name,arrayArg,scalarArg,objectArg,data,
-		fullName,optionByFullName,updateCallback,makeEntry,isInsideArray
-	) {
+	static collectArgs(scalarArg,arrayArg,settings) {
+		settings=Object.create(settings)
+		if (settings.availableValues===undefined) settings.availableValues=arrayArg
+		if (scalarArg===undefined) scalarArg=settings.availableValues[0]
+		return super.collectArgs(scalarArg,arrayArg,settings)
+	}
+	constructor(name,settings,data,fullName,optionByFullName,updateCallback,makeEntry,isInsideArray) {
 		super(...arguments)
-		if (objectArg===undefined) objectArg={}
-		if (arrayArg===undefined) arrayArg=[]
-		if (objectArg.availableValues!==undefined) {
-			this.availableValues=objectArg.availableValues
-		} else {
-			this.availableValues=arrayArg
-		}
+		this.availableValues=settings.availableValues
 	}
 }
 
 Option.Number = class extends Option.NonBoolean { // requires precision, gives step = Math.pow(0.1,precision).toFixed(precision)
-	constructor(
-		name,arrayArg,scalarArg,objectArg,data,
-		fullName,optionByFullName,updateCallback,makeEntry,isInsideArray
-	) {
+	static collectArgs(scalarArg,arrayArg,settings) {
+		settings=Object.create(settings)
+		if (settings.availableMin===undefined) settings.availableMin=arrayArg[0]
+		if (settings.availableMax===undefined) settings.availableMax=arrayArg[1]
+		if (scalarArg===undefined) scalarArg=settings.availableMin
+		return super.collectArgs(scalarArg,arrayArg,settings)
+	}
+	constructor(name,settings,data,fullName,optionByFullName,updateCallback,makeEntry,isInsideArray) {
 		super(...arguments)
-		if (objectArg===undefined) objectArg={}
-		if (arrayArg===undefined) arrayArg=[]
-		if (objectArg.availableMin!==undefined) {
-			this.availableMin=objectArg.availableMin
-		} else if (arrayArg.length>=1) {
-			this.availableMin=arrayArg[0]
-		} else {
-			throw new Error(`No min value provided for RangeInput option ${fullName}`)
-		}
-		if (objectArg.availableMax!==undefined) {
-			this.availableMax=objectArg.availableMax
-		} else if (arrayArg.length>=2) {
-			this.availableMax=arrayArg[1]
-		} else {
-			throw new Error(`No max value provided for RangeInput option ${fullName}`)
-		}
+		this.availableMin=settings.availableMin
+		this.availableMax=settings.availableMax
 	}
 }
 
 Option.Collection = class extends Option.Base {
-	constructor(
-		name,arrayArg,scalarArg,objectArg,data,
-		fullName,optionByFullName,updateCallback,makeEntry,isInsideArray
-	) {
+	static collectArgs(scalarArg,arrayArg,settings) {
+		settings=Object.create(settings)
+		if (settings.descriptions===undefined) settings.descriptions=arrayArg
+		return super.collectArgs(scalarArg,arrayArg,settings)
+	}
+	constructor(name,settings,data,fullName,optionByFullName,updateCallback,makeEntry,isInsideArray) {
 		super(...arguments)
-		if (objectArg===undefined) objectArg={}
-		if (arrayArg===undefined) arrayArg=[]
-		let descriptions=arrayArg
-		if (objectArg.descriptions!==undefined) {
-			descriptions=objectArg.descriptions
-		}
-		this.entries=descriptions.map(x=>{
+		this.entries=settings.descriptions.map(x=>{
 			const subName=x[1]
 			let subData
 			if (typeof data == 'object') subData=data[subName]
@@ -230,25 +222,7 @@ Option.Void = class extends Option.Base { // useful as array entry w/o settings
 	}
 }
 
-Option.Checkbox = class extends Option.Boolean {
-	constructor(
-		name,arrayArg,scalarArg,objectArg,data,
-		fullName,optionByFullName,updateCallback,makeEntry,isInsideArray
-	) {
-		if (objectArg===undefined) objectArg={}
-		objectArg=Object.create(objectArg)
-		if (objectArg.defaultValue!==undefined) {
-			objectArg.defaultValue=!!objectArg.defaultValue
-		} else {
-			objectArg.defaultValue=!!scalarArg
-		}
-		scalarArg=undefined
-		super(
-			name,arrayArg,scalarArg,objectArg,data,
-			fullName,optionByFullName,updateCallback,makeEntry,isInsideArray
-		)
-	}
-}
+Option.Checkbox = class extends Option.Boolean {}
 
 Option.Select = class extends Option.Factor {}
 
@@ -261,14 +235,10 @@ Option.Int = class extends Option.Number {
 }
 
 Option.Float = class extends Option.Number {
-	constructor(
-		name,arrayArg,scalarArg,objectArg,data,
-		fullName,optionByFullName,updateCallback,makeEntry,isInsideArray
-	) {
+	constructor(name,settings,data,fullName,optionByFullName,updateCallback,makeEntry,isInsideArray) {
 		super(...arguments)
-		if (objectArg===undefined) objectArg={}
-		if (objectArg.precision!==undefined) {
-			this.precision=objectArg.precision
+		if (settings.precision!==undefined) {
+			this.precision=settings.precision
 		} else {
 			if (this.availableMax>=100) {
 				this.precision=1
@@ -285,28 +255,23 @@ Option.Root = class extends Option.Collection {}
 
 Option.Group = class extends Option.Collection {}
 
-Option.Array = class extends Option.Base {
-	constructor(
-		name,arrayArg,scalarArg,objectArg,data,
-		fullName,optionByFullName,updateCallback,makeEntry,isInsideArray
-	) {
+Option.Array = class extends Option.Base { // TODO consider extending Collection
+	static collectArgs(scalarArg,arrayArg,settings) {
+		settings=Object.create(settings)
+		if (settings.descriptions===undefined) settings.descriptions=arrayArg
+		if (settings.typePropertyName===undefined) settings.typePropertyName=scalarArg
+		return super.collectArgs(scalarArg,arrayArg,settings)
+	}
+	constructor(name,settings,data,fullName,optionByFullName,updateCallback,makeEntry,isInsideArray) {
 		super(...arguments)
-		if (objectArg===undefined) objectArg={}
-		if (arrayArg===undefined) arrayArg=[]
-		let descriptions=arrayArg
-		if (objectArg.descriptions!==undefined) {
-			descriptions=objectArg.descriptions
-		}
 		this.availableConstructors=new Map
-		descriptions.forEach(x=>{ // TODO test array inside array
+		settings.descriptions.forEach(x=>{ // TODO test array inside array
 			const type=x[1]
 			const ctor=subData=>makeEntry(x,fullName,subData,true)
 			this.availableConstructors.set(type,ctor)
 		})
-		if (objectArg.typePropertyName) {
-			this.typePropertyName=objectArg.typePropertyName
-		} else if (scalarArg!==undefined) {
-			this.typePropertyName=scalarArg
+		if (settings.typePropertyName!==undefined) {
+			this.typePropertyName=settings.typePropertyName
 		} else {
 			this.typePropertyName='type'
 		}

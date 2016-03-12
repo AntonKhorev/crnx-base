@@ -19,38 +19,7 @@ class Options {
 			if (parentfullName!==null) {
 				fullName=parentfullName+'.'+name
 			}
-			const ctorArgsDescription=description.slice(2)
-			let scalarArg,arrayArg,objectArg
-			let nScalars=0
-			let nArrays=0
-			let nObjects=0
-			for (let i=0;i<ctorArgsDescription.length;i++) {
-				let arg=ctorArgsDescription[i]
-				if (typeof arg == 'string' || typeof arg == 'number' || typeof arg == 'boolean') {
-					if (nScalars==0) {
-						scalarArg=arg
-					} else {
-						throw new Error("too many scalar arguments")
-					}
-					nScalars++
-				} else if (Array.isArray(arg)) {
-					if (nArrays==0) {
-						arrayArg=arg
-					} else {
-						throw new Error("too many array arguments")
-					}
-					nArrays++
-				} else if (arg instanceof Object) {
-					if (nObjects==0) {
-						objectArg=arg
-					} else {
-						throw new Error("too many array arguments")
-					}
-					nObjects++
-				} else {
-					throw new Error("unknown argument type")
-				}
-			}
+			const makeArgs=description.slice(1)
 			let updateCallback
 			if (isInsideArray) {
 				updateCallback=simpleUpdateCallback
@@ -64,9 +33,8 @@ class Options {
 					if (this.updateCallback) this.updateCallback()
 				}
 			}
-			const option=new Option[className](
-				name,arrayArg,scalarArg,objectArg,data,
-				fullName,optionByFullName,updateCallback,makeEntry,isInsideArray
+			const option=Option[className].make(...makeArgs)(
+				data,fullName,optionByFullName,updateCallback,makeEntry,isInsideArray
 			)
 			if (!isInsideArray) {
 				optionByFullName[fullName]=option
@@ -79,9 +47,8 @@ class Options {
 			}
 			return option
 		}
-		this.root=new Option.Root(
-			null,this.entriesDescription,undefined,{},data,
-			null,optionByFullName,simpleUpdateCallback,makeEntry,false
+		this.root=Option.Root.make(null,this.entriesDescription)(
+			data,null,optionByFullName,simpleUpdateCallback,makeEntry,false
 		)
 	}
 	// methods to be redefined by subclasses
