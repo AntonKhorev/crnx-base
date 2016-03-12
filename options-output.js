@@ -83,22 +83,40 @@ class OptionsOutput {
 				)
 		})
 		optionClassWriters.set(Option.Number,(option,writeOption,i18n,generateId)=>{
-			const id=generateId()
 			const p=option.precision
+			const setInputAttrs=$input=>$input
+				.attr('min',option.availableMin)
+				.attr('max',option.availableMax)
+				.attr('step',Math.pow(0.1,p).toFixed(p))
+			const setInputAttrsAndListeners=($input,getOtherInput)=>setInputAttrs($input)
+				.val(option.value)
+				.on('input change',function(){
+					if (this.checkValidity()) {
+						const $that=getOtherInput()
+						$that.val(this.value)
+						option.value=parseFloat(this.value)
+					}
+				})
+			const id=generateId()
+			let $sliderInput,$numberInput
+			let $rangeMinInput,$rangeMaxInput
 			return option.$=$("<div class='option'>")
 				.append("<label for='"+id+"'>"+i18n('options.'+option.fullName)+":</label>")
+				.append(" <span class='min'>"+option.availableMin+"</span> ")
+				.append($sliderInput=setInputAttrsAndListeners(
+					$("<input type='range' id='"+id+"'>"),
+					()=>$numberInput
+				))
+				.append(" <span class='max'>"+option.availableMax+"</span> ")
+				.append($numberInput=setInputAttrsAndListeners(
+					$("<input type='number' required>"),
+					()=>$sliderInput
+				))
 				.append(" ")
 				.append(
-					$("<input type='number' id='"+id+"' required />")
-						.val(option.value)
-						.attr('min',option.availableMin)
-						.attr('max',option.availableMax)
-						.attr('step',Math.pow(0.1,p).toFixed(p))
-						.on('input change',function(){
-							if (this.checkValidity()) {
-								option.value=this.value
-							}
-						})
+					$("<button type='button'>"+i18n('options-output.reset')+"</button>").click(function(){
+						$sliderInput.val(option.defaultValue).change()
+					})
 				)
 		})
 		optionClassWriters.set(Option.Array,(option,writeOption,i18n,generateId)=>{
