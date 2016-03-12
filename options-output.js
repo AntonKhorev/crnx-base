@@ -36,51 +36,43 @@ class OptionsOutput {
 		})
 		optionClassWriters.set(Option.Checkbox,(option,writeOption,i18n,generateId)=>{
 			const id=generateId()
-			return option.$=$("<div class='option no-lead'>")
-				.append(
-					$("<input type='checkbox' id='"+id+"'>")
-						.prop('checked',option.value)
-						.change(function(){
-							option.value=$(this).prop('checked')
-						})
-				)
-				.append(" <label for='"+id+"'>"+i18n('options.'+option.fullName)+"</label>")
+			return option.$=$("<div class='option no-lead'>").append(
+				$("<input type='checkbox' id='"+id+"'>")
+					.prop('checked',option.value)
+					.change(function(){
+						option.value=$(this).prop('checked')
+					}),
+				" <label for='"+id+"'>"+i18n('options.'+option.fullName)+"</label>"
+			)
 		})
 		optionClassWriters.set(Option.Select,(option,writeOption,i18n,generateId)=>{
 			const id=generateId()
-			return option.$=$("<div class='option'>")
-				.append("<label for='"+id+"'>"+i18n('options.'+option.fullName)+":</label>")
-				.append(" ")
-				.append(
-					$("<select id='"+id+"'>").append(
-						option.availableValues.map(availableValue=>
-							$("<option>").val(availableValue).html(i18n('options.'+option.fullName+'.'+availableValue))
-						)
-					).val(option.value).change(function(){
-						option.value=this.value
-					})
-				)
+			return option.$=$("<div class='option'>").append(
+				"<label for='"+id+"'>"+i18n('options.'+option.fullName)+":</label> ",
+				$("<select id='"+id+"'>").append(
+					option.availableValues.map(availableValue=>
+						$("<option>").val(availableValue).html(i18n('options.'+option.fullName+'.'+availableValue))
+					)
+				).val(option.value).change(function(){
+					option.value=this.value
+				})
+			)
 		})
 		optionClassWriters.set(Option.Text,(option,writeOption,i18n,generateId)=>{
 			const id=generateId()
 			const listId=generateId()
-			return option.$=$("<div class='option'>")
-				.append("<label for='"+id+"'>"+i18n('options.'+option.fullName)+":</label>")
-				.append(" ")
-				.append(
-					$("<input type='text' id='"+id+"' list='"+listId+"' />")
-						.val(option.value)
-						.on('input change',function(){
-							option.value=this.value
-						})
+			return option.$=$("<div class='option'>").append(
+				"<label for='"+id+"'>"+i18n('options.'+option.fullName)+":</label> ",
+				$("<input type='text' id='"+id+"' list='"+listId+"' />")
+					.val(option.value)
+					.on('input change',function(){
+						option.value=this.value
+					}),
+				" ",
+				$("<datalist id='"+listId+"'>").append(
+					option.availableValues.map(availableValue=>$("<option>").text(availableValue))
 				)
-				.append(" ")
-				.append(
-					$("<datalist id='"+listId+"'>")
-						.append(
-							option.availableValues.map(availableValue=>$("<option>").text(availableValue))
-						)
-				)
+			)
 		})
 		optionClassWriters.set(Option.Number,(option,writeOption,i18n,generateId)=>{
 			const p=option.precision
@@ -100,24 +92,23 @@ class OptionsOutput {
 			const id=generateId()
 			let $sliderInput,$numberInput
 			let $rangeMinInput,$rangeMaxInput
-			return option.$=$("<div class='option'>")
-				.append("<label for='"+id+"'>"+i18n('options.'+option.fullName)+":</label>")
-				.append(" <span class='min'>"+option.availableMin+"</span> ")
-				.append($sliderInput=setInputAttrsAndListeners(
+			return option.$=$("<div class='option'>").append(
+				"<label for='"+id+"'>"+i18n('options.'+option.fullName)+":</label>",
+				" <span class='min'>"+option.availableMin+"</span> ",
+				$sliderInput=setInputAttrsAndListeners(
 					$("<input type='range' id='"+id+"'>"),
 					()=>$numberInput
-				))
-				.append(" <span class='max'>"+option.availableMax+"</span> ")
-				.append($numberInput=setInputAttrsAndListeners(
+				),
+				" <span class='max'>"+option.availableMax+"</span> ",
+				$numberInput=setInputAttrsAndListeners(
 					$("<input type='number' required>"),
 					()=>$sliderInput
-				))
-				.append(" ")
-				.append(
-					$("<button type='button'>"+i18n('options-output.reset')+"</button>").click(function(){
-						$sliderInput.val(option.defaultValue).change()
-					})
-				)
+				),
+				" ",
+				$("<button type='button'>"+i18n('options-output.reset')+"</button>").click(function(){
+					$sliderInput.val(option.defaultValue).change()
+				})
+			)
 		})
 		optionClassWriters.set(Option.Array,(option,writeOption,i18n,generateId)=>{
 			let $dragged=null
@@ -131,93 +122,81 @@ class OptionsOutput {
 				// have to make drag handler 'draggable', not the whole item
 				// because inputs and labels don't like to be inside 'draggable'
 				// http://stackoverflow.com/questions/13017177/selection-disabled-while-using-html5-drag-and-drop
-				return $("<div class='draggable-with-handle'>")
-					.data('option',option)
-					.append(
-						$("<div draggable='true' tabindex='0' title='"+i18n('options-output.drag')+"'>")
-							.on('dragstart',function(ev){
-								$dragged=$(this).parent()
-								ev.originalEvent.dataTransfer.effectAllowed='move'
-								ev.originalEvent.dataTransfer.setData('Text',name)
-								if (ev.originalEvent.dataTransfer.setDragImage) { // doesn't work in IE
-									ev.originalEvent.dataTransfer.setDragImage($dragged[0],0,0)
-								}
-								setTimeout(function(){
-									$dragged.addClass('ghost')
-								},0)
-							})
-							.keydown(function(ev){
-								const $handle=$(this)
-								const $sorted=$handle.parent()
-								if (ev.keyCode==38) {
-									$sorted.prev().before($sorted)
-									$handle.focus()
-									updateArrayEntries()
-									return false
-								} else if (ev.keyCode==40) {
-									$sorted.next().after($sorted)
-									$handle.focus()
-									updateArrayEntries()
-									return false
-								}
-							})
-					)
-					.append(writeOption(option))
-					.append(
-						//$("<div tabindex='0' class='delete' title='"+i18n('options-output.delete')+"'>×</div>")
-						$("<div tabindex='0' class='delete' title='"+i18n('options-output.delete')+"'>")
-							.click(function(){
-								$(this).parent().remove()
-								updateArrayEntries()
-							})
-							.keydown(function(ev){
-								if (ev.keyCode==13 || ev.keyCode==32) {
-									$(this).parent().remove()
-									updateArrayEntries()
-									return false
-								}
-							})
-					)
-					.on('dragover',function(ev){
-						ev.preventDefault()
-						ev.originalEvent.dataTransfer.dropEffect='move'
-						const $target=$(this)
-						if ($dragged) {
-							if ($target.nextAll().is($dragged)) {
-								$target.before($dragged)
-								updateArrayEntries()
-							} else if ($target.prevAll().is($dragged)) {
-								$target.after($dragged)
-								updateArrayEntries()
+				return $("<div class='draggable-with-handle'>").data('option',option).append(
+					$("<div draggable='true' tabindex='0' title='"+i18n('options-output.drag')+"'>")
+						.on('dragstart',function(ev){
+							$dragged=$(this).parent()
+							ev.originalEvent.dataTransfer.effectAllowed='move'
+							ev.originalEvent.dataTransfer.setData('Text',name)
+							if (ev.originalEvent.dataTransfer.setDragImage) { // doesn't work in IE
+								ev.originalEvent.dataTransfer.setDragImage($dragged[0],0,0)
 							}
+							setTimeout(function(){
+								$dragged.addClass('ghost')
+							},0)
+						})
+						.keydown(function(ev){
+							const $handle=$(this)
+							const $sorted=$handle.parent()
+							if (ev.keyCode==38) {
+								$sorted.prev().before($sorted)
+								$handle.focus()
+								updateArrayEntries()
+								return false
+							} else if (ev.keyCode==40) {
+								$sorted.next().after($sorted)
+								$handle.focus()
+								updateArrayEntries()
+								return false
+							}
+						}),
+					writeOption(option),
+					$("<div tabindex='0' class='delete' title='"+i18n('options-output.delete')+"'>").click(function(){
+						$(this).parent().remove()
+						updateArrayEntries()
+					}).keydown(function(ev){
+						if (ev.keyCode==13 || ev.keyCode==32) {
+							$(this).parent().remove()
+							updateArrayEntries()
+							return false
 						}
 					})
-					.on('drop',function(ev){
-						ev.preventDefault()
-					})
-					.on('dragend',function(ev){
-						ev.preventDefault()
-						if ($dragged) {
-							$dragged.removeClass('ghost')
-							$dragged=null
+				).on('dragover',function(ev){
+					ev.preventDefault()
+					ev.originalEvent.dataTransfer.dropEffect='move'
+					const $target=$(this)
+					if ($dragged) {
+						if ($target.nextAll().is($dragged)) {
+							$target.before($dragged)
+							updateArrayEntries()
+						} else if ($target.prevAll().is($dragged)) {
+							$target.after($dragged)
+							updateArrayEntries()
 						}
-					})
+					}
+				}).on('drop',function(ev){
+					ev.preventDefault()
+				}).on('dragend',function(ev){
+					ev.preventDefault()
+					if ($dragged) {
+						$dragged.removeClass('ghost')
+						$dragged=null
+					}
+				})
 			}
-			option.$=$("<fieldset>").append("<legend>"+i18n('options.'+option.fullName)+"</legend>")
-				.append(
-					$entries=$("<div>")
-						.append(option.entries.map(writeDraggableOption))
-				)
+			option.$=$("<fieldset>").append("<legend>"+i18n('options.'+option.fullName)+"</legend>").append(
+				$entries=$("<div>").append(option.entries.map(writeDraggableOption))
+			)
 			const $buttons=$("<div>")
 			option.availableTypes.forEach((type,i)=>{
 				if (i) $buttons.append(" ")
 				$buttons.append(
-					$("<button type='button'>")
-						.html(i18n('options.'+option.fullName+'.'+type+'.add'))
-						.click(function(){
-							const entry=option.addEntry(type)
-							$entries.append(writeDraggableOption(entry))
-						})
+					$("<button type='button'>").html(
+						i18n('options.'+option.fullName+'.'+type+'.add')
+					).click(function(){
+						const entry=option.addEntry(type)
+						$entries.append(writeDraggableOption(entry))
+					})
 				)
 			})
 			option.$.append($buttons)
