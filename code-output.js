@@ -55,32 +55,34 @@ class CodeOutput {
 			}
 		}
 		const writeFormattingControls=()=>{
-			return $("<details>")
-				.append("<summary>Formatting</summary>")
-				.append($("<div>")
-					.append($("<label>")
-						.append($indentCheckbox=$("<input type='checkbox' checked>").change(extractCode))
-						.append(" indent with tabs")
+			return $("<details>").append(
+				"<summary>Formatting</summary>",
+				$("<div>").append(
+					$("<label>").append(
+						$indentCheckbox=$("<input type='checkbox' checked>").change(extractCode),
+						" indent with tabs"
+					)
+				),
+				$("<div>").append(
+					$("<label>").append(
+						$indentNumber=$("<input type='number' min='0' max='32' value='4' required>").on('input change',extractCode),
+						" spaces per indent"
+					)
+				),
+				$("<div>").append(
+					$("<label>").append(
+						$jsSemicolonsCheckbox=$("<input type='checkbox'>").change(extractCode),
+						" JavaScript semicolons"
 					)
 				)
-				.append($("<div>")
-					.append($("<label>")
-						.append($indentNumber=$("<input type='number' min='0' max='32' value='4' required>").on('input change',extractCode))
-						.append(" spaces per indent")
-					)
-				)
-				.append($("<div>")
-					.append($("<label>")
-						.append($jsSemicolonsCheckbox=$("<input type='checkbox'>").change(extractCode))
-						.append(" JavaScript semicolons")
-					)
-				)
+			)
 		}
 		const writeSection=(sectionName)=>{
 			const extractable=sectionName!='html'
 			const $summary=$("<summary>"+i18n('code-output.section.'+sectionName)+"</summary>")
 			let $saveButton
-			$summary.append(" ").append(
+			$summary.append(
+				" ",
 				$sectionModeInput[sectionName]=$("<select>").append(
 					(sectionName=='html'
 						? ['full','body']
@@ -93,9 +95,8 @@ class CodeOutput {
 						$saveButton.prop('disabled',this.value=='embed')
 					}
 					extractCode()
-				})
-			)
-			$summary.append(" ").append(
+				}),
+				" ",
 				/*
 				// doesn't work in IE
 				$("<a download='"+section.filename+"'><button type='button'>"+i18n('code-output.save')+"</button></a>").click(function(){
@@ -127,15 +128,17 @@ class CodeOutput {
 			if (extractable) {
 				$saveButton.prop('disabled',$sectionModeInput[sectionName].val()=='embed')
 			}
-			return $("<details open>")
-				.append($summary)
-				.append($sectionCode[sectionName]=$("<div class='code'>"))
+			return $("<details open>").append(
+				$summary,
+				$sectionCode[sectionName]=$("<div class='code'>")
+			)
 		}
-		const $output=$("<div class='code-output'>").append(this.writeButtons(getCode,getFormatting,i18n))
-			.append(writeFormattingControls())
-			.append(writeSection('html'))
-			.append(writeSection('css'))
-			.append(writeSection('js'))
+		const $output=$("<div class='code-output'>").append(this.writeButtons(getCode,getFormatting,i18n)).append(
+			writeFormattingControls(),
+			writeSection('html'),
+			writeSection('css'),
+			writeSection('js')
+		)
 		if (!window.hljs) {
 			$output.append("<p>"+i18n('code-output.warning.no-hljs')+"</p>")
 		}
@@ -173,25 +176,24 @@ class CodeOutput {
 					code.get(getFormatting()).join("\n")
 				)
 				w.document.close()
-			})
-		).append(" ").append(
+			}),
+			" ",
 			$("<button type='button'>Open in CodePen</button>").click(function(){
 				// http://blog.codepen.io/documentation/api/prefill/
 				const code=getCode()
 				const sections=code.extractSections({html:'body',css:'paste',js:'paste'})
 				const getSection=sectionName=>
 					sections[sectionName].get(getFormatting()).join("\n")
-				$("<form method='post' action='http://codepen.io/pen/define/'>")
-					.append($("<input type='hidden' name='data'>").val(JSON.stringify({
+				$("<form method='post' action='http://codepen.io/pen/define/'>").append(
+					$("<input type='hidden' name='data'>").val(JSON.stringify({
 						html: getSection('html'),
 						css: getSection('css'),
 						js: getSection('js'),
 						title: code.title,
-					})))
-					.appendTo('body')
-					.submit()
-			})
-		).append(" ").append(
+					}))
+				).appendTo('body').submit()
+			}),
+			" ",
 			$("<button type='button'>Open in JSFiddle</button>").click(function(){
 				// http://doc.jsfiddle.net/api/post.html
 				const code=getCode()
@@ -202,14 +204,13 @@ class CodeOutput {
 					$("<input type='hidden'>")
 						.attr('name',sectionName)
 						.val(getSection(sectionName))
-				$("<form method='post' action='http://jsfiddle.net/api/post/library/pure/'>")
-					.append(writeSection('html'))
-					.append(writeSection('css'))
-					.append(writeSection('js'))
-					.append($("<input type='hidden' name='title'>").val(code.title))
-					.append("<input type='hidden' name='wrap' value='b'>")
-					.appendTo('body')
-					.submit()
+				$("<form method='post' action='http://jsfiddle.net/api/post/library/pure/'>").append(
+					writeSection('html'),
+					writeSection('css'),
+					writeSection('js'),
+					$("<input type='hidden' name='title'>").val(code.title),
+					"<input type='hidden' name='wrap' value='b'>"
+				).appendTo('body').submit()
 			})
 		)
 	}
