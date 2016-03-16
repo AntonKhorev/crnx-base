@@ -172,6 +172,11 @@ Option.Number = class extends Option.NonBoolean { // requires precision, gives s
 		this.availableMin=settings.availableMin
 		this.availableMax=settings.availableMax
 	}
+	fix() {
+		const fixed=super.fix()
+		fixed.precision=this.precision
+		return fixed
+	}
 }
 
 Option.Collection = class extends Option.Base {
