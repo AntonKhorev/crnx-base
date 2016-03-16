@@ -1,17 +1,10 @@
 'use strict'
 
-const formatNumberInternal=(number,precision,keepDot)=>{
-	if (precision===undefined) precision=number.precision
-	if (precision===undefined) throw new Error('formatNumber received no precision')
-	let s=Number(number).toFixed(precision)
-	if (precision>0) s=s.replace(/\.?0*$/,'')
-	if (keepDot && s.indexOf('.')<0) s+='.0'
-	return s
-}
+const formatNumbers=require('./format-numbers')
 
-const formatNumber=(number,precision)=>formatNumberInternal(number,precision)
-formatNumber.html=(number,precision)=>formatNumberInternal(number,precision)
-formatNumber.js=(number,precision)=>formatNumberInternal(number,precision)
-formatNumber.glsl=(number,precision)=>formatNumberInternal(number,precision,true)
+const formatNumber=(number,precision)=>formatNumbers     ([number],precision)[0]
+formatNumber.html =(number,precision)=>formatNumbers.html([number],precision)[0]
+formatNumber.js   =(number,precision)=>formatNumbers.js  ([number],precision)[0]
+formatNumber.glsl =(number,precision)=>formatNumbers.glsl([number],precision)[0]
 
 module.exports=formatNumber

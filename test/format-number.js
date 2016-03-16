@@ -45,14 +45,23 @@ describe("formatNumber",()=>{
 		const s=formatNumber(10,0)
 		assert.equal(s,"10")
 	})
-	it("formats number for html",()=>{
+})
+
+describe("formatNumber.html",()=>{
+	it("formats number",()=>{
 		const s=formatNumber.html(123.456,3)
 		assert.equal(s,"123.456")
 	})
+})
+
+describe("formatNumber.js",()=>{
 	it("formats number for js",()=>{
 		const s=formatNumber.js(123.456,3)
 		assert.equal(s,"123.456")
 	})
+})
+
+describe("formatNumber.glsl",()=>{
 	it("formats number for glsl",()=>{
 		const s=formatNumber.glsl(123.456,3)
 		assert.equal(s,"123.456")
