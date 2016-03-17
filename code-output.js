@@ -3,12 +3,13 @@
 const debounce=require('./fake-lodash/debounce')
 const repeat=require('./fake-lodash/repeat')
 
+const getHtmlDataUri=(html)=>'data:text/html;charset=utf-8,'+encodeURIComponent(html)
+
 class CodeOutput {
 	constructor(generateCode,i18n) {
 		let code=generateCode()
 		const $sectionCode={}, $sectionModeInput={}
 		let $indentCheckbox, $indentNumber, $jsSemicolonsCheckbox
-		const getHtmlDataUri=(html)=>'data:text/html;charset=utf-8,'+encodeURIComponent(html)
 		const getCode=()=>code
 		const getFormatting=()=>{
 			let indent='\t'
@@ -163,19 +164,24 @@ class CodeOutput {
 	writeButtons(getCode,getFormatting,i18n) {
 		return $("<div>").append(
 			$("<button type='button'>"+i18n('code-output.run')+"</button>").click(function(){
-				/*
-				// doesn't work in IE
-				window.open(getHtmlDataUri(
-					code.get(this.formatting).join("\n")
-				),"generatedCode")
-				*/
 				const code=getCode()
-				const w=window.open("","generatedCode")
-				w.document.open()
-				w.document.write(
-					code.get(getFormatting()).join("\n")
-				)
-				w.document.close()
+				const html=code.get(getFormatting()).join("\n")
+				if (navigator.msSaveOrOpenBlob) {
+					// has drawbacks:
+					// * Firefox and Chrome have trouble showing the source
+					// * weird bug in Firefox:
+					//   in webgl-starter: add z-rotation, slider input, add speed, slider input, run, change rotation range, run again
+					// * Firefox shows url of a generator page
+					const w=window.open("","generatedCode")
+					w.document.open()
+					w.document.write(html)
+					w.document.close()
+				} else {
+					// has drawbacks:
+					// * doesn't work in IE b/c they decided it's security risk
+					// * long url
+					window.open(getHtmlDataUri(html),"generatedCode")
+				}
 			}),
 			" ",
 			$("<button type='button'>Open in CodePen</button>").click(function(){
