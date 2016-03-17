@@ -9,13 +9,18 @@ module.exports=function(inStrings){
 			const idStart=match[1]
 			const idMids=match[2].split(',')
 			const idEnd=match[3]
-			if ((typeof string=='string') && (match=expandRegexp.exec(string))) {
+			if (match=expandRegexp.exec(string)) {
 				const stringStart=match[1]
-				const stringMids=match[2].split(',')
+				const stringMidsStr=match[2]
+				const stringMids=stringMidsStr.split(',')
 				const stringEnd=match[3]
 				idMids.forEach((idMid,i)=>{
 					const stringMid=stringMids[i]
-					expandIdAndString(idStart+idMid+idEnd,stringStart+stringMid+stringEnd)
+					if (stringMidsStr!='') {
+						expandIdAndString(idStart+idMid+idEnd,stringStart+stringMid+stringEnd)
+					} else {
+						expandIdAndString(idStart+idMid+idEnd,stringStart+idMid+stringEnd)
+					}
 				})
 			} else {
 				idMids.forEach(idMid=>{
