@@ -171,10 +171,12 @@ Option.Number = class extends Option.NonBoolean { // requires precision, gives s
 		super(...arguments)
 		this.availableMin=settings.availableMin
 		this.availableMax=settings.availableMax
+		this.unit=settings.unit
 	}
 	fix() {
 		const fixed=super.fix()
 		fixed.precision=this.precision
+		fixed.unit=this.unit
 		return fixed
 	}
 }

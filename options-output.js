@@ -1,5 +1,6 @@
 'use strict'
 
+const formatNumbers=require('./format-numbers')
 const Option=require('./option-classes')
 
 class OptionsOutput {
@@ -92,14 +93,18 @@ class OptionsOutput {
 			const id=generateId()
 			let $sliderInput,$numberInput
 			let $rangeMinInput,$rangeMaxInput
+			const fmt=formatNumbers({
+				min: option.availableMin,
+				max: option.availableMax
+			},option.precision)
 			return option.$=$("<div class='option'>").append(
 				"<label for='"+id+"'>"+i18n('options.'+option.fullName)+":</label>",
-				" <span class='min'>"+option.availableMin+"</span> ",
+				" <span class='min'>"+i18n.numberWithUnits(fmt.min,option.unit)+"</span> ",
 				$sliderInput=setInputAttrsAndListeners(
 					$("<input type='range' id='"+id+"'>"),
 					()=>$numberInput
 				),
-				" <span class='max'>"+option.availableMax+"</span> ",
+				" <span class='max'>"+i18n.numberWithUnits(fmt.max,option.unit)+"</span> ",
 				$numberInput=setInputAttrsAndListeners(
 					$("<input type='number' required>"),
 					()=>$sliderInput
