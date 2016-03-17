@@ -122,6 +122,14 @@ class OptionsOutput {
 				// have to make drag handler 'draggable', not the whole item
 				// because inputs and labels don't like to be inside 'draggable'
 				// http://stackoverflow.com/questions/13017177/selection-disabled-while-using-html5-drag-and-drop
+				const moveUp=$moved=>{
+					$moved.prev().before($moved)
+					updateArrayEntries()
+				}
+				const moveDown=$moved=>{
+					$moved.next().after($moved)
+					updateArrayEntries()
+				}
 				return $("<div class='draggable-with-handle'>").data('option',option).append(
 					$("<div draggable='true' tabindex='0' title='"+i18n('options-output.drag')+"'>")
 						.on('dragstart',function(ev){
@@ -139,14 +147,12 @@ class OptionsOutput {
 							const $handle=$(this)
 							const $sorted=$handle.parent()
 							if (ev.keyCode==38) {
-								$sorted.prev().before($sorted)
+								moveUp($sorted)
 								$handle.focus()
-								updateArrayEntries()
 								return false
 							} else if (ev.keyCode==40) {
-								$sorted.next().after($sorted)
+								moveDown($sorted)
 								$handle.focus()
-								updateArrayEntries()
 								return false
 							}
 						}),
@@ -166,12 +172,23 @@ class OptionsOutput {
 					ev.originalEvent.dataTransfer.dropEffect='move'
 					const $target=$(this)
 					if ($dragged) {
-						if ($target.nextAll().is($dragged)) {
-							$target.before($dragged)
-							updateArrayEntries()
+						if ($target.next().is($dragged)) {
+							const dh=$dragged.height()
+							const y=ev.pageY-$target.offset().top
+							if (y<dh) {
+								moveUp($dragged)
+							}
+						} else if ($target.nextAll().is($dragged)) {
+							moveUp($dragged)
+						} else if ($target.prev().is($dragged)) {
+							const th=$target.height()
+							const dh=$dragged.height()
+							const y=ev.pageY-$target.offset().top
+							if (y>th-dh) {
+								moveDown($dragged)
+							}
 						} else if ($target.prevAll().is($dragged)) {
-							$target.after($dragged)
-							updateArrayEntries()
+							moveDown($dragged)
 						}
 					}
 				}).on('drop',function(ev){
