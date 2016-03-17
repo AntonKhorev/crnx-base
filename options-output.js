@@ -47,17 +47,41 @@ class OptionsOutput {
 			)
 		})
 		optionClassWriters.set(Option.Select,(option,writeOption,i18n,generateId)=>{
+			const valueId=value=>'options.'+option.fullName+'.'+value
+			const valueInfoId=value=>'options-info.'+option.fullName+'.'+value
 			const id=generateId()
-			return option.$=$("<div class='option'>").append(
+			let $select
+			option.$=$("<div class='option'>").append(
 				"<label for='"+id+"'>"+i18n('options.'+option.fullName)+":</label> ",
-				$("<select id='"+id+"'>").append(
+				$select=$("<select id='"+id+"'>").append(
 					option.availableValues.map(availableValue=>
-						$("<option>").val(availableValue).html(i18n('options.'+option.fullName+'.'+availableValue))
+						$("<option>").val(availableValue).html(i18n(valueId(availableValue)))
 					)
 				).val(option.value).change(function(){
 					option.value=this.value
 				})
 			)
+			if (option.availableValues.some(availableValue=>i18n.has(valueInfoId(availableValue)))) {
+				let $tip,$tipContent
+				option.$.append(
+					" ",
+					$tip=$("<span class='tip-info'>").append(
+						$tipContent=$("<span class='tip-content'>")
+					)
+				)
+				const handler=function(){
+					if (i18n.has(valueInfoId(this.value))) {
+						$tipContent.html(i18n(valueInfoId(this.value)))
+						$tip.show()
+					} else {
+						$tip.hide()
+						$tipContent.empty()
+					}
+				}
+				handler.call($select[0])
+				$select.change(handler)
+			}
+			return option.$
 		})
 		optionClassWriters.set(Option.Text,(option,writeOption,i18n,generateId)=>{
 			const id=generateId()

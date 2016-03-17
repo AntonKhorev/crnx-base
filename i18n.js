@@ -13,6 +13,7 @@ module.exports=function(langStrings){
 			}
 		}
 		i18n.lang=lang
+		i18n.has=id=>strings[id]!==undefined
 		if (lang=='en') {
 			i18n.number=function(n){
 				return String(n).replace('-','−')
