@@ -57,23 +57,23 @@ class CodeOutput {
 		}
 		const writeFormattingControls=()=>{
 			return $("<details>").append(
-				"<summary>Formatting</summary>",
+				"<summary>"+i18n('code-output.formatting')+"</summary>",
 				$("<div>").append(
 					$("<label>").append(
 						$indentCheckbox=$("<input type='checkbox' checked>").change(extractCode),
-						" indent with tabs"
+						" "+i18n('code-output.formatting.indent')
 					)
 				),
 				$("<div>").append(
 					$("<label>").append(
 						$indentNumber=$("<input type='number' min='0' max='32' value='4' required>").on('input change',extractCode),
-						" spaces per indent"
+						" "+i18n('code-output.formatting.indentNumber')
 					)
 				),
 				$("<div>").append(
 					$("<label>").append(
 						$jsSemicolonsCheckbox=$("<input type='checkbox'>").change(extractCode),
-						" JavaScript semicolons"
+						" "+i18n('code-output.formatting.jsSemicolons')
 					)
 				)
 			)
@@ -184,7 +184,7 @@ class CodeOutput {
 				}
 			}),
 			" ",
-			$("<button type='button'>Open in CodePen</button>").click(function(){
+			$("<button type='button'>"+i18n('code-output.open.codepen')+"</button>").click(function(){
 				// http://blog.codepen.io/documentation/api/prefill/
 				const code=getCode()
 				const sections=code.extractSections({html:'body',css:'paste',js:'paste'})
@@ -200,7 +200,7 @@ class CodeOutput {
 				).appendTo('body').submit().remove()
 			}),
 			" ",
-			$("<button type='button'>Open in JSFiddle</button>").click(function(){
+			$("<button type='button'>"+i18n('code-output.open.jsfiddle')+"</button>").click(function(){
 				// http://doc.jsfiddle.net/api/post.html
 				const code=getCode()
 				const sections=code.extractSections({html:'body',css:'paste',js:'paste'})
