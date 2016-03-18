@@ -1,6 +1,6 @@
 'use strict'
 
-module.exports=function(strings){
+module.exports=lang=>strings=>{
 	const additionalStringsPrefix='code-output'
 	const additionalStrings={
 		'save': "Save source code",
