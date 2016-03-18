@@ -190,14 +190,14 @@ class CodeOutput {
 				const sections=code.extractSections({html:'body',css:'paste',js:'paste'})
 				const getSection=sectionName=>
 					sections[sectionName].get(getFormatting()).join("\n")
-				$("<form method='post' action='http://codepen.io/pen/define/'>").append(
+				$("<form method='post' action='http://codepen.io/pen/define/' target='codepenGeneratedCode'>").append(
 					$("<input type='hidden' name='data'>").val(JSON.stringify({
 						html: getSection('html'),
 						css: getSection('css'),
 						js: getSection('js'),
 						title: code.title,
 					}))
-				).appendTo('body').submit()
+				).appendTo('body').submit().remove()
 			}),
 			" ",
 			$("<button type='button'>Open in JSFiddle</button>").click(function(){
@@ -210,13 +210,13 @@ class CodeOutput {
 					$("<input type='hidden'>")
 						.attr('name',sectionName)
 						.val(getSection(sectionName))
-				$("<form method='post' action='http://jsfiddle.net/api/post/library/pure/'>").append(
+				$("<form method='post' action='http://jsfiddle.net/api/post/library/pure/' target='jsfiddleGeneratedCode'>").append(
 					writeSection('html'),
 					writeSection('css'),
 					writeSection('js'),
 					$("<input type='hidden' name='title'>").val(code.title),
 					"<input type='hidden' name='wrap' value='b'>"
-				).appendTo('body').submit()
+				).appendTo('body').submit().remove()
 			})
 		)
 	}
