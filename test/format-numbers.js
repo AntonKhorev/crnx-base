@@ -29,6 +29,15 @@ describe("formatNumbers",()=>{
 		assert.equal(ss.b,"654.321")
 		assert.equal(ss.c,"787.878")
 	})
+	it("formats an array of numbers",()=>{
+		const ss=formatNumbers([
+			123.456,654.321,787.878
+		],3)
+		assert(Array.isArray(ss))
+		assert.deepEqual(ss,[
+			"123.456","654.321","787.878"
+		])
+	})
 })
 
 describe("formatNumbers.html",()=>{

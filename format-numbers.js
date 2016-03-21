@@ -25,7 +25,7 @@ const formatNumbersInternal=(numbers,precision,keepDot,noPlus)=>{
 			maxPrecision=p
 		}
 	}
-	const ss={}
+	const ss=Array.isArray(numbers)?[]:{}
 	for (let i in numbers) {
 		const number=Number(numbers[i])
 		let s=number.toFixed(maxPrecision)
