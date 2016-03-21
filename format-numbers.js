@@ -16,8 +16,10 @@ const formatNumbersInternal=(numbers,precision,keepDot,noPlus)=>{
 			throw new Error('formatNumbers received no precision')
 		}
 		const number=Number(numbers[i])
-		if (number<0) hasNegative=true
 		let s=number.toFixed(p)
+		if (Number(s)<0) { // protects against negative zero
+			hasNegative=true
+		}
 		if (p>0) {
 			p-=s.match(/0*$/)[0].length
 		}
@@ -29,6 +31,9 @@ const formatNumbersInternal=(numbers,precision,keepDot,noPlus)=>{
 	for (let i in numbers) {
 		const number=Number(numbers[i])
 		let s=number.toFixed(maxPrecision)
+		if (Number(s)>=0 && s.charAt(0)=='-') {  // protects against negative zero
+			s=s.slice(1)
+		}
 		if (!noPlus && hasNegative && number>0) {
 			s='+'+s
 		}

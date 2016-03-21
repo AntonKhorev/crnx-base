@@ -38,6 +38,14 @@ describe("formatNumbers",()=>{
 			"123.456","654.321","787.878"
 		])
 	})
+	it("doesn't think that small negative value is negative",()=>{
+		const ss=formatNumbers([
+			-0.0001,0.001
+		],3)
+		assert.deepEqual(ss,[
+			"0.000","0.001"
+		])
+	})
 })
 
 describe("formatNumbers.html",()=>{
