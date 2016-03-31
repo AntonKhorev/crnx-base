@@ -1,8 +1,18 @@
 // no options
 module.exports=function(func,wait){
 	var timeoutId=null
-	return function(){
+	var debounced=function(){
 		clearTimeout(timeoutId)
-		timeoutId=setTimeout(func,wait)
+		timeoutId=setTimeout(function(){
+			timeoutId=null
+			func()
+		},wait)
 	}
+	debounced.flush=function(){
+		if (timeoutId) {
+			timeoutId=null
+			func()
+		}
+	}
+	return debounced
 }

@@ -7,10 +7,8 @@ const getHtmlDataUri=(html)=>'data:text/html;charset=utf-8,'+encodeURIComponent(
 
 class CodeOutput {
 	constructor(generateCode,i18n) {
-		let code=generateCode()
 		const $sectionCode={}, $sectionModeInput={}
 		let $indentCheckbox, $indentNumber, $jsSemicolonsCheckbox
-		const getCode=()=>code
 		const getFormatting=()=>{
 			let indent='\t'
 			if (!$indentCheckbox.prop('checked')) {
@@ -33,7 +31,7 @@ class CodeOutput {
 		})
 		const extractCode=()=>{
 			const sectionModes=getSectionModes()
-			const sections=code.extractSections(sectionModes)
+			const sections=this.code.extractSections(sectionModes)
 			for (let sectionName in sections) {
 				if (sectionModes[sectionName]=='embed') {
 					$sectionCode[sectionName].empty().append(
@@ -79,6 +77,7 @@ class CodeOutput {
 			)
 		}
 		const writeSection=(sectionName)=>{
+			const This=this
 			const extractable=sectionName!='html'
 			const $summary=$("<summary>"+i18n('code-output.section.'+sectionName)+"</summary>")
 			let $saveButton
@@ -92,6 +91,7 @@ class CodeOutput {
 						$("<option>").val(mode).html(i18n('code-output.mode.'+mode))
 					)
 				).change(function(){
+					This.update.flush()
 					if (extractable) {
 						$saveButton.prop('disabled',this.value=='embed')
 					}
@@ -108,7 +108,8 @@ class CodeOutput {
 				})
 				*/
 				$saveButton=$("<button type='button'>"+i18n('code-output.save')+"</button>").click(function(){
-					const section=code.extractSections(getSectionModes())[sectionName]
+					This.update.flush()
+					const section=This.code.extractSections(getSectionModes())[sectionName]
 					// http://stackoverflow.com/a/24354303
 					const blob=new Blob(
 						[section.get(getFormatting()).join("\n")],
@@ -134,38 +135,42 @@ class CodeOutput {
 				$sectionCode[sectionName]=$("<div class='code'>")
 			)
 		}
-		const $output=$("<div class='code-output'>").append(this.writeButtons(getCode,getFormatting,i18n)).append(
+		const $sections={}
+		const $output=$("<div class='code-output'>").append(this.writeButtons(getFormatting,i18n)).append(
 			writeFormattingControls(),
-			writeSection('html'),
-			writeSection('css'),
-			writeSection('js')
+			$sections['html']=writeSection('html'),
+			$sections['css']=writeSection('css'),
+			$sections['js']=writeSection('js')
 		)
 		if (!window.hljs) {
 			$output.append("<p>"+i18n('code-output.warning.no-hljs')+"</p>")
 		}
-		$output.append(this.writeButtons(getCode,getFormatting,i18n))
-		extractCode()
+		$output.append(this.writeButtons(getFormatting,i18n))
 
 		const delay=200
-		const update=debounce(()=>{
-			code=generateCode()
-			extractCode()
-		},delay)
+		const updateFn=()=>{
+			this.actualUpdate(generateCode,extractCode)
+		}
+		setTimeout(updateFn,0)
+		this.update=debounce(updateFn,delay)
 
 		// public props:
+		//this.code // set by actualUpdate()
 		this.$output=$output
-		this.update=update
+		this.$sections=$sections
+		//this.update
 	}
 
 	// private interface:
 	get refs() {
 		return {}
 	}
-	writeButtons(getCode,getFormatting,i18n) {
+	writeButtons(getFormatting,i18n) {
+		const This=this
 		return $("<div>").append(
 			$("<button type='button'>"+i18n('code-output.run')+"</button>").click(function(){
-				const code=getCode()
-				const html=code.get(getFormatting()).join("\n")
+				This.update.flush()
+				const html=This.code.get(getFormatting()).join("\n")
 				if (navigator.msSaveOrOpenBlob) {
 					// has drawbacks:
 					// * Firefox and Chrome have trouble showing the source
@@ -185,9 +190,9 @@ class CodeOutput {
 			}),
 			" ",
 			$("<button type='button'>"+i18n('code-output.open.codepen')+"</button>").click(function(){
+				This.update.flush()
 				// http://blog.codepen.io/documentation/api/prefill/
-				const code=getCode()
-				const sections=code.extractSections({html:'body',css:'paste',js:'paste'})
+				const sections=This.code.extractSections({html:'body',css:'paste',js:'paste'})
 				const getSection=sectionName=>
 					sections[sectionName].get(getFormatting()).join("\n")
 				$("<form method='post' action='http://codepen.io/pen/define/' target='codepenGeneratedCode'>").append(
@@ -195,15 +200,15 @@ class CodeOutput {
 						html: getSection('html'),
 						css: getSection('css'),
 						js: getSection('js'),
-						title: code.title,
+						title: This.code.title,
 					}))
 				).appendTo('body').submit().remove()
 			}),
 			" ",
 			$("<button type='button'>"+i18n('code-output.open.jsfiddle')+"</button>").click(function(){
+				This.update.flush()
 				// http://doc.jsfiddle.net/api/post.html
-				const code=getCode()
-				const sections=code.extractSections({html:'body',css:'paste',js:'paste'})
+				const sections=This.code.extractSections({html:'body',css:'paste',js:'paste'})
 				const getSection=sectionName=>
 					sections[sectionName].get(getFormatting()).join("\n")
 				const writeSection=sectionName=>
@@ -214,11 +219,15 @@ class CodeOutput {
 					writeSection('html'),
 					writeSection('css'),
 					writeSection('js'),
-					$("<input type='hidden' name='title'>").val(code.title),
+					$("<input type='hidden' name='title'>").val(This.code.title),
 					"<input type='hidden' name='wrap' value='b'>"
 				).appendTo('body').submit().remove()
 			})
 		)
+	}
+	actualUpdate(generateCode,extractCode) {
+		this.code=generateCode()
+		extractCode()
 	}
 }
 
