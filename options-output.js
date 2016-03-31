@@ -240,8 +240,7 @@ class OptionsOutput {
 					$("<button type='button'>").html(
 						i18n('options.'+option.fullName+'.'+type+'.add')
 					).click(function(){
-						const entry=option.addEntry(type)
-						$entries.append(writeDraggableOption(entry))
+						option.addEntry(type,entry=>$entries.append(writeDraggableOption(entry)))
 					})
 				)
 			})
