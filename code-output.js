@@ -60,21 +60,27 @@ class CodeOutput {
 				"<summary>"+i18n('code-output.formatting')+"</summary>",
 				$("<div>").append(
 					$("<label>").append(
-						$indentCheckbox=$("<input type='checkbox' checked>").change(updateIndent),
+						$indentCheckbox=$("<input type='checkbox'>")
+							.prop('checked',this.formatting.indent=='\t')
+							.change(updateIndent),
 						" "+i18n('code-output.formatting.indent')
 					)
 				),
 				$("<div>").append(
 					$("<label>").append(
-						$indentNumber=$("<input type='number' min='0' max='32' value='4' required>").on('input change',updateIndent),
+						$indentNumber=$("<input type='number' min='0' max='32' required>")
+							.val(this.formatting.indent=='\t'?4:this.formatting.indent.length)
+							.on('input change',updateIndent),
 						" "+i18n('code-output.formatting.indentNumber')
 					)
 				),
 				$("<div>").append(
 					$("<label>").append(
-						$("<input type='checkbox'>").change(function(){
-							This.formatting.jsSemicolons=this.checked
-						}),
+						$("<input type='checkbox'>")
+							.prop('checked',this.formatting.jsSemicolons)
+							.change(function(){
+								This.formatting.jsSemicolons=this.checked
+							}),
 						" "+i18n('code-output.formatting.jsSemicolons')
 					)
 				)
