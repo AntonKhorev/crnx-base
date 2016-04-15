@@ -118,8 +118,9 @@ class CodeOutput {
 	}
 	initDomProps() {
 		this.$sectionCode={}
+		this.$saveButtons={}
 	}
-	applyUpdatedCode(i18n) { // TODO pass code
+	applyUpdatedCode(i18n) { // TODO pass code to avoid recursion on accessing this.code... or not b/c reading this.sectionModes and like
 		const sections=this.code.extractSections(this.sectionModes)
 		for (let sectionName in sections) {
 			if (this.sectionModes[sectionName]=='embed') {
@@ -139,6 +140,9 @@ class CodeOutput {
 				if (window.hljs) {
 					hljs.highlightBlock($code[0])
 				}
+			}
+			if (sectionName!='html') { // extractable section
+				this.$saveButtons[sectionName].prop('disabled',this.sectionModes[sectionName]=='embed')
 			}
 		}
 	}
@@ -201,9 +205,7 @@ class CodeOutput {
 	}
 	writeSectionSummary(sectionName,i18n) {
 		const This=this
-		const extractable=sectionName!='html'
 		const $summary=$("<summary>"+i18n('code-output.section.'+sectionName)+"</summary>")
-		let $saveButton
 		$summary.append(
 			" ",
 			$("<select>").append(
@@ -214,9 +216,6 @@ class CodeOutput {
 					$("<option>").val(mode).html(i18n('code-output.mode.'+mode))
 				)
 			).val(this.sectionModes[sectionName]).change(function(){
-				if (extractable) {
-					$saveButton.prop('disabled',this.value=='embed')
-				}
 				This.sectionModes[sectionName]=this.value
 			}),
 			" ",
@@ -227,7 +226,7 @@ class CodeOutput {
 			//		section.get(this.formatting).join("\n")
 			//	))
 			//})
-			$saveButton=$("<button type='button'>"+i18n('code-output.save')+"</button>").click(function(){
+			this.$saveButtons[sectionName]=$("<button type='button'>"+i18n('code-output.save')+"</button>").click(function(){
 				const section=This.code.extractSections(This.sectionModes)[sectionName]
 				// http://stackoverflow.com/a/24354303
 				const blob=new Blob(
@@ -246,9 +245,6 @@ class CodeOutput {
 				}
 			})
 		)
-		if (extractable) {
-			$saveButton.prop('disabled',this.sectionModes[sectionName]=='embed')
-		}
 		return $summary
 	}
 }
