@@ -317,12 +317,17 @@ Option.Array = class extends Option.Base { // TODO consider extending Collection
 		this._entries=entries
 		this.updateCallback()
 	}
+	/*
 	addEntry(type,addCallback) {
 		const entry=this.availableConstructors.get(type)()
 		this._entries.push(entry)
 		if (addCallback) addCallback(entry) // typically output entry ui - for symmetry with set entries, which is done after ui is updated
 		this.updateCallback()
 		return entry
+	}
+	*/
+	makeEntry(type,data) {
+		return this.availableConstructors.get(type)(data)
 	}
 	export() {
 		let defaultType=this.availableTypes[0]
