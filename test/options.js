@@ -246,11 +246,13 @@ describe("Options",()=>{
 		it("exports changed data",()=>{
 			const options=new TestOptions
 			options.root.entries[0].value=true
-			options.root.entries[1].addEntry('scope')
-			options.root.entries[1].addEntry('shape')
+			options.root.entries[1].entries=[
+				options.root.entries[1].makeEntry('scope'),
+				options.root.entries[1].makeEntry('shape'),
+				options.root.entries[1].makeEntry('shape'),
+				options.root.entries[1].makeEntry('projection'),
+			]
 			options.root.entries[1].entries[1].value='triangle'
-			options.root.entries[1].addEntry('shape')
-			options.root.entries[1].addEntry('projection')
 			options.root.entries[1].entries[3].value='perspective'
 			assert.deepEqual(options.export(),{
 				chk: true,
@@ -265,8 +267,10 @@ describe("Options",()=>{
 		it("fixes data",()=>{
 			const options=new TestOptions
 			options.root.entries[0].value=true
-			options.root.entries[1].addEntry('scope')
-			options.root.entries[1].addEntry('shape')
+			options.root.entries[1].entries=[
+				options.root.entries[1].makeEntry('scope'),
+				options.root.entries[1].makeEntry('shape'),
+			]
 			options.root.entries[1].entries[1].value='triangle'
 			const fixed=options.fix()
 			assert.equal(fixed.chk,true)
@@ -284,20 +288,8 @@ describe("Options",()=>{
 			options.updateCallback=()=>{
 				updated=true
 			}
-			options.root.entries[1].addEntry('shape')
-			assert.equal(updated,true,"didn't call update")
-		})
-		it("calls update when rewriting array entries",()=>{
-			const options=new TestOptions
-			options.root.entries[1].addEntry('shape')
-			options.root.entries[1].addEntry('scope')
-			let updated=false
-			options.updateCallback=()=>{
-				updated=true
-			}
 			options.root.entries[1].entries=[
-				options.root.entries[1].entries[1],
-				options.root.entries[1].entries[0],
+				options.root.entries[1].makeEntry('shape'),
 			]
 			assert.equal(updated,true,"didn't call update")
 		})
@@ -318,7 +310,9 @@ describe("Options",()=>{
 			const options=new TestOptions
 			const arrayEntry=options.root.entries[0]
 			assert.equal(arrayEntry.entries.length,0)
-			arrayEntry.addEntry('grp')
+			arrayEntry.entries=[
+				arrayEntry.makeEntry('grp'),
+			]
 			assert.equal(arrayEntry.entries.length,1)
 			assert.equal(arrayEntry.entries[0].entries[0].name,'txt')
 			assert.equal(arrayEntry.entries[0].entries[0].value,'blabla')
@@ -357,7 +351,9 @@ describe("Options",()=>{
 		it("adds array entry",()=>{
 			const options=new TestOptions
 			const arrayEntry=options.root.entries[0]
-			arrayEntry.addEntry('biquad')
+			arrayEntry.entries=[
+				arrayEntry.makeEntry('biquad'),
+			]
 			assert.equal(arrayEntry.entries.length,1)
 			assert.equal(arrayEntry.entries[0].entries[0].name,'type')
 			assert.equal(arrayEntry.entries[0].entries[0].value,'lowpass')
@@ -387,12 +383,14 @@ describe("Options",()=>{
 		it("exports changed data",()=>{
 			const options=new TestOptions
 			const arrayEntry=options.root.entries[0]
-			arrayEntry.addEntry('gain')
+			arrayEntry.entries=[
+				arrayEntry.makeEntry('gain'),
+				arrayEntry.makeEntry('biquad'),
+				arrayEntry.makeEntry('gain'),
+				arrayEntry.makeEntry('biquad'),
+			]
 			arrayEntry.entries[0].entries[0].value='4'
-			arrayEntry.addEntry('biquad')
 			arrayEntry.entries[1].entries[0].value='notch'
-			arrayEntry.addEntry('gain')
-			arrayEntry.addEntry('biquad')
 			assert.deepEqual(options.export(),{
 				arr: [
 					{gain:'4'},
@@ -405,12 +403,14 @@ describe("Options",()=>{
 		it("fixes data",()=>{
 			const options=new TestOptions
 			const arrayEntry=options.root.entries[0]
-			arrayEntry.addEntry('gain')
+			arrayEntry.entries=[
+				arrayEntry.makeEntry('gain'),
+				arrayEntry.makeEntry('biquad'),
+				arrayEntry.makeEntry('gain'),
+				arrayEntry.makeEntry('biquad'),
+			]
 			arrayEntry.entries[0].entries[0].value='4'
-			arrayEntry.addEntry('biquad')
 			arrayEntry.entries[1].entries[0].value='notch'
-			arrayEntry.addEntry('gain')
-			arrayEntry.addEntry('biquad')
 			const fixed=options.fix()
 			assert.equal(fixed.arr.entries.length,4)
 			assert.equal(fixed.arr.entries[0].filter,'gain')
