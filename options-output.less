@@ -25,8 +25,11 @@
 			width: 4em;
 			text-align: left;
 		}
-		input[type="number"] {
+		input[type="number"] { // number inputs in addition to range input
 			width: 4.5em;
+		}
+		label:first-child + input[type="number"] { // standalone number input
+			width: 12em;
 		}
 		input[type="text"] {
 			width: 30em;
