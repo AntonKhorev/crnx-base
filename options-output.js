@@ -3,6 +3,7 @@
 const formatNumbers=require('./format-numbers')
 const Option=require('./option-classes')
 const ArrayOptionOutput=require('./array-option-output')
+const GroupOptionOutput=require('./group-option-output')
 
 class OptionsOutput {
 	constructor(options,generateId,i18n) {
@@ -27,10 +28,8 @@ class OptionsOutput {
 				option.entries.map(writeOption)
 			)
 		})
-		optionClassWriters.set(Option.Group,(option,writeOption,i18n,generateId)=>{
-			return option.$=$("<fieldset>").append("<legend>"+i18n('options.'+option.fullName)+"</legend>").append(
-				option.entries.map(writeOption)
-			)
+		optionClassWriters.set(Option.Group,function(){
+			return new GroupOptionOutput(...arguments).$output
 		})
 		optionClassWriters.set(Option.Void,(option,writeOption,i18n,generateId)=>{
 			return option.$=$("<div class='option no-lead'>")
