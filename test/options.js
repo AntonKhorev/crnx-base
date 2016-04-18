@@ -285,9 +285,9 @@ describe("Options",()=>{
 		it("calls update when adding entry to array",()=>{
 			const options=new TestOptions
 			let updated=false
-			options.updateCallback=()=>{
+			options.addUpdateCallback(()=>{
 				updated=true
-			}
+			})
 			options.root.entries[1].entries=[
 				options.root.entries[1].makeEntry('shape'),
 			]

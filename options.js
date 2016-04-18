@@ -2,7 +2,6 @@
 
 class Options {
 	constructor(data) { // data = imported values, import is done in ctor to avoid calling updateCallback later
-		this.updateCallback=undefined // general update callback for stuff like regenerating the code
 		const Option=this.optionClasses
 		const optionByFullName={}
 		const optionsWithVisibilityAffectedByFullName={}
@@ -20,9 +19,6 @@ class Options {
 		this.root=Option.Root.make(null,this.entriesDescription)(
 			data,null,undefined,makeEntry
 		)
-		this.root.addUpdateCallback(()=>{
-			if (this.updateCallback) this.updateCallback()
-		})
 	}
 	// methods to be redefined by subclasses
 	// TODO make them static?
@@ -33,6 +29,9 @@ class Options {
 		return []
 	}
 	// public methods
+	addUpdateCallback(updateCallback) {
+		this.root.addUpdateCallback(updateCallback)
+	}
 	export() {
 		return this.root.shortenExport(this.root.export())
 	}
