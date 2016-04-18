@@ -211,7 +211,7 @@ Option.Collection = class extends Option.Base {
 			const subName=x[1]
 			let subData
 			if (typeof data == 'object') subData=data[subName]
-			return makeEntry(x,this,subData,visibilityManager) // nested option
+			return makeEntry(x,subData,this,visibilityManager) // nested option
 		})
 	}
 	export() {
@@ -293,7 +293,7 @@ Option.Array = class extends Option.Base { // TODO consider extending Collection
 		if (visibilityManager) visibilityManager.enterArray()
 		settings.descriptions.forEach(x=>{ // TODO test array inside array
 			const type=x[1]
-			const ctor=subData=>makeEntry(x,this,subData,visibilityManager)
+			const ctor=subData=>makeEntry(x,subData,this,visibilityManager)
 			this.availableConstructors.set(type,ctor)
 		})
 		if (visibilityManager) visibilityManager.exitArray()

@@ -38,7 +38,7 @@ class OptionVisibilityManager {
 class Options {
 	constructor(data) { // data = imported values, import is done in ctor to avoid calling updateCallback later
 		const Option=this.optionClasses
-		const makeEntry=(description,parent,data,visibilityManager)=>{
+		const makeEntry=(description,data,parent,visibilityManager)=>{
 			const className=description[0]
 			if (Option[className]===undefined) {
 				throw new Error(`invalid option type '${className}'`)
