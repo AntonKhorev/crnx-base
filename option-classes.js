@@ -16,41 +16,6 @@ fixed options spec:
 	TODO decide on: boolean option cannot be an array member (where to store it's type?)
 */
 
-class OptionVisibilityManager {
-	constructor() {
-		this.options={}
-		this.affects={}
-		this.inArray=0
-	}
-	register(option) {
-		if (!this.inArray) {
-			this.options[option.fullName]=option
-			option.addUpdateCallback(()=>{
-				this.updateVisibilityAffectedBy(option.fullName)
-			})
-		}
-	}
-	declareAffectedBy(option,byFullName) {
-		if (this.affects[byFullName]===undefined) {
-			this.affects[byFullName]=[]
-		}
-		this.affects[byFullName].push(option)
-	}
-	updateVisibilityAffectedBy(byFullName) {
-		if (this.affects[byFullName]!==undefined) {
-			this.affects[byFullName].forEach(option=>{
-				option.updateVisibility()
-			})
-		}
-	}
-	enterArray() {
-		this.inArray+=1
-	}
-	exitArray() {
-		this.inArray-=1
-	}
-}
-
 const Option={}
 
 // abstract classes
@@ -72,14 +37,13 @@ Option.Base = class {
 		const optionClass=this
 		const settings=this.collectArgs(scalarArg,arrayArg,objectArg)
 		return function(data,parent,visibilityManager,makeEntry){
-			if (!visibilityManager) visibilityManager=new OptionVisibilityManager
 			return new optionClass(name,settings,data,parent,visibilityManager,makeEntry)
 		}
 	}
 	static collectArgs(scalarArg,arrayArg,settings) {
 		return settings
 	}
-	constructor(name,settings,data,parent,visibilityManager,makeEntry) { // TODO try to remove makeEntry
+	constructor(name,settings,data,parent,visibilityManager,makeEntry) {
 		this.parent=parent
 		this.name=name
 		this.fullName=name
@@ -89,20 +53,22 @@ Option.Base = class {
 		this.updateCallbacks=[]
 		this._$=null
 		// visibility and callbacks
-		visibilityManager.register(this)
 		this.isVisible=()=>true
-		if (settings.visibilityData!==undefined) {
-			this.isVisible=()=>{
-				for (let testName in settings.visibilityData) {
-					const value=visibilityManager.options[testName].value
-					if (settings.visibilityData[testName].indexOf(value)<0) {
-						return false
+		if (visibilityManager) {
+			visibilityManager.register(this)
+			if (settings.visibilityData!==undefined) {
+				this.isVisible=()=>{
+					for (let testName in settings.visibilityData) {
+						const value=visibilityManager.options[testName].value
+						if (settings.visibilityData[testName].indexOf(value)<0) {
+							return false
+						}
 					}
+					return true
 				}
-				return true
-			}
-			for (let testName in settings.visibilityData) {
-				visibilityManager.declareAffectedBy(this,testName)
+				for (let testName in settings.visibilityData) {
+					visibilityManager.declareAffectedBy(this,testName)
+				}
 			}
 		}
 	}
@@ -324,13 +290,13 @@ Option.Array = class extends Option.Base { // TODO consider extending Collection
 	constructor(name,settings,data,parent,visibilityManager,makeEntry) {
 		super(...arguments)
 		this.availableConstructors=new Map
-		visibilityManager.enterArray()
+		if (visibilityManager) visibilityManager.enterArray()
 		settings.descriptions.forEach(x=>{ // TODO test array inside array
 			const type=x[1]
 			const ctor=subData=>makeEntry(x,this,subData,visibilityManager)
 			this.availableConstructors.set(type,ctor)
 		})
-		visibilityManager.exitArray()
+		if (visibilityManager) visibilityManager.exitArray()
 		if (settings.typePropertyName!==undefined) {
 			this.typePropertyName=settings.typePropertyName
 		} else {
