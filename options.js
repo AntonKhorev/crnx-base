@@ -3,30 +3,26 @@
 class Options {
 	constructor(data) { // data = imported values, import is done in ctor to avoid calling updateCallback later
 		this.updateCallback=undefined // general update callback for stuff like regenerating the code
-		const simpleUpdateCallback=()=>{
-			if (this.updateCallback) this.updateCallback()
-		}
 		const Option=this.optionClasses
 		const optionByFullName={}
 		const optionsWithVisibilityAffectedByFullName={}
-		const makeEntry=(description,parentPath,data,visibilityManager)=>{
+		const makeEntry=(description,parent,data,visibilityManager)=>{
 			const className=description[0]
 			if (Option[className]===undefined) {
 				throw new Error(`invalid option type '${className}'`)
 			}
 			const name=description[1]
-			const path=parentPath.enter(name)
 			const makeArgs=description.slice(1)
-			const option=Option[className].make(...makeArgs)(
-				data,path,visibilityManager,makeEntry
+			return Option[className].make(...makeArgs)(
+				data,parent,visibilityManager,makeEntry
 			)
-			option.addUpdateCallback(simpleUpdateCallback)
-			return option
 		}
 		this.root=Option.Root.make(null,this.entriesDescription)(
 			data,null,undefined,makeEntry
 		)
-		this.root.addUpdateCallback(simpleUpdateCallback)
+		this.root.addUpdateCallback(()=>{
+			if (this.updateCallback) this.updateCallback()
+		})
 	}
 	// methods to be redefined by subclasses
 	// TODO make them static?

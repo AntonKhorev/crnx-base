@@ -16,30 +16,19 @@ fixed options spec:
 	TODO decide on: boolean option cannot be an array member (where to store it's type?)
 */
 
-// TODO remove and just pass parent
-class OptionPath {
-	constructor(fullName,inArray) {
-		if (fullName===undefined) fullName=null
-		if (inArray===undefined) inArray=false
-		this.fullName=fullName
-		this.inArray=inArray
-	}
-	enter(name) {
-		if (this.fullName!==null) {
-			return new OptionPath(this.fullName+'.'+name,this.inArray)
-		} else {
-			return new OptionPath(name,this.inArray)
-		}
-	}
-	enterArray() {
-		return new OptionPath(this.fullName,true)
-	}
-}
-
 class OptionVisibilityManager {
 	constructor() {
 		this.options={}
 		this.affects={}
+		this.inArray=0
+	}
+	register(option) {
+		if (!this.inArray) {
+			this.options[option.fullName]=option
+			option.addUpdateCallback(()=>{
+				this.updateVisibilityAffectedBy(option.fullName)
+			})
+		}
 	}
 	declareAffectedBy(option,byFullName) {
 		if (this.affects[byFullName]===undefined) {
@@ -53,6 +42,12 @@ class OptionVisibilityManager {
 				option.updateVisibility()
 			})
 		}
+	}
+	enterArray() {
+		this.inArray+=1
+	}
+	exitArray() {
+		this.inArray-=1
 	}
 }
 
@@ -76,27 +71,25 @@ Option.Base = class {
 		}
 		const optionClass=this
 		const settings=this.collectArgs(scalarArg,arrayArg,objectArg)
-		return function(data,path,visibilityManager,makeEntry){
-			if (!path) path=new OptionPath
+		return function(data,parent,visibilityManager,makeEntry){
 			if (!visibilityManager) visibilityManager=new OptionVisibilityManager
-			return new optionClass(name,settings,data,path,visibilityManager,makeEntry)
+			return new optionClass(name,settings,data,parent,visibilityManager,makeEntry)
 		}
 	}
 	static collectArgs(scalarArg,arrayArg,settings) {
 		return settings
 	}
-	constructor(
-		name,settings,data,
-		path, // TODO replace by parent
-		visibilityManager,
-		makeEntry // TODO try to remove
-	) {
+	constructor(name,settings,data,parent,visibilityManager,makeEntry) { // TODO try to remove makeEntry
+		this.parent=parent
 		this.name=name
-		this.fullName=path.fullName
-		this._$=null
-		if (!path.inArray) {
-			visibilityManager.options[this.fullName]=this
+		this.fullName=name
+		if (parent && parent.fullName!==null) {
+			this.fullName=parent.fullName+'.'+name
 		}
+		this.updateCallbacks=[]
+		this._$=null
+		// visibility and callbacks
+		visibilityManager.register(this)
 		this.isVisible=()=>true
 		if (settings.visibilityData!==undefined) {
 			this.isVisible=()=>{
@@ -111,13 +104,6 @@ Option.Base = class {
 			for (let testName in settings.visibilityData) {
 				visibilityManager.declareAffectedBy(this,testName)
 			}
-		}
-		// update callbacks
-		this.updateCallbacks=[]
-		if (!path.inArray) {
-			this.updateCallbacks.push(()=>{
-				visibilityManager.updateVisibilityAffectedBy(this.fullName)
-			})
 		}
 	}
 	get $() {
@@ -134,7 +120,9 @@ Option.Base = class {
 		this.updateCallbacks.forEach(updateCallback=>{
 			updateCallback()
 		})
-		// TODO call parent
+		if (this.parent) {
+			this.parent.update()
+		}
 	}
 	addUpdateCallback(updateCallback) {
 		this.updateCallbacks.push(updateCallback)
@@ -163,7 +151,7 @@ Option.Input = class extends Option.Base {
 		if (settings.defaultValue===undefined) settings.defaultValue=scalarArg
 		return super.collectArgs(scalarArg,arrayArg,settings)
 	}
-	constructor(name,settings,data,path,visibilityManager,makeEntry) {
+	constructor(name,settings,data,parent,visibilityManager,makeEntry) {
 		super(...arguments)
 		this.defaultValue=settings.defaultValue
 		if (typeof data == 'object') {
@@ -217,7 +205,7 @@ Option.Factor = class extends Option.NonBoolean {
 		if (scalarArg===undefined) scalarArg=settings.availableValues[0]
 		return super.collectArgs(scalarArg,arrayArg,settings)
 	}
-	constructor(name,settings,data,path,visibilityManager,makeEntry) {
+	constructor(name,settings,data,parent,visibilityManager,makeEntry) {
 		super(...arguments)
 		this.availableValues=settings.availableValues
 	}
@@ -231,7 +219,7 @@ Option.Number = class extends Option.NonBoolean { // requires precision, gives s
 		if (scalarArg===undefined) scalarArg=settings.availableMin
 		return super.collectArgs(scalarArg,arrayArg,settings)
 	}
-	constructor(name,settings,data,path,visibilityManager,makeEntry) {
+	constructor(name,settings,data,parent,visibilityManager,makeEntry) {
 		super(...arguments)
 		this.availableMin=settings.availableMin
 		this.availableMax=settings.availableMax
@@ -251,13 +239,13 @@ Option.Collection = class extends Option.Base {
 		if (settings.descriptions===undefined) settings.descriptions=arrayArg
 		return super.collectArgs(scalarArg,arrayArg,settings)
 	}
-	constructor(name,settings,data,path,visibilityManager,makeEntry) {
+	constructor(name,settings,data,parent,visibilityManager,makeEntry) {
 		super(...arguments)
 		this.entries=settings.descriptions.map(x=>{
 			const subName=x[1]
 			let subData
 			if (typeof data == 'object') subData=data[subName]
-			return makeEntry(x,path,subData,visibilityManager) // nested option
+			return makeEntry(x,this,subData,visibilityManager) // nested option
 		})
 	}
 	export() {
@@ -306,7 +294,7 @@ Option.Int = class extends Option.Number {
 }
 
 Option.Float = class extends Option.Number {
-	constructor(name,settings,data,path,visibilityManager,makeEntry) {
+	constructor(name,settings,data,parent,visibilityManager,makeEntry) {
 		super(...arguments)
 		if (settings.precision!==undefined) {
 			this.precision=settings.precision
@@ -333,14 +321,16 @@ Option.Array = class extends Option.Base { // TODO consider extending Collection
 		if (settings.typePropertyName===undefined) settings.typePropertyName=scalarArg
 		return super.collectArgs(scalarArg,arrayArg,settings)
 	}
-	constructor(name,settings,data,path,visibilityManager,makeEntry) {
+	constructor(name,settings,data,parent,visibilityManager,makeEntry) {
 		super(...arguments)
 		this.availableConstructors=new Map
+		visibilityManager.enterArray()
 		settings.descriptions.forEach(x=>{ // TODO test array inside array
 			const type=x[1]
-			const ctor=subData=>makeEntry(x,path.enterArray(),subData,visibilityManager)
+			const ctor=subData=>makeEntry(x,this,subData,visibilityManager)
 			this.availableConstructors.set(type,ctor)
 		})
+		visibilityManager.exitArray()
 		if (settings.typePropertyName!==undefined) {
 			this.typePropertyName=settings.typePropertyName
 		} else {
