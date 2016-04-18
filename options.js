@@ -9,7 +9,7 @@ class Options {
 		const Option=this.optionClasses
 		const optionByFullName={}
 		const optionsWithVisibilityAffectedByFullName={}
-		const makeEntry=(description,parentPath,data)=>{
+		const makeEntry=(description,parentPath,data,visibilityManager)=>{
 			const className=description[0]
 			if (Option[className]===undefined) {
 				throw new Error(`invalid option type '${className}'`)
@@ -17,35 +17,13 @@ class Options {
 			const name=description[1]
 			const path=parentPath.enter(name)
 			const makeArgs=description.slice(1)
-			let updateCallback
-			if (path.inArray) {
-				updateCallback=simpleUpdateCallback
-			} else {
-				updateCallback=()=>{
-					if (optionsWithVisibilityAffectedByFullName[path.fullName]!==undefined) {
-						optionsWithVisibilityAffectedByFullName[path.fullName].forEach(option=>{
-							option.updateVisibility()
-						})
-					}
-					if (this.updateCallback) this.updateCallback()
-				}
-			}
 			const option=Option[className].make(...makeArgs)(
-				data,path,optionByFullName,updateCallback,makeEntry
+				data,path,visibilityManager,simpleUpdateCallback,makeEntry
 			)
-			if (!path.inArray) {
-				optionByFullName[path.fullName]=option
-				option.fullNamesAffectingVisibility.forEach(testName=>{
-					if (optionsWithVisibilityAffectedByFullName[testName]===undefined) {
-						optionsWithVisibilityAffectedByFullName[testName]=[]
-					}
-					optionsWithVisibilityAffectedByFullName[testName].push(option)
-				})
-			}
 			return option
 		}
 		this.root=Option.Root.make(null,this.entriesDescription)(
-			data,null,optionByFullName,simpleUpdateCallback,makeEntry
+			data,null,undefined,simpleUpdateCallback,makeEntry
 		)
 	}
 	// methods to be redefined by subclasses
