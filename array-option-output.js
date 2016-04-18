@@ -28,6 +28,9 @@ class ArrayOptionOutput {
 			$buttons
 		)
 	}
+	canDeleteEntry($entry) {
+		return true
+	}
 	updateArrayEntries() {
 		this.option.entries=this.$entries.children().map(function(){
 			return $(this).data('option')
@@ -44,6 +47,12 @@ class ArrayOptionOutput {
 		const moveDown=$moved=>{
 			$moved.next().after($moved)
 			this.updateArrayEntries()
+		}
+		const attemptDelete=$entry=>{
+			if (this.canDeleteEntry($entry)) {
+				$entry.remove()
+				this.updateArrayEntries()
+			}
 		}
 		const This=this
 		return $("<div class='draggable-with-handle'>").data('option',subOption).append(
@@ -74,12 +83,10 @@ class ArrayOptionOutput {
 				}),
 			writeOption(subOption),
 			$("<div tabindex='0' class='delete' title='"+i18n('options-output.delete')+"'>").click(function(){
-				$(this).parent().remove()
-				This.updateArrayEntries()
+				attemptDelete($(this).parent())
 			}).keydown(function(ev){
 				if (ev.keyCode==13 || ev.keyCode==32) {
-					$(this).parent().remove()
-					This.updateArrayEntries()
+					attemptDelete($(this).parent())
 					return false
 				}
 			})
