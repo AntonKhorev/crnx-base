@@ -18,13 +18,15 @@ class Options {
 			const path=parentPath.enter(name)
 			const makeArgs=description.slice(1)
 			const option=Option[className].make(...makeArgs)(
-				data,path,visibilityManager,simpleUpdateCallback,makeEntry
+				data,path,visibilityManager,makeEntry
 			)
+			option.addUpdateCallback(simpleUpdateCallback)
 			return option
 		}
 		this.root=Option.Root.make(null,this.entriesDescription)(
-			data,null,undefined,simpleUpdateCallback,makeEntry
+			data,null,undefined,makeEntry
 		)
+		this.root.addUpdateCallback(simpleUpdateCallback)
 	}
 	// methods to be redefined by subclasses
 	// TODO make them static?

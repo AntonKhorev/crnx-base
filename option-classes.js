@@ -76,10 +76,10 @@ Option.Base = class {
 		}
 		const optionClass=this
 		const settings=this.collectArgs(scalarArg,arrayArg,objectArg)
-		return function(data,path,visibilityManager,updateCallback,makeEntry){
+		return function(data,path,visibilityManager,makeEntry){
 			if (!path) path=new OptionPath
 			if (!visibilityManager) visibilityManager=new OptionVisibilityManager
-			return new optionClass(name,settings,data,path,visibilityManager,updateCallback,makeEntry)
+			return new optionClass(name,settings,data,path,visibilityManager,makeEntry)
 		}
 	}
 	static collectArgs(scalarArg,arrayArg,settings) {
@@ -89,7 +89,6 @@ Option.Base = class {
 		name,settings,data,
 		path, // TODO replace by parent
 		visibilityManager,
-		updateCallback, // TODO remove
 		makeEntry // TODO try to remove
 	) {
 		this.name=name
@@ -120,7 +119,6 @@ Option.Base = class {
 				visibilityManager.updateVisibilityAffectedBy(this.fullName)
 			})
 		}
-		this.updateCallbacks.push(updateCallback)
 	}
 	get $() {
 		return this._$
@@ -165,7 +163,7 @@ Option.Input = class extends Option.Base {
 		if (settings.defaultValue===undefined) settings.defaultValue=scalarArg
 		return super.collectArgs(scalarArg,arrayArg,settings)
 	}
-	constructor(name,settings,data,path,visibilityManager,updateCallback,makeEntry) {
+	constructor(name,settings,data,path,visibilityManager,makeEntry) {
 		super(...arguments)
 		this.defaultValue=settings.defaultValue
 		if (typeof data == 'object') {
@@ -219,7 +217,7 @@ Option.Factor = class extends Option.NonBoolean {
 		if (scalarArg===undefined) scalarArg=settings.availableValues[0]
 		return super.collectArgs(scalarArg,arrayArg,settings)
 	}
-	constructor(name,settings,data,path,visibilityManager,updateCallback,makeEntry) {
+	constructor(name,settings,data,path,visibilityManager,makeEntry) {
 		super(...arguments)
 		this.availableValues=settings.availableValues
 	}
@@ -233,7 +231,7 @@ Option.Number = class extends Option.NonBoolean { // requires precision, gives s
 		if (scalarArg===undefined) scalarArg=settings.availableMin
 		return super.collectArgs(scalarArg,arrayArg,settings)
 	}
-	constructor(name,settings,data,path,visibilityManager,updateCallback,makeEntry) {
+	constructor(name,settings,data,path,visibilityManager,makeEntry) {
 		super(...arguments)
 		this.availableMin=settings.availableMin
 		this.availableMax=settings.availableMax
@@ -253,7 +251,7 @@ Option.Collection = class extends Option.Base {
 		if (settings.descriptions===undefined) settings.descriptions=arrayArg
 		return super.collectArgs(scalarArg,arrayArg,settings)
 	}
-	constructor(name,settings,data,path,visibilityManager,updateCallback,makeEntry) {
+	constructor(name,settings,data,path,visibilityManager,makeEntry) {
 		super(...arguments)
 		this.entries=settings.descriptions.map(x=>{
 			const subName=x[1]
@@ -308,7 +306,7 @@ Option.Int = class extends Option.Number {
 }
 
 Option.Float = class extends Option.Number {
-	constructor(name,settings,data,path,visibilityManager,updateCallback,makeEntry) {
+	constructor(name,settings,data,path,visibilityManager,makeEntry) {
 		super(...arguments)
 		if (settings.precision!==undefined) {
 			this.precision=settings.precision
@@ -335,7 +333,7 @@ Option.Array = class extends Option.Base { // TODO consider extending Collection
 		if (settings.typePropertyName===undefined) settings.typePropertyName=scalarArg
 		return super.collectArgs(scalarArg,arrayArg,settings)
 	}
-	constructor(name,settings,data,path,visibilityManager,updateCallback,makeEntry) {
+	constructor(name,settings,data,path,visibilityManager,makeEntry) {
 		super(...arguments)
 		this.availableConstructors=new Map
 		settings.descriptions.forEach(x=>{ // TODO test array inside array
