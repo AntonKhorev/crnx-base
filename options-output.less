@@ -18,13 +18,15 @@
 				padding: 0 4px;
 			}
 		}
+		// printing won't work in Firefox: https://bugzilla.mozilla.org/show_bug.cgi?id=471015
+		//	unless js trickery is used: http://stackoverflow.com/questions/7336586/printing-fieldsets-in-firefox
 	}
 	.buttons {
 		margin: @inter-option-margin 0;
 	}
 	.option {
 		margin: @inter-option-margin 0;
-		@media all and (min-width: @wide-mode-min-width) {
+		@media (min-width: @wide-mode-min-width) {
 			margin-left: @label-margin;
 			&.no-lead {
 				margin-left: 0;
@@ -32,7 +34,7 @@
 		}
 		label:first-child {
 			display: block;
-			@media all and (min-width: @wide-mode-min-width) {
+			@media (min-width: @wide-mode-min-width) {
 				margin-left: -@label-margin;
 				display: inline-block;
 				width: @label-margin;
@@ -94,6 +96,17 @@
 			box-sizing: border-box;
 			// http://www.patternify.com/
 			background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAJCAYAAADgkQYQAAAAJklEQVQYlWNgIBYYGxv/J0ocXQCXRrgETgUETSDaJIJuItp3+AAAbDIUubYyZeYAAAAASUVORK5CYII=) center no-repeat;
+		}
+	}
+	button {
+		@media print {
+			display: none;
+		}
+	}
+	abbr {
+		text-decoration: dotted underline;
+		@media print {
+			text-decoration: none;
 		}
 	}
 }
