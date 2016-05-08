@@ -2,18 +2,25 @@
 	@inter-option-margin: .3em;
 	@label-margin: 15em;
 	@drag-control-width: 1em;
+	@wide-mode-min-width: 60em;
 	margin: 1em 0;
 	.option {
-		margin: @inter-option-margin 0 @inter-option-margin @label-margin;
-		&.no-lead {
-			margin-left: 0;
+		margin: @inter-option-margin 0;
+		@media all and (min-width: @wide-mode-min-width) {
+			margin-left: @label-margin;
+			&.no-lead {
+				margin-left: 0;
+			}
 		}
 		label:first-child {
-			margin-left: -@label-margin;
-			display: inline-block;
-			width: @label-margin;
-			text-align: right;
-			line-height: 0.8em;
+			display: block;
+			@media all and (min-width: @wide-mode-min-width) {
+				margin-left: -@label-margin;
+				display: inline-block;
+				width: @label-margin;
+				text-align: right;
+				line-height: 0.8em;
+			}
 		}
 		.min {
 			display: inline-block;
