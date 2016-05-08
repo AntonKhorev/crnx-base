@@ -32,6 +32,11 @@
 				margin-left: 0;
 			}
 		}
+		&.only-buttons {
+			@media print {
+				display: none;
+			}
+		}
 		label:first-child {
 			display: block;
 			@media (min-width: @wide-mode-min-width) {
