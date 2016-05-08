@@ -4,6 +4,24 @@
 	@drag-control-width: 1em;
 	@wide-mode-min-width: 60em;
 	margin: 1em 0;
+	fieldset {
+		margin: @inter-option-margin 0 1px 0;
+		padding: 0 10px;
+		border: groove 2px #DDD;
+		& > fieldset {
+			margin-left: -9px;
+			margin-right: -9px;
+			padding: 0 7px;
+			& > fieldset {
+				margin-left: -6px;
+				margin-right: -6px;
+				padding: 0 4px;
+			}
+		}
+	}
+	.buttons {
+		margin: @inter-option-margin 0;
+	}
 	.option {
 		margin: @inter-option-margin 0;
 		@media all and (min-width: @wide-mode-min-width) {
@@ -56,10 +74,6 @@
 		margin: @inter-option-margin @drag-control-width;
 		&.ghost {
 			opacity: .4;
-		}
-		.option {
-			margin-top: 0;
-			margin-bottom: 0;
 		}
 		[draggable], .delete {
 			position: absolute;

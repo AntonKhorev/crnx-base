@@ -7,7 +7,7 @@ class ArrayOptionOutput {
 		this.$entries=$("<div>").append(
 			option.entries.map(subOption=>this.writeDraggableSubOption(subOption,writeOption,i18n))
 		)
-		const $buttons=$("<div>")
+		const $buttons=$("<div class='buttons'>")
 		option.availableTypes.forEach((type,i)=>{
 			if (i) $buttons.append(" ")
 			$buttons.append(
