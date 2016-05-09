@@ -68,7 +68,7 @@ class OptionsOutput {
 				let $tip,$tipContent
 				option.$.append(
 					" ",
-					$tip=$("<span class='tip-info'>").append(
+					$tip=$("<span class='tip-info' tabindex='0'>").append(
 						$tipContent=$("<span class='tip-content'>")
 					)
 				)

@@ -18,16 +18,18 @@
 				font-size: 1.25em;
 			}
 		}
-		&:hover .tip-content {
-			display: block;
-			position: absolute;
-			top: -@icon-border;
-			left: -@icon-border;
-			padding: @icon-size/2;
-			border: solid 1px black;
-			border-radius: @icon-size/2;
-			background: inherit;
-			width: 20em;
+		&:hover, &:focus {
+			.tip-content {
+				display: block;
+				position: absolute;
+				top: -@icon-border;
+				left: -@icon-border;
+				padding: @icon-size/2;
+				border: solid 1px black;
+				border-radius: @icon-size/2;
+				background: inherit;
+				width: 20em;
+			}
 		}
 		&::before {
 			display: inline-block;

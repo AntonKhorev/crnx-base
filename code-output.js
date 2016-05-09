@@ -19,10 +19,10 @@ const detailsPolyfill=function(){ // to be called in .each()
 	const keyCodeEnter=13
 	const keyCodeSpace=32
 	$details.addClass('polyfill').find('summary').attr('tabindex',0).click(function(ev){
-		if (ev.target.tagName=='SUMMARY') {
-			toggleOpen()
-		}
+		if (ev.target.tagName!='SUMMARY') return
+		toggleOpen()
 	}).keydown(function(ev){
+		if (ev.target.tagName!='SUMMARY') return
 		if (ev.keyCode==keyCodeEnter || ev.keyCode==keyCodeSpace) {
 			toggleOpen()
 			return false
