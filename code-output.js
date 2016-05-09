@@ -9,7 +9,8 @@ const detailsSupported=('open' in document.createElement('details')) // http://t
 const detailsPolyfill=function(){ // to be called in .each()
 	if (detailsSupported) return
 	const $details=$(this)
-	$details.addClass('polyfill').find('summary').click(function(){
+	$details.addClass('polyfill').find('summary').click(function(ev){
+		if (ev.target.tagName!='SUMMARY') return
 		if (!$details.attr('open')) {
 			$details.attr('open','')
 		} else {
