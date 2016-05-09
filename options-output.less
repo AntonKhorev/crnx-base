@@ -8,11 +8,14 @@
 		@data: escape(@svg);
 		background-image: url("data:image/svg+xml;charset=utf-8,@{data}");
 	}
+	.frame() {
+		border: groove 2px #DDD;
+	}
 	margin: 1em 0;
 	fieldset {
 		margin: @inter-option-margin 0 1px 0;
 		padding: 0 @inter-option-margin 0 10px;
-		border: groove 2px #DDD;
+		.frame();
 		& > fieldset {
 			margin-right: ~"calc(1px - @{inter-option-margin})";
 			margin-left: -9px;
