@@ -21,6 +21,9 @@ class OptionsOutput {
 		// public prop:
 		this.$output=writeOption(options.root)
 	}
+	getLeadLabel(id,i18n,option) {
+		return "<label for='"+id+"'>"+i18n('options.'+option.fullName)+":</label><span class='space'> </span>"
+	}
 	// override this fn for custom writers
 	setOptionClassWriters(optionClassWriters) {
 		optionClassWriters.set(Option.Root,(option,writeOption,i18n,generateId)=>{
@@ -52,7 +55,7 @@ class OptionsOutput {
 			const id=generateId()
 			let $select
 			option.$=$("<div class='option'>").append(
-				"<label for='"+id+"'>"+i18n('options.'+option.fullName)+":</label> ",
+				this.getLeadLabel(id,i18n,option),
 				$select=$("<select id='"+id+"'>").append(
 					option.availableValues.map(availableValue=>
 						$("<option>").val(availableValue).html(i18n(valueId(availableValue)))
@@ -87,7 +90,7 @@ class OptionsOutput {
 			const id=generateId()
 			const listId=generateId()
 			return option.$=$("<div class='option'>").append(
-				"<label for='"+id+"'>"+i18n('options.'+option.fullName)+":</label> ",
+				this.getLeadLabel(id,i18n,option),
 				$("<input type='text' id='"+id+"' list='"+listId+"' />")
 					.val(option.value)
 					.on('input change',function(){
@@ -122,8 +125,8 @@ class OptionsOutput {
 				max: option.availableMax
 			},option.precision)
 			return option.$=$("<div class='option'>").append(
-				"<label for='"+id+"'>"+i18n('options.'+option.fullName)+":</label>",
-				" <span class='min'>"+i18n.numberWithUnits(fmt.min,option.unit)+"</span> ",
+				this.getLeadLabel(id,i18n,option),
+				"<span class='min'>"+i18n.numberWithUnits(fmt.min,option.unit)+"</span> ",
 				$sliderInput=setInputAttrsAndListeners(
 					$("<input type='range' id='"+id+"'>"),
 					()=>$numberInput

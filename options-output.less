@@ -42,9 +42,13 @@
 			@media (min-width: @wide-mode-min-width) {
 				margin-left: -@label-margin;
 				display: inline-block;
-				width: @label-margin;
+				width: @label-margin - @inter-option-margin;
+				padding-right: @inter-option-margin;
 				text-align: right;
-				line-height: 0.8em;
+				line-height: 0.8em; // when label spans multiple lines
+				& + span.space {
+					display: none;
+				}
 			}
 		}
 		.min {
@@ -64,7 +68,8 @@
 			width: 12em;
 		}
 		input[type="text"] {
-			width: 30em;
+			width: 100%;
+			box-sizing: border-box;
 		}
 		input[type="range"] {
 			width: 12em;
