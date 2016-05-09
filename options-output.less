@@ -3,6 +3,11 @@
 	@label-margin: 15em;
 	@drag-control-width: 1em;
 	@wide-mode-min-width: 60em;
+	.svg(@width,@height,@contents) {
+		@svg: "<svg xmlns='http://www.w3.org/2000/svg' width='@{width}' height='@{height}'>@{contents}</svg>";
+		@data: escape(@svg);
+		background-image: url("data:image/svg+xml;charset=utf-8,@{data}");
+	}
 	margin: 1em 0;
 	fieldset {
 		margin: @inter-option-margin 0 1px 0;
@@ -105,8 +110,14 @@
 				cursor: default;
 				border: dotted 1px #888;
 				box-sizing: border-box;
-				// http://www.patternify.com/
-				background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAJCAYAAADgkQYQAAAAJklEQVQYlWNgIBYYGxv/J0ocXQCXRrgETgUETSDaJIJuItp3+AAAbDIUubYyZeYAAAAASUVORK5CYII=) center no-repeat;
+				.svg(16,16,"<path d='M 2 2 L 14 14 M 2 14 L 14 2' fill='none' stroke='#444' stroke-width='2' />");
+				background-size: contain;
+				background-position: center;
+				background-repeat: no-repeat;
+				&:hover {
+					border-color: #F88;
+					.svg(16,16,"<path d='M 2 2 L 14 14 M 2 14 L 14 2' fill='none' stroke='#C44' stroke-width='2' />");
+				}
 			}
 		}
 	}
