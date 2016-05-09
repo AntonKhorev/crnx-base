@@ -9,12 +9,23 @@ const detailsSupported=('open' in document.createElement('details')) // http://t
 const detailsPolyfill=function(){ // to be called in .each()
 	if (detailsSupported) return
 	const $details=$(this)
-	$details.addClass('polyfill').find('summary').click(function(ev){
-		if (ev.target.tagName!='SUMMARY') return
+	const toggleOpen=()=>{
 		if (!$details.attr('open')) {
 			$details.attr('open','')
 		} else {
 			$details.removeAttr('open')
+		}
+	}
+	const keyCodeEnter=13
+	const keyCodeSpace=32
+	$details.addClass('polyfill').find('summary').attr('tabindex',0).click(function(ev){
+		if (ev.target.tagName=='SUMMARY') {
+			toggleOpen()
+		}
+	}).keydown(function(ev){
+		if (ev.keyCode==keyCodeEnter || ev.keyCode==keyCodeSpace) {
+			toggleOpen()
+			return false
 		}
 	})
 }
