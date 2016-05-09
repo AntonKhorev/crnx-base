@@ -76,31 +76,33 @@
 			background: #F8A;
 		}
 	}
-	.draggable-with-handle {
-		position: relative;
-		margin: @inter-option-margin @drag-control-width;
-		&.ghost {
-			opacity: .4;
-		}
-		[draggable], .delete {
-			position: absolute;
-			top: 0;
-			bottom: 0;
-			width: @drag-control-width;
-		}
-		[draggable] { // drag handle
-			left: -@drag-control-width;
-			cursor: move;
-			// http://www.patternify.com/
-			background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAJCAYAAADgkQYQAAAAGUlEQVQYlWNgIAYYGxv/J4SJMog4MFStAwDfUCsJGefs4gAAAABJRU5ErkJggg==) center no-repeat, url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAJCAYAAADgkQYQAAAAF0lEQVQYlWNgIBZ0dHT8J8SmIhiK1gEAJMkXUFw51ewAAAAASUVORK5CYII=) center;
-		}
-		.delete {
-			right: -@drag-control-width;
-			cursor: default;
-			border: dotted 1px #888;
-			box-sizing: border-box;
-			// http://www.patternify.com/
-			background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAJCAYAAADgkQYQAAAAJklEQVQYlWNgIBYYGxv/J0ocXQCXRrgETgUETSDaJIJuItp3+AAAbDIUubYyZeYAAAAASUVORK5CYII=) center no-repeat;
+	@media not print {
+		.draggable-with-handle {
+			position: relative;
+			margin: @inter-option-margin @drag-control-width;
+			&.ghost {
+				opacity: .4;
+			}
+			[draggable], .delete {
+				position: absolute;
+				top: 0;
+				bottom: 0;
+				width: @drag-control-width;
+			}
+			[draggable] { // drag handle
+				left: -@drag-control-width;
+				cursor: move;
+				// http://www.patternify.com/
+				background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAJCAYAAADgkQYQAAAAGUlEQVQYlWNgIAYYGxv/J4SJMog4MFStAwDfUCsJGefs4gAAAABJRU5ErkJggg==) center no-repeat, url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAJCAYAAADgkQYQAAAAF0lEQVQYlWNgIBZ0dHT8J8SmIhiK1gEAJMkXUFw51ewAAAAASUVORK5CYII=) center;
+			}
+			.delete {
+				right: -@drag-control-width;
+				cursor: default;
+				border: dotted 1px #888;
+				box-sizing: border-box;
+				// http://www.patternify.com/
+				background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAJCAYAAADgkQYQAAAAJklEQVQYlWNgIBYYGxv/J0ocXQCXRrgETgUETSDaJIJuItp3+AAAbDIUubYyZeYAAAAASUVORK5CYII=) center no-repeat;
+			}
 		}
 	}
 	button {
