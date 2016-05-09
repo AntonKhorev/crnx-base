@@ -88,8 +88,9 @@
 	}
 	@media not print {
 		.draggable-with-handle {
+			@drag-margin: @drag-control-width + @inter-option-margin;
 			position: relative;
-			margin: @inter-option-margin @drag-control-width;
+			margin: @inter-option-margin @drag-margin;
 			&.ghost {
 				opacity: .4;
 			}
@@ -100,13 +101,13 @@
 				width: @drag-control-width;
 			}
 			[draggable] { // drag handle
-				left: -@drag-control-width;
+				left: -@drag-margin;
 				cursor: move;
 				// http://www.patternify.com/
 				background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAJCAYAAADgkQYQAAAAGUlEQVQYlWNgIAYYGxv/J4SJMog4MFStAwDfUCsJGefs4gAAAABJRU5ErkJggg==) center no-repeat, url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAJCAYAAADgkQYQAAAAF0lEQVQYlWNgIBZ0dHT8J8SmIhiK1gEAJMkXUFw51ewAAAAASUVORK5CYII=) center;
 			}
 			.delete {
-				right: -@drag-control-width;
+				right: -@drag-margin;
 				cursor: default;
 				border: dotted 1px #888;
 				box-sizing: border-box;
