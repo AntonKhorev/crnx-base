@@ -13,6 +13,15 @@
 	details {
 		display: block;
 		margin: 1em 0;
+		&.polyfill:not([open]) > :not(summary) {
+			display: none;
+		}
+		&.polyfill summary::before {
+			content: "▸ ";
+		}
+		&.polyfill[open] summary::before {
+			content: "▾ ";
+		}
 	}
 	input[type="number"] {
 		width: 3em;
@@ -23,6 +32,12 @@
 		}
 		a {
 			text-decoration: none;
+		}
+		details {
+			display: none;
+			&[open] {
+				display: block;
+			}
 		}
 	}
 }

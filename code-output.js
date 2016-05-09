@@ -5,6 +5,19 @@ const repeat=require('./fake-lodash/repeat')
 
 const getHtmlDataUri=(html)=>'data:text/html;charset=utf-8,'+encodeURIComponent(html)
 
+const detailsSupported=('open' in document.createElement('details')) // http://thenewcode.com/680/Feature-Detection-and-Styling-For-The-HTML5-details-Element
+const detailsPolyfill=function(){ // to be called in .each()
+	if (detailsSupported) return
+	const $details=$(this)
+	$details.addClass('polyfill').find('summary').click(function(){
+		if (!$details.attr('open')) {
+			$details.attr('open','')
+		} else {
+			$details.removeAttr('open')
+		}
+	})
+}
+
 const makeObjectWithSetters=(values,setCallback)=>{
 	const obj={}
 	for (let prop in values) {
@@ -84,13 +97,13 @@ class CodeOutput {
 						" "+i18n('code-output.formatting.jsSemicolons')
 					)
 				)
-			)
+			).each(detailsPolyfill)
 		}
 		const writeSection=(sectionName)=>{
 			return $("<details open>").append(
 				this.writeSectionSummary(sectionName,i18n),
 				this.$sectionCode[sectionName]=$("<div class='code'>")
-			)
+			).each(detailsPolyfill)
 		}
 		const $output=$("<div class='code-output'>").append(this.writeButtons(i18n)).append(
 			writeFormattingControls(),
