@@ -5,13 +5,17 @@ module.exports=lang=>strings=>{
 	const additionalStrings={
 		en: {
 			'reset': "Reset",
-			'drag': "Drag or press ↑/↓ while in focus to reorder",
+			'drag': "Drag",
+			'drag.tip': "Drag or press ↑/↓ while in focus to reorder items",
 			'delete': "Delete",
+			'delete.tip': "Delete item",
 		},
 		ru: {
 			'reset': "Сбросить",
-			'drag': "Перетаскивайте или нажимайте ↑/↓, пока элемент в фокусе, чтобы изменить порядок",
+			'drag': "Перетащить",
+			'drag.tip': "Перетаскивайте или нажимайте ↑/↓, пока элемент в фокусе, чтобы изменить порядок элементов",
 			'delete': "Удалить",
+			'delete.tip': "Удалить элемент",
 		}
 	}
 	for (let id in additionalStrings[lang]) {

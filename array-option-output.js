@@ -56,33 +56,38 @@ class ArrayOptionOutput {
 		}
 		const This=this
 		return $("<div class='draggable-with-handle'>").data('option',subOption).append(
-			$("<div draggable='true' tabindex='0' title='"+i18n('options-output.drag')+"'>")
-				.on('dragstart',function(ev){
-					This.$dragged=$(this).parent()
-					ev.originalEvent.dataTransfer.effectAllowed='move'
-					ev.originalEvent.dataTransfer.setData('Text',name)
-					if (ev.originalEvent.dataTransfer.setDragImage) { // doesn't work in IE
-						ev.originalEvent.dataTransfer.setDragImage(This.$dragged[0],0,0)
-					}
-					setTimeout(function(){
-						This.$dragged.addClass('ghost')
-					},0)
-				})
-				.keydown(function(ev){
-					const $handle=$(this)
-					const $sorted=$handle.parent()
-					if (ev.keyCode==38) {
-						moveUp($sorted)
-						$handle.focus()
-						return false
-					} else if (ev.keyCode==40) {
-						moveDown($sorted)
-						$handle.focus()
-						return false
-					}
-				}),
 			writeOption(subOption),
-			$("<div tabindex='0' class='delete' title='"+i18n('options-output.delete')+"'>").click(function(){
+			" ",
+			$("<span draggable='true' tabindex='0' title='"+i18n('options-output.drag.tip')+"'>").append(
+				"<span>"+i18n('options-output.drag')+"</span>"
+			).on('dragstart',function(ev){
+				This.$dragged=$(this).parent()
+				ev.originalEvent.dataTransfer.effectAllowed='move'
+				ev.originalEvent.dataTransfer.setData('Text',name)
+				if (ev.originalEvent.dataTransfer.setDragImage) { // doesn't work in IE
+					ev.originalEvent.dataTransfer.setDragImage(This.$dragged[0],0,0)
+				}
+				setTimeout(function(){
+					This.$dragged.addClass('ghost')
+				},0)
+			})
+			.keydown(function(ev){
+				const $handle=$(this)
+				const $sorted=$handle.parent()
+				if (ev.keyCode==38) {
+					moveUp($sorted)
+					$handle.focus()
+					return false
+				} else if (ev.keyCode==40) {
+					moveDown($sorted)
+					$handle.focus()
+					return false
+				}
+			}),
+			" ",
+			$("<button class='delete' title='"+i18n('options-output.delete.tip')+"'>").append(
+				"<span>"+i18n('options-output.delete')+"</span>"
+			).click(function(){
 				attemptDelete($(this).parent())
 			}).keydown(function(ev){
 				if (ev.keyCode==13 || ev.keyCode==32) {

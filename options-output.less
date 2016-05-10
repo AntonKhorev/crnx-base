@@ -11,6 +11,13 @@
 	.frame() {
 		border: groove 2px #DDD;
 	}
+	.visually-hidden() {
+		position: absolute;
+		left: -10000px;
+		width: 1px;
+		height: 1px;
+		overflow: hidden;
+	}
 	margin: 1em 0;
 	fieldset {
 		margin: @inter-option-margin 0 1px 0;
@@ -97,10 +104,16 @@
 				opacity: .4;
 			}
 			[draggable], .delete {
+				display: block;
 				position: absolute;
 				top: 0;
 				bottom: 0;
 				width: @drag-control-width;
+				padding: 0;
+				background-color: transparent;
+				& > span {
+					.visually-hidden();
+				}
 			}
 			[draggable] { // drag handle
 				left: -@drag-margin;
