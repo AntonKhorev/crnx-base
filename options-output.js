@@ -1,6 +1,7 @@
 'use strict'
 
 const formatNumbers=require('./format-numbers')
+const writeTip=require('./tip.js')
 const Option=require('./option-classes')
 const ArrayOptionOutput=require('./array-option-output')
 const GroupOptionOutput=require('./group-option-output')
@@ -65,45 +66,15 @@ class OptionsOutput {
 				})
 			)
 			if (option.availableValues.some(availableValue=>i18n.has(valueInfoId(availableValue)))) {
-				let $tip,$tipContent
-				let popupTimeoutId=null
-				let popupLevel=0
-				const handlePopup=()=>{
-					if (popupLevel) {
-						clearTimeout(popupTimeoutId)
-						popupTimeoutId=null
-						$tip.addClass('hold')
-					} else {
-						popupTimeoutId=setTimeout(()=>{
-							$tip.removeClass('hold')
-						},300)
-					}
-				}
-				option.$.append(
-					" ",
-					$tip=$("<span class='tip-info' tabindex='0'>").append(
-						$tipContent=$("<span class='tip-content'>")
-					).on('mouseenter focus',function(){
-						popupLevel+=1
-						handlePopup()
-					}).on('mouseleave blur',function(){
-						popupLevel-=1
-						handlePopup()
-					}).on('focus','*',function(){
-						popupLevel+=1
-						handlePopup()
-					}).on('blur','*',function(){
-						popupLevel-=1
-						handlePopup()
-					})
-				)
+				const $tip=writeTip('info',"")
+				option.$.append(" ",$tip)
 				const handler=function(){
 					if (i18n.has(valueInfoId(this.value))) {
-						$tipContent.html(i18n(valueInfoId(this.value)))
+						$tip.find('.tip-content').html(i18n(valueInfoId(this.value)))
 						$tip.show()
 					} else {
 						$tip.hide()
-						$tipContent.empty()
+						$tip.find('.tip-content').empty()
 					}
 				}
 				handler.call($select[0])
