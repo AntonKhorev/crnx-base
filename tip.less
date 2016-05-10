@@ -11,14 +11,16 @@
 		height: @icon-size;
 		border: solid @icon-border black;
 		border-radius: @icon-size/2;
+		cursor: help;
 		.tip-content {
 			display: none;
 			z-index: 1;
+			cursor: default;
 			kbd {
 				font-size: 1.25em;
 			}
 		}
-		&:hover, &:focus, &.hold {
+		&.open { // &:hover, &:focus may be needed to handle no-js case
 			.tip-content {
 				display: block;
 				position: absolute;
@@ -39,6 +41,7 @@
 			font-family: monospace;
 			font-size: 1.2em;
 			font-weight: bold;
+			// cursor: help; // ie ignores it
 		}
 	}
 	@media print {
