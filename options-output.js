@@ -71,9 +71,9 @@ class OptionsOutput {
 				const handler=function(){
 					if (i18n.has(valueInfoId(this.value))) {
 						$tip.find('.tip-content').html(i18n(valueInfoId(this.value)))
-						$tip.show()
+						$tip.css('display','') // $tip.show() won't work right with inline-block
 					} else {
-						$tip.hide()
+						$tip.css('display','none')
 						$tip.find('.tip-content').empty()
 					}
 				}
