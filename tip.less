@@ -11,10 +11,12 @@
 		height: @icon-size;
 		border: solid @icon-border black;
 		border-radius: @icon-size/2;
+		text-align: center;
 		cursor: help;
 		.tip-content {
 			display: none;
 			z-index: 1;
+			text-align: left;
 			cursor: default;
 			kbd {
 				font-size: 1.25em;
@@ -34,14 +36,9 @@
 			}
 		}
 		&::before {
-			display: inline-block;
-			width: @icon-size;
-			height: @icon-size;
-			text-align: center;
 			font-family: monospace;
 			font-size: 1.2em;
 			font-weight: bold;
-			// cursor: help; // ie ignores it
 		}
 	}
 	@media print {
