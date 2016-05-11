@@ -135,18 +135,24 @@
 				background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAJCAYAAADgkQYQAAAAGUlEQVQYlWNgIAYYGxv/J4SJMog4MFStAwDfUCsJGefs4gAAAABJRU5ErkJggg==) center no-repeat, url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAJCAYAAADgkQYQAAAAF0lEQVQYlWNgIBZ0dHT8J8SmIhiK1gEAJMkXUFw51ewAAAAASUVORK5CYII=) center;
 			}
 			.delete {
+				.cross-icon(@color) {
+					.svg(16,16,"<path d='M 2 2 L 14 14 M 2 14 L 14 2' fill='none' stroke='@{color}' stroke-width='2' />");
+				}
 				font-size: 1em;
 				right: -@drag-margin;
 				cursor: default;
 				border: dotted 1px #888;
 				box-sizing: border-box;
-				.svg(16,16,"<path d='M 2 2 L 14 14 M 2 14 L 14 2' fill='none' stroke='#444' stroke-width='2' />");
+				.cross-icon(#444);
 				background-size: contain;
 				background-position: center;
 				background-repeat: no-repeat;
 				&:hover {
 					border-color: #F88;
-					.svg(16,16,"<path d='M 2 2 L 14 14 M 2 14 L 14 2' fill='none' stroke='#C44' stroke-width='2' />");
+					.cross-icon(#C44);
+					&:active {
+						background-position: 50% ~"calc(50% + 1px)";
+					}
 				}
 			}
 		}
