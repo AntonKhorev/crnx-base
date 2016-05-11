@@ -131,8 +131,7 @@
 			[draggable] { // drag handle
 				left: -@drag-margin;
 				cursor: move;
-				// http://www.patternify.com/
-				background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAJCAYAAADgkQYQAAAAGUlEQVQYlWNgIAYYGxv/J4SJMog4MFStAwDfUCsJGefs4gAAAABJRU5ErkJggg==) center no-repeat, url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAJCAYAAADgkQYQAAAAF0lEQVQYlWNgIBZ0dHT8J8SmIhiK1gEAJMkXUFw51ewAAAAASUVORK5CYII=) center;
+				background: data-uri('./drag-burger.gif') center no-repeat, data-uri('./drag-grip.gif') center;
 			}
 			.delete {
 				.cross-icon(@color) {
