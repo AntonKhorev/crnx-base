@@ -12,11 +12,24 @@
 		border: groove 2px #DDD;
 	}
 	.visually-hidden() {
-		position: absolute;
-		left: -10000px;
-		width: 1px;
+		//// doesn't work with dataTransfer.setDragImage()
+		//position: absolute;
+		//left: -10000px;
+		//width: 1px;
+		//height: 1px;
+		//overflow: hidden;
+
+		// [h5bp]
+		// contains deprecated property 'clip'
+		// can try to fix it with clip-path: http://stackoverflow.com/a/34723602
+		border: 0;
+		clip: rect(0 0 0 0);
 		height: 1px;
+		margin: -1px;
 		overflow: hidden;
+		padding: 0;
+		position: absolute;
+		width: 1px;
 	}
 	margin: 1em 0;
 	fieldset {
