@@ -150,8 +150,11 @@
 			}
 		}
 	}
-	button {
-		@media print {
+	@media print {
+		button {
+			display: none;
+		}
+		.draggable-with-handle [draggable] {
 			display: none;
 		}
 	}
