@@ -36,17 +36,36 @@
 		margin: @inter-option-margin 0 1px 0;
 		padding: 0 @inter-option-margin 0 10px;
 		.frame();
+		& > .option > label:first-child {
+			border-left: solid 9px #AAA;
+			padding-left: 2px;
+			margin-left: -11px;
+		}
 		& > fieldset {
 			margin-right: ~"calc(1px - @{inter-option-margin})";
 			margin-left: -9px;
 			padding-left: 7px;
+			& > .option > label:first-child {
+				border-left: solid 6px #AAA;
+				padding-left: 2px;
+				margin-left: -8px;
+			}
 			& > fieldset {
 				margin-left: -6px;
 				padding-left: 4px;
+				& > .option > label:first-child {
+					border-left: solid 3px #AAA;
+					padding-left: 2px;
+					margin-left: -5px;
+				}
 			}
 		}
 		// printing won't work in Firefox: https://bugzilla.mozilla.org/show_bug.cgi?id=471015
 		//	unless js trickery is used: http://stackoverflow.com/questions/7336586/printing-fieldsets-in-firefox
+	}
+	legend {
+		padding: 0 2px;
+		margin-left: -2px;
 	}
 	.buttons {
 		margin: @inter-option-margin 0;
@@ -64,19 +83,27 @@
 				display: none;
 			}
 		}
-		label:first-child {
+		& > label:first-child {
 			display: block;
 			@media (min-width: @wide-mode-min-width) {
-				margin-left: -@label-margin;
+				border-left: 0 !important;
+				padding-left: 0 !important;
+				margin-left: -@label-margin !important;
 				display: inline-block;
 				width: @label-margin - @inter-option-margin;
 				padding-right: @inter-option-margin;
 				text-align: right;
 				line-height: 0.8em; // when label spans multiple lines
+				&::before {
+					content: none;
+				}
 				& + span.space {
 					display: none;
 				}
 			}
+		}
+		.nowrap {
+			white-space: nowrap;
 		}
 		.min {
 			display: inline-block;

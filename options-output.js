@@ -122,12 +122,15 @@ class OptionsOutput {
 			},option.precision)
 			return option.$=$("<div class='option'>").append(
 				this.getLeadLabel(id,i18n,option),
-				"<span class='min'>"+i18n.numberWithUnits(fmt.min,option.unit)+"</span> ",
-				$sliderInput=setInputAttrsAndListeners(
-					$("<input type='range' id='"+id+"'>"),
-					()=>$numberInput
+				$("<span class='nowrap'>").append(
+					"<span class='min'>"+i18n.numberWithUnits(fmt.min,option.unit)+"</span> ",
+					$sliderInput=setInputAttrsAndListeners(
+						$("<input type='range' id='"+id+"'>"),
+						()=>$numberInput
+					),
+					" <span class='max'>"+i18n.numberWithUnits(fmt.max,option.unit)+"</span>"
 				),
-				" <span class='max'>"+i18n.numberWithUnits(fmt.max,option.unit)+"</span> ",
+				" ",
 				$numberInput=setInputAttrsAndListeners(
 					$("<input type='number' required>"),
 					()=>$sliderInput
