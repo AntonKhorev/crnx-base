@@ -6,6 +6,12 @@
 	.code {
 		pre {
 			.frame();
+			code {
+				@media print {
+					white-space: pre-wrap;
+					word-wrap: break-word;
+				}
+			}
 		}
 		p {
 			.frame();
