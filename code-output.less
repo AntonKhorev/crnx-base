@@ -1,3 +1,5 @@
+@import 'details-polyfill';
+
 .code-output {
 	margin: 1em 0;
 	.frame() {
@@ -20,20 +22,9 @@
 		}
 	}
 	details {
-		display: block;
 		margin: 1em 0;
-		&.polyfill:not([open]) > :not(summary) {
-			display: none;
-		}
-		&.polyfill summary::before {
-			content: "▸ ";
-		}
-		&.polyfill[open] summary::before {
-			content: "▾ ";
-		}
 	}
 	summary {
-		display: block;
 		&:hover {
 			outline: solid 3px #BCF;
 		}
