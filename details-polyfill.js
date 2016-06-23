@@ -14,7 +14,7 @@ module.exports=function(){ // to be called in .each()
 	}
 	const keyCodeEnter=13
 	const keyCodeSpace=32
-	$details.addClass('polyfill').find('summary').attr('tabindex',0).click(function(ev){
+	$details.addClass('polyfill').children('summary').attr('tabindex',0).click(function(ev){
 		if (ev.target.tagName!='SUMMARY') return
 		toggleOpen()
 	}).keydown(function(ev){

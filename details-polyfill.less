@@ -3,10 +3,10 @@ details {
 	&.polyfill:not([open]) > :not(summary) {
 		display: none;
 	}
-	&.polyfill summary::before {
+	&.polyfill > summary::before {
 		content: "▸ ";
 	}
-	&.polyfill[open] summary::before {
+	&.polyfill[open] > summary::before {
 		content: "▾ ";
 	}
 }
