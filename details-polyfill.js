@@ -14,12 +14,13 @@ module.exports=function(){ // to be called in .each()
 	}
 	const keyCodeEnter=13
 	const keyCodeSpace=32
+	const handleEvent=ev=>$(ev.target).closest('summary, :input, a[href]').is('summary') // check if event target is not an input/link, also check its ancestors (jQuery doesn't include <option> in :input selector)
 	$details.addClass('polyfill').children('summary').attr('tabindex',0).click(function(ev){
-		if (ev.target.tagName!='SUMMARY') return
-		toggleOpen()
+		if (handleEvent(ev)) {
+			toggleOpen()
+		}
 	}).keydown(function(ev){
-		if (ev.target.tagName!='SUMMARY') return
-		if (ev.keyCode==keyCodeEnter || ev.keyCode==keyCodeSpace) {
+		if (handleEvent(ev) && (ev.keyCode==keyCodeEnter || ev.keyCode==keyCodeSpace)) {
 			toggleOpen()
 			return false
 		}
