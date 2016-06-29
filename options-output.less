@@ -162,7 +162,8 @@
 				left: -@drag-margin;
 				cursor: move;
 				background: data-uri('./drag-burger.gif') center no-repeat, data-uri('./drag-grip.gif') center;
-				touch-action: none;
+				//touch-action: none; // not supported on some browsers
+				user-select: none; // disables tap-hold text selection on touch devices - http://stackoverflow.com/a/11368321
 				&:hover {
 					background: data-uri('./drag-burger-hover.gif') center no-repeat, data-uri('./drag-grip-hover.gif') center;
 				}

@@ -73,6 +73,7 @@ class ArrayOptionOutput {
 			}).on('touchstart',function(ev){
 				const $sorted=$(this).parent()
 				$sorted.addClass('ghost')
+				return false // disable touch panning on Firefox
 			}).on('touchmove',function(ev){
 				const $sorted=$(this).parent()
 				const h=$sorted.height()
@@ -86,6 +87,7 @@ class ArrayOptionOutput {
 				if ($next.length && y>t+h && y-$next.offset().top>$next.height()-h) {
 					moveDown($sorted)
 				}
+				return false // disable touch panning
 			}).on('touchend touchcancel',function(ev){
 				const $sorted=$(this).parent()
 				$sorted.removeClass('ghost')
