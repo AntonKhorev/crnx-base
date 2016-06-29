@@ -70,8 +70,26 @@ class ArrayOptionOutput {
 				setTimeout(function(){
 					This.$dragged.addClass('ghost')
 				},0)
-			})
-			.keydown(function(ev){
+			}).on('touchstart',function(ev){
+				const $sorted=$(this).parent()
+				$sorted.addClass('ghost')
+			}).on('touchmove',function(ev){
+				const $sorted=$(this).parent()
+				const h=$sorted.height()
+				const t=$sorted.offset().top
+				const y=ev.originalEvent.touches[0].pageY // TODO test if length of touches is 1
+				const $prev=$sorted.prev()
+				if ($prev.length && y<t && y-$prev.offset().top<h) {
+					moveUp($sorted)
+				}
+				const $next=$sorted.next()
+				if ($next.length && y>t+h && y-$next.offset().top>$next.height()-h) {
+					moveDown($sorted)
+				}
+			}).on('touchend touchcancel',function(ev){
+				const $sorted=$(this).parent()
+				$sorted.removeClass('ghost')
+			}).keydown(function(ev){
 				const $handle=$(this)
 				const $sorted=$handle.parent()
 				if (ev.keyCode==38) {
