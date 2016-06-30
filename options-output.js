@@ -1,7 +1,7 @@
 'use strict'
 
 const formatNumbers=require('./format-numbers')
-const writeTip=require('./tip.js')
+const writeTip=require('./tip')
 const Option=require('./option-classes')
 const ArrayOptionOutput=require('./array-option-output')
 const GroupOptionOutput=require('./group-option-output')
@@ -120,7 +120,7 @@ class OptionsOutput {
 				min: option.availableMin,
 				max: option.availableMax
 			},option.precision)
-			return option.$=$("<div class='option'>").append(
+			option.$=$("<div class='option'>").append(
 				this.getLeadLabel(id,i18n,option),
 				$("<span class='nowrap'>").append(
 					"<span class='min'>"+i18n.numberWithUnits(fmt.min,option.unit)+"</span> ",
@@ -140,6 +140,11 @@ class OptionsOutput {
 					$sliderInput.val(option.defaultValue).change()
 				})
 			)
+			const infoId='options-info.'+option.fullName
+			if (i18n.has(infoId)) {
+				option.$.append(" ",writeTip('info',i18n(infoId)))
+			}
+			return option.$
 		})
 		optionClassWriters.set(Option.Array,function(){
 			return new ArrayOptionOutput(...arguments).$output
