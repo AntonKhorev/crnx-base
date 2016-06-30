@@ -57,14 +57,26 @@ Option.Base = class {
 		if (visibilityManager) {
 			visibilityManager.register(this)
 			if (settings.visibilityData!==undefined) {
-				this.isVisible=()=>{
-					for (let testName in settings.visibilityData) {
-						const value=visibilityManager.options[testName].value
-						if (settings.visibilityData[testName].indexOf(value)<0) {
-							return false
+				if (settings.visibilityDataLogic!='or') {
+					this.isVisible=()=>{
+						for (let testName in settings.visibilityData) {
+							const value=visibilityManager.options[testName].value
+							if (settings.visibilityData[testName].indexOf(value)<0) {
+								return false
+							}
 						}
+						return true
 					}
-					return true
+				} else {
+					this.isVisible=()=>{
+						for (let testName in settings.visibilityData) {
+							const value=visibilityManager.options[testName].value
+							if (settings.visibilityData[testName].indexOf(value)>=0) {
+								return true
+							}
+						}
+						return false
+					}
 				}
 				for (let testName in settings.visibilityData) {
 					visibilityManager.declareAffectedBy(this,testName)
