@@ -155,6 +155,15 @@ class CodeOutput {
 	}
 	writeButtons(i18n) {
 		const This=this
+		const postData=(url,target,data)=>{
+			const $form=$(`<form method='post' action='${url}' target='${target}'>`)
+			for (let name in data) {
+				$form.append(
+					$("<input type='hidden'>").attr('name',name).val(data[name])
+				)
+			}
+			$form.appendTo('body').submit().remove()
+		}
 		return $("<div>").append(
 			$("<button type='button'>"+i18n('code-output.run')+"</button>").click(function(){
 				const html=This.code.get(This.formatting).join("\n")
@@ -181,14 +190,14 @@ class CodeOutput {
 				const sections=This.code.extractSections({html:'body',css:'paste',js:'paste'})
 				const getSection=sectionName=>
 					sections[sectionName].get(This.formatting).join("\n")
-				$("<form method='post' action='http://codepen.io/pen/define/' target='codepenGeneratedCode'>").append(
-					$("<input type='hidden' name='data'>").val(JSON.stringify({
+				postData('http://codepen.io/pen/define/','codepenGeneratedCode',{
+					data: JSON.stringify({
 						html: getSection('html'),
 						css: getSection('css'),
 						js: getSection('js'),
-						title: code.title,
-					}))
-				).appendTo('body').submit().remove()
+						title: This.code.title, // doesn't work?
+					})
+				})
 			}),
 			" ",
 			$("<button type='button'>"+i18n('code-output.open.jsfiddle')+"</button>").click(function(){
@@ -196,17 +205,27 @@ class CodeOutput {
 				const sections=This.code.extractSections({html:'body',css:'paste',js:'paste'})
 				const getSection=sectionName=>
 					sections[sectionName].get(This.formatting).join("\n")
-				const writeSection=sectionName=>
-					$("<input type='hidden'>")
-						.attr('name',sectionName)
-						.val(getSection(sectionName))
-				$("<form method='post' action='http://jsfiddle.net/api/post/library/pure/' target='jsfiddleGeneratedCode'>").append(
-					writeSection('html'),
-					writeSection('css'),
-					writeSection('js'),
-					$("<input type='hidden' name='title'>").val(This.code.title),
-					"<input type='hidden' name='wrap' value='b'>"
-				).appendTo('body').submit().remove()
+				postData('http://jsfiddle.net/api/post/library/pure/','jsfiddleGeneratedCode',{
+					html: getSection('html'),
+					css: getSection('css'),
+					js: getSection('js'),
+					title: This.code.title,
+					wrap: 'b',
+				})
+			}),
+			" ",
+			$("<button type='button'>"+i18n('code-output.open.plunker')+"</button>").click(function(){
+				// https://github.com/angular/angular.js/blob/489835dd0b36a108bedd5ded439a186aca4fa739/docs/app/src/examples.js#L139-L157
+				const sections=This.code.extractSections({html:'full',css:'file',js:'file'})
+				const getSection=sectionName=>
+					sections[sectionName].get(This.formatting).join("\n")
+				postData('http://plnkr.co/edit/?p=preview','plunkerGeneratedCode',{
+					//['files['+sections['html'].filename+']']: getSection('html'), // wants index.html
+					['files[index.html]']: getSection('html'),
+					['files['+sections['css'].filename+']']: getSection('css'),
+					['files['+sections['js'].filename+']']: getSection('js'),
+					'private': true,
+				})
 			})
 		)
 	}
