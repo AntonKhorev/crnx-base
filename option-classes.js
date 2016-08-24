@@ -21,11 +21,10 @@ const Option={}
 // abstract classes
 
 Option.Base = class {
-	static make(name) {
+	static make(name,...rest) {
 		let nScalars=0, nArrays=0, nObjects=0
 		let scalarArg, arrayArg=[], objectArg={}
-		for (let i=1;i<arguments.length;i++) {
-			let arg=arguments[i]
+		for (const arg of rest) {
 			if (typeof arg == 'string' || typeof arg == 'number' || typeof arg == 'boolean') {
 				if (nScalars++==0) scalarArg=arg
 			} else if (Array.isArray(arg)) {
@@ -228,9 +227,9 @@ Option.Collection = class extends Option.Base {
 	}
 	export() {
 		const data={}
-		this.entries.forEach(entry=>{
+		for (const entry of this.entries) {
 			entry.shortenExportAssign(entry.export(),data,entry.name)
-		})
+		}
 		return data
 	}
 	fix() {
@@ -239,9 +238,9 @@ Option.Collection = class extends Option.Base {
 			name: this.name,
 			entries: fixedEntries,
 		}
-		this.entries.forEach(entry=>{
+		for (const entry of this.entries) {
 			fixedEntries.push(fixed[entry.name]=entry.fix())
-		})
+		}
 		return fixed
 	}
 }
@@ -303,11 +302,11 @@ Option.Array = class extends Option.Base { // TODO consider extending Collection
 		super(...arguments)
 		this.availableConstructors=new Map
 		if (visibilityManager) visibilityManager.enterArray()
-		settings.descriptions.forEach(x=>{ // TODO test array inside array
+		for (const x of settings.descriptions) { // TODO test array inside array
 			const type=x[1]
 			const ctor=subData=>makeEntry(x,subData,this,visibilityManager)
 			this.availableConstructors.set(type,ctor)
-		})
+		}
 		if (visibilityManager) visibilityManager.exitArray()
 		if (settings.typePropertyName!==undefined) {
 			this.typePropertyName=settings.typePropertyName
@@ -323,8 +322,7 @@ Option.Array = class extends Option.Base { // TODO consider extending Collection
 			subDatas=data.value
 		}
 		let defaultType=this.availableTypes[0]
-		for (let i=0;i<subDatas.length;i++) {
-			const subData=subDatas[i]
+		for (const subData of subDatas) {
 			let subType=defaultType
 			if (typeof subData == 'object' && subData[this.typePropertyName]!==undefined) {
 				subType=subData[this.typePropertyName]

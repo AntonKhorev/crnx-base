@@ -4,12 +4,9 @@ const escape=require('./fake-lodash/escape')
 const Lines=require('./lines')
 
 class WrapLines extends Lines {
-	constructor(data) {
+	constructor(data,...wrappers) {
 		super(data)
-		this.wrappers=[]
-		for (let i=1;i<arguments.length;i++) {
-			this.wrappers.push(arguments[i])
-		}
+		this.wrappers=wrappers
 	}
 	isEmpty() {
 		return false
@@ -33,7 +30,7 @@ class WrapLines extends Lines {
 			i++
 		}
 		pushWrapper()
-		this.data.forEach(item=>{
+		for (const item of this.data) {
 			if (item instanceof Lines) {
 				const subOut=item.doGet(formatting,html)
 				out.push(...subOut.map(s=>indent+s))
@@ -47,7 +44,7 @@ class WrapLines extends Lines {
 					pushWrapper()
 				}
 			}
-		})
+		}
 		if (this.wrappers.length==2) {
 			pushWrapper()
 		}

@@ -48,8 +48,7 @@ class Lines {
 		this.data=data
 	}
 	isDataEmpty() {
-		for (let i=0;i<this.data.length;i++) {
-			const item=this.data[i]
+		for (const item of this.data) {
 			if (item instanceof Lines) {
 				if (!item.isEmpty()) {
 					return false
@@ -66,7 +65,7 @@ class Lines {
 	doGet(formatting,html) {
 		const out=[]
 		let addTo=false
-		this.data.forEach(item=>{
+		for (const item of this.data) {
 			if (item===TO) {
 				addTo=true
 			} else if (item instanceof Lines) {
@@ -89,7 +88,7 @@ class Lines {
 				}
 				addTo=false
 			}
-		})
+		}
 		return out
 	}
 

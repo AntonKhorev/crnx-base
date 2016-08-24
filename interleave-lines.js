@@ -14,7 +14,7 @@ class InterleaveLines extends Lines {
 				out.push('')
 			}
 		}
-		this.data.forEach(item=>{
+		for (const item of this.data) {
 			if (item instanceof Lines) {
 				const subOut=item.doGet(formatting,html)
 				if (subOut.length>0) {
@@ -26,7 +26,7 @@ class InterleaveLines extends Lines {
 				const s=(html ? escape(item) : item)
 				out.push(s)
 			}
-		})
+		}
 		return out
 	}
 }
