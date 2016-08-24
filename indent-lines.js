@@ -1,6 +1,5 @@
 'use strict'
 
-const repeat=require('./fake-lodash/repeat')
 const Lines=require('./lines')
 
 class IndentLines extends Lines {
@@ -17,7 +16,7 @@ class IndentLines extends Lines {
 		if (formatting.indent!==undefined) {
 			indent=formatting.indent
 		}
-		const indentStr=repeat(indent,this.level)
+		const indentStr=indent/*:string*/.repeat(this.level)
 		return super.doGet(formatting,html).map(s=>indentStr+s)
 	}
 }

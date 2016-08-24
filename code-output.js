@@ -1,7 +1,6 @@
 'use strict'
 
 const debounce=require('./fake-lodash/debounce')
-const repeat=require('./fake-lodash/repeat')
 const detailsPolyfill=require('./details-polyfill')
 
 const getHtmlDataUri=(html)=>'data:text/html;charset=utf-8,'+encodeURIComponent(html)
@@ -53,7 +52,7 @@ class CodeOutput {
 					if ($indentNumber[0].checkValidity()) {
 						n=Number($indentNumber.val())
 					}
-					indent=repeat(' ',n)
+					indent=' '.repeat(n)
 				}
 				this.formatting.indent=indent
 			}

@@ -36,7 +36,6 @@ Read lines:
 */
 
 const escape=require('./fake-lodash/escape')
-const repeat=require('./fake-lodash/repeat')
 
 const TO={} // TODO Symbol
 
@@ -80,7 +79,7 @@ class Lines {
 			} else if (typeof item == 'string') {
 				let s=this.processStringInGet(item,formatting)
 				if (formatting.indent!==undefined && formatting.indent!='\t') {
-					s=s.replace(/^(\t)+/,match=>repeat(formatting.indent,match.length))
+					s=s.replace(/^(\t)+/,match=>formatting.indent/*:string*/.repeat(match.length))
 				}
 				s=(html ? escape(s) : s)
 				if (addTo) {
