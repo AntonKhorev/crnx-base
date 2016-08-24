@@ -13,8 +13,8 @@ module.exports=function(inStrings){
 				const [,stringStart,stringMidsStr,stringEnd]=stringMatch
 				const stringMids=stringMidsStr.split(',')
 				idMids.forEach((idMid,i)=>{
-					const stringMid=stringMids[i]
 					if (stringMidsStr!='') {
+						const stringMid=stringMids[i]
 						expandIdAndString(idStart+idMid+idEnd,stringStart+stringMid+stringEnd)
 					} else {
 						expandIdAndString(idStart+idMid+idEnd,stringStart+idMid+stringEnd)

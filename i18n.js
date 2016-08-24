@@ -26,15 +26,15 @@ module.exports=langStrings=>lang=>{
 		}
 		i18n.pluralSuffix=function(n){
 			const ns=String(n)
-			if (ns.indexOf('.')<0) {
+			if (ns/*:string*/.includes('.')) {
+				return '2'
+			} else {
 				const nn=Number(n)
 				if (Math.abs(nn)==1) {
 					return '1'
 				} else {
 					return '2'
 				}
-			} else {
-				return '2'
 			}
 		}
 	} else if (lang=='ru') {
@@ -43,17 +43,17 @@ module.exports=langStrings=>lang=>{
 		}
 		i18n.pluralSuffix=function(n){
 			const ns=String(n)
-			if (ns.indexOf('.')<0) {
+			if (ns/*:string*/.includes('.')) {
+				return '2'
+			} else {
 				const teen=ns.slice(-2,-1)==='1'
 				if (ns.slice(-1)==='1' && !teen) {
 					return '1'
-				} else if ('234'.indexOf(ns.slice(-1))>=0 && !teen) {
+				} else if ('234'.includes(ns.slice(-1)) && !teen) {
 					return '2'
 				} else {
 					return '5'
 				}
-			} else {
-				return '2'
 			}
 		}
 	}
