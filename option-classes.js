@@ -10,8 +10,8 @@ fixed options spec:
 	options have the following properties in order of priority (most important first)
 		type property (defaults to 'type') if option is an array member
 			why need type property if there's name? - because name is not imported/exported
-		suboption-named properties equal to suboptions for collections
-		'entries' array of suboptions for array and collection
+		suboption-named properties equal to suboptions for structs
+		'entries' array of suboptions for struct and array
 		'value' and 'name' properties for non-boolean options
 	TODO decide on: boolean option cannot be an array member (where to store it's type?)
 */
@@ -210,7 +210,7 @@ Option.Number = class extends Option.NonBoolean { // requires precision, gives s
 	}
 }
 
-Option.Collection = class extends Option.Base {
+Option.Struct = class extends Option.Base {
 	static collectArgs(scalarArg,arrayArg,settings) {
 		settings=Object.create(settings)
 		if (settings.descriptions===undefined) settings.descriptions=arrayArg
@@ -242,6 +242,86 @@ Option.Collection = class extends Option.Base {
 			fixedEntries.push(fixed[entry.name]=entry.fix())
 		}
 		return fixed
+	}
+}
+
+Option.Collection = class extends Option.Base {
+	static collectArgs(scalarArg,arrayArg,settings) {
+		settings=Object.create(settings)
+		if (settings.descriptions===undefined) settings.descriptions=arrayArg
+		if (settings.typePropertyName===undefined) settings.typePropertyName=scalarArg
+		return super.collectArgs(scalarArg,arrayArg,settings)
+	}
+	constructor(name,settings,data,parent,visibilityManager,makeEntry) {
+		super(...arguments)
+		this.availableConstructors=new Map
+		if (visibilityManager) visibilityManager.enterArray()
+		for (const x of settings.descriptions) { // TODO test array inside array
+			const type=x[1]
+			const ctor=subData=>makeEntry(x,subData,this,visibilityManager)
+			this.availableConstructors.set(type,ctor)
+		}
+		if (visibilityManager) visibilityManager.exitArray()
+		if (settings.typePropertyName!==undefined) {
+			this.typePropertyName=settings.typePropertyName
+		} else {
+			this.typePropertyName='type'
+		}
+		// populate array entries from data:
+		let subDatas=[]
+		if (Array.isArray(data)) {
+			subDatas=data
+		} else if (typeof data == 'object') {
+			subDatas=data.value
+		}
+		const defaultType=this.availableTypes[0]
+		const indexedEntries=subDatas.map(subData=>{ // can contain nulls for faulty entries, this._entries can't contain them
+			let subType=defaultType
+			if (typeof subData == 'object' && subData[this.typePropertyName]!==undefined) {
+				subType=subData[this.typePropertyName]
+			}
+			const subCtor=this.availableConstructors.get(subType)
+			if (subCtor) { // can't throw an exception b/c have to be resistant to invalid data
+				return subCtor(subData)
+			} else {
+				return null
+			}
+		})
+		this.populateEntries(subDatas,indexedEntries)
+	}
+	// protected
+	//populateEntries(datas,entries) {}
+	// public
+	get availableTypes() {
+		const types=[]
+		this.availableConstructors.forEach((_,type)=>{
+			types.push(type)
+		})
+		return types
+	}
+	makeEntry(type,data) {
+		return this.availableConstructors.get(type)(data)
+	}
+	export() {
+		let defaultType=this.availableTypes[0]
+		return {
+			value: this._entries.map(entry=>{
+				const subData=entry.export()
+				const subType=entry.name
+				if (subType!=defaultType) subData[this.typePropertyName]=subType
+				return entry.shortenExport(subData)
+			}),
+		}
+	}
+	fix() {
+		return {
+			name: this.name,
+			entries: this._entries.map(entry=>{
+				const subFixed=entry.fix()
+				if (typeof subFixed == 'object') subFixed[this.typePropertyName]=entry.name
+				return subFixed
+			}),
+		}
 	}
 }
 
@@ -287,58 +367,13 @@ Option.Float = class extends Option.Number {
 	}
 }
 
-Option.Root = class extends Option.Collection {}
+Option.Root = class extends Option.Struct {}
 
-Option.Group = class extends Option.Collection {}
+Option.Group = class extends Option.Struct {}
 
-Option.Array = class extends Option.Base { // TODO consider extending Collection
-	static collectArgs(scalarArg,arrayArg,settings) {
-		settings=Object.create(settings)
-		if (settings.descriptions===undefined) settings.descriptions=arrayArg
-		if (settings.typePropertyName===undefined) settings.typePropertyName=scalarArg
-		return super.collectArgs(scalarArg,arrayArg,settings)
-	}
-	constructor(name,settings,data,parent,visibilityManager,makeEntry) {
-		super(...arguments)
-		this.availableConstructors=new Map
-		if (visibilityManager) visibilityManager.enterArray()
-		for (const x of settings.descriptions) { // TODO test array inside array
-			const type=x[1]
-			const ctor=subData=>makeEntry(x,subData,this,visibilityManager)
-			this.availableConstructors.set(type,ctor)
-		}
-		if (visibilityManager) visibilityManager.exitArray()
-		if (settings.typePropertyName!==undefined) {
-			this.typePropertyName=settings.typePropertyName
-		} else {
-			this.typePropertyName='type'
-		}
-		// populate array entries from data:
-		this._entries=[]
-		let subDatas=[]
-		if (Array.isArray(data)) {
-			subDatas=data
-		} else if (typeof data == 'object') {
-			subDatas=data.value
-		}
-		let defaultType=this.availableTypes[0]
-		for (const subData of subDatas) {
-			let subType=defaultType
-			if (typeof subData == 'object' && subData[this.typePropertyName]!==undefined) {
-				subType=subData[this.typePropertyName]
-			}
-			let subCtor=this.availableConstructors.get(subType)
-			if (subCtor) {
-				this._entries.push(subCtor(subData))
-			}
-		}
-	}
-	get availableTypes() {
-		const types=[]
-		this.availableConstructors.forEach((_,type)=>{
-			types.push(type)
-		})
-		return types
+Option.Array = class extends Option.Collection {
+	populateEntries(datas,entries) {
+		this._entries=entries.filter(entry=>!!entry)
 	}
 	get entries() {
 		return this._entries
@@ -346,30 +381,6 @@ Option.Array = class extends Option.Base { // TODO consider extending Collection
 	set entries(entries) {
 		this._entries=entries
 		this.update()
-	}
-	makeEntry(type,data) {
-		return this.availableConstructors.get(type)(data)
-	}
-	export() {
-		let defaultType=this.availableTypes[0]
-		return {
-			value: this._entries.map(entry=>{
-				const subData=entry.export()
-				const subType=entry.name
-				if (subType!=defaultType) subData[this.typePropertyName]=subType
-				return entry.shortenExport(subData)
-			}),
-		}
-	}
-	fix() {
-		return {
-			name: this.name,
-			entries: this._entries.map(entry=>{
-				const subFixed=entry.fix()
-				if (typeof subFixed == 'object') subFixed[this.typePropertyName]=entry.name
-				return subFixed
-			}),
-		}
 	}
 }
 
