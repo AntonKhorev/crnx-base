@@ -290,10 +290,14 @@ Option.Collection = class extends Option.Base {
 		this.populateEntries(subDatas,indexedEntries)
 	}
 	// protected
+	//getElementsPropertyName() {}
 	//populateEntries(datas,entries) {}
-	//map() {}
+	map(fn) {
+		return this[this.getElementsPropertyName()].map(fn)
+	}
 	//getEntryFromElement(element)
 	setElementExportData(element,data) {}
+	setElementFixData(element,fixed) {}
 	// public
 	get availableTypes() {
 		const types=[]
@@ -321,9 +325,13 @@ Option.Collection = class extends Option.Base {
 	fix() {
 		return {
 			name: this.name,
-			entries: this._entries.map(entry=>{
+			[this.getElementsPropertyName()]: this.map(element=>{
+				const entry=this.getEntryFromElement(element)
 				const subFixed=entry.fix()
-				if (typeof subFixed == 'object') subFixed[this.typePropertyName]=entry.name
+				if (typeof subFixed == 'object') {
+					subFixed[this.typePropertyName]=entry.name
+					this.setElementFixData(element,subFixed)
+				}
 				return subFixed
 			}),
 		}
@@ -377,11 +385,11 @@ Option.Root = class extends Option.Struct {}
 Option.Group = class extends Option.Struct {}
 
 Option.Array = class extends Option.Collection {
+	getElementsPropertyName() {
+		return 'entries'
+	}
 	populateEntries(datas,entries) {
 		this._entries=entries.filter(entry=>!!entry)
-	}
-	map(fn) {
-		return this._entries.map(fn)
 	}
 	getEntryFromElement(entry) {
 		return entry
