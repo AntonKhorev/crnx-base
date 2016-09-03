@@ -291,6 +291,9 @@ Option.Collection = class extends Option.Base {
 	}
 	// protected
 	//populateEntries(datas,entries) {}
+	//map() {}
+	//getEntryFromElement(element)
+	setElementExportData(element,data) {}
 	// public
 	get availableTypes() {
 		const types=[]
@@ -305,10 +308,12 @@ Option.Collection = class extends Option.Base {
 	export() {
 		let defaultType=this.availableTypes[0]
 		return {
-			value: this._entries.map(entry=>{
+			value: this.map(element=>{
+				const entry=this.getEntryFromElement(element)
 				const subData=entry.export()
 				const subType=entry.name
 				if (subType!=defaultType) subData[this.typePropertyName]=subType
+				this.setElementExportData(element,subData)
 				return entry.shortenExport(subData)
 			}),
 		}
@@ -374,6 +379,12 @@ Option.Group = class extends Option.Struct {}
 Option.Array = class extends Option.Collection {
 	populateEntries(datas,entries) {
 		this._entries=entries.filter(entry=>!!entry)
+	}
+	map(fn) {
+		return this._entries.map(fn)
+	}
+	getEntryFromElement(entry) {
+		return entry
 	}
 	get entries() {
 		return this._entries
