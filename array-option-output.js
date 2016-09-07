@@ -14,7 +14,6 @@ class ArrayOptionOutput {
 				$("<button type='button'>").html(
 					i18n('options.'+option.fullName+'.'+type+'.add')
 				).click(()=>{
-					//option.addEntry(type,entry=>this.$entries.append(this.writeDraggableSubOption(entry,writeOption,i18n)))
 					this.$entries.append(
 						this.writeDraggableSubOption(option.makeEntry(type),writeOption,i18n)
 					)

@@ -1,0 +1,25 @@
+.visually-hidden() {
+	//// doesn't work with dataTransfer.setDragImage()
+	//position: absolute;
+	//left: -10000px;
+	//width: 1px;
+	//height: 1px;
+	//overflow: hidden;
+
+	// [h5bp]
+	// contains deprecated property 'clip'
+	// can try to fix it with clip-path: http://stackoverflow.com/a/34723602
+	border: 0;
+	clip: rect(0 0 0 0);
+	height: 1px;
+	margin: -1px;
+	overflow: hidden;
+	padding: 0;
+	position: absolute;
+	width: 1px;
+}
+.svg(@width,@height,@contents) {
+	@svg: "<svg xmlns='http://www.w3.org/2000/svg' width='@{width}' height='@{height}'>@{contents}</svg>";
+	@data: escape(@svg);
+	background-image: url("data:image/svg+xml;charset=utf-8,@{data}");
+}
