@@ -112,18 +112,17 @@ class OptionsOutput {
 				max: option.availableMax,
 				step: Math.pow(0.1,p).toFixed(p),
 			})
-			const setInputAttrsAndListeners=($input,getOtherInput)=>setInputAttrs($input)
+			const setInputAttrsAndListeners=($input,$that)=>setInputAttrs($input)
 				.val(option.value)
 				.on('input change',function(){
 					if (this.checkValidity()) {
-						const $that=getOtherInput()
 						$that.val(this.value)
 						option.value=parseFloat(this.value)
 					}
 				})
 			const id=generateId()
-			let $sliderInput,$numberInput
-			let $rangeMinInput,$rangeMaxInput
+			const $sliderInput=$("<input type='range' id='"+id+"'>")
+			const $numberInput=$("<input type='number' required>")
 			const fmt=formatNumbers({
 				min: option.availableMin,
 				max: option.availableMax
@@ -132,17 +131,11 @@ class OptionsOutput {
 				this.getLeadLabel(id,i18n,option),
 				$("<span class='nowrap'>").append(
 					"<span class='min'>"+i18n.numberWithUnits(fmt.min,option.unit)+"</span> ",
-					$sliderInput=setInputAttrsAndListeners(
-						$("<input type='range' id='"+id+"'>"),
-						()=>$numberInput
-					),
+					setInputAttrsAndListeners($sliderInput,$numberInput),
 					" <span class='max'>"+i18n.numberWithUnits(fmt.max,option.unit)+"</span>"
 				),
 				" ",
-				$numberInput=setInputAttrsAndListeners(
-					$("<input type='number' required>"),
-					()=>$sliderInput
-				),
+				setInputAttrsAndListeners($numberInput,$sliderInput),
 				" ",
 				$("<button type='button'>"+i18n('options-output.reset')+"</button>").click(function(){
 					$sliderInput.val(option.defaultValue).change()
