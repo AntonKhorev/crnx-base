@@ -6,6 +6,14 @@ const Option=require('./option-classes')
 const ArrayOptionOutput=require('./array-option-output')
 const GroupOptionOutput=require('./group-option-output')
 
+/*
+	matching css is:
+		.options-output fieldset.option
+			can contain suboptions (fieldset.option and div.option)
+			children have to be matched with > to aviod style collisions with other option-output hierarchies
+		.options-output div.option
+			can't contain suboptions
+*/
 class OptionsOutput {
 	constructor(options,generateId,i18n) {
 		const optionClassWriters=new Map

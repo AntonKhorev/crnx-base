@@ -3,7 +3,8 @@
 class GroupOptionOutput {
 	constructor(option,writeOption,i18n,generateId) {
 		this.option=option
-		this.$output=option.$=$("<fieldset>").append("<legend>"+i18n('options.'+option.fullName)+"</legend>").append(
+		this.$output=option.$=$("<fieldset class='option'>").append(
+			"<legend>"+i18n('options.'+option.fullName)+"</legend>",
 			option.entries.map(writeOption)
 		)
 	}

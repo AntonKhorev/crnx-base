@@ -4,7 +4,7 @@ class ArrayOptionOutput {
 	constructor(option,writeOption,i18n,generateId) {
 		this.option=option
 		this.$dragged=null
-		this.$entries=$("<div>").append(
+		this.$entries=$("<div class='entries'>").append(
 			option.entries.map(subOption=>this.writeDraggableSubOption(subOption,writeOption,i18n))
 		)
 		const $buttons=$("<div class='buttons'>")
@@ -21,7 +21,7 @@ class ArrayOptionOutput {
 				})
 			)
 		})
-		this.$output=option.$=$("<fieldset>").append(
+		this.$output=option.$=$("<fieldset class='option'>").append(
 			"<legend>"+i18n('options.'+option.fullName)+"</legend>",
 			this.$entries,
 			$buttons
