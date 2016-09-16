@@ -4,10 +4,10 @@ class OptionVisibilityManager {
 	constructor() {
 		this.options={}
 		this.affects={}
-		this.inArray=0
+		this.inCollection=0
 	}
 	register(option) {
-		if (!this.inArray) {
+		if (!this.inCollection) {
 			this.options[option.fullName]=option
 			option.addUpdateCallback(()=>{
 				this.updateVisibilityAffectedBy(option.fullName)
@@ -27,11 +27,11 @@ class OptionVisibilityManager {
 			})
 		}
 	}
-	enterArray() {
-		this.inArray+=1
+	enterCollection() {
+		this.inCollection+=1
 	}
-	exitArray() {
-		this.inArray-=1
+	exitCollection() {
+		this.inCollection-=1
 	}
 }
 

@@ -255,13 +255,13 @@ Option.Collection = class extends Option.Base {
 	constructor(name,settings,data,parent,visibilityManager,makeEntry) {
 		super(...arguments)
 		this.availableConstructors=new Map
-		if (visibilityManager) visibilityManager.enterArray()
+		if (visibilityManager) visibilityManager.enterCollection()
 		for (const x of settings.descriptions) { // TODO test array inside array
 			const type=x[1]
 			const ctor=subData=>makeEntry(x,subData,this,visibilityManager)
 			this.availableConstructors.set(type,ctor)
 		}
-		if (visibilityManager) visibilityManager.exitArray()
+		if (visibilityManager) visibilityManager.exitCollection()
 		if (settings.typePropertyName!==undefined) {
 			this.typePropertyName=settings.typePropertyName
 		} else {
