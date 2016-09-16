@@ -107,10 +107,11 @@ class OptionsOutput {
 		})
 		optionClassWriters.set(Option.Number,(option,writeOption,i18n,generateId)=>{
 			const p=option.precision
-			const setInputAttrs=$input=>$input
-				.attr('min',option.availableMin)
-				.attr('max',option.availableMax)
-				.attr('step',Math.pow(0.1,p).toFixed(p))
+			const setInputAttrs=$input=>$input.attr({
+				min: option.availableMin,
+				max: option.availableMax,
+				step: Math.pow(0.1,p).toFixed(p),
+			})
 			const setInputAttrsAndListeners=($input,getOtherInput)=>setInputAttrs($input)
 				.val(option.value)
 				.on('input change',function(){

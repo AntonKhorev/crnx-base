@@ -261,10 +261,10 @@ class CodeOutput {
 				if (navigator.msSaveOrOpenBlob) {
 					navigator.msSaveOrOpenBlob(blob,section.filename)
 				} else {
-					const $a=$("<a>")
-						.attr('download',section.filename)
-						.attr('href',URL.createObjectURL(blob))
-						.appendTo('body')
+					const $a=$("<a>").attr({
+						download: section.filename,
+						href: URL.createObjectURL(blob),
+					}).appendTo('body')
 					$a.get(0).click()
 					$a.remove()
 				}
