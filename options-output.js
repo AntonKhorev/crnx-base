@@ -3,7 +3,6 @@
 const formatNumbers=require('./format-numbers')
 const writeTip=require('./tip')
 const Option=require('./option-classes')
-const ArrayOptionOutput=require('./array-option-output')
 const GroupOptionOutput=require('./group-option-output')
 
 /*
@@ -153,9 +152,6 @@ class OptionsOutput {
 				option.$.append(" ",writeTip('info',i18n(infoId)))
 			}
 			return option.$
-		})
-		optionClassWriters.set(Option.Array,function(){
-			return new ArrayOptionOutput(...arguments).$output
 		})
 	}
 }

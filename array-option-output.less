@@ -1,0 +1,65 @@
+@import 'mixins';
+
+.options-output {
+	@inter-option-margin: .3em; // originally defined in options-output.less
+	@drag-control-width: 1em;
+
+	fieldset.option > .entries > .draggable-with-handle {
+		@media not print {
+			@drag-margin: @drag-control-width + @inter-option-margin;
+			position: relative;
+			margin: @inter-option-margin @drag-margin;
+			&.ghost {
+				opacity: .4;
+			}
+			& > [draggable], & > .delete {
+				display: block;
+				position: absolute;
+				top: 0;
+				bottom: 0;
+				width: @drag-control-width;
+				padding: 0;
+				background-color: transparent;
+				& > span {
+					.visually-hidden();
+				}
+			}
+			& > [draggable] { // drag handle
+				left: -@drag-margin;
+				cursor: move;
+				background: data-uri('./drag-burger.gif') center no-repeat, data-uri('./drag-grip.gif') center;
+				//touch-action: none; // not supported on some browsers
+				user-select: none; // disables tap-hold text selection on touch devices - http://stackoverflow.com/a/11368321
+				&:hover {
+					background: data-uri('./drag-burger-hover.gif') center no-repeat, data-uri('./drag-grip-hover.gif') center;
+				}
+			}
+			& > .delete {
+				.cross-icon(@color) {
+					.svg(16,16,"<path d='M 2 2 L 14 14 M 2 14 L 14 2' fill='none' stroke='@{color}' stroke-width='2' />");
+				}
+				font-size: 1em;
+				right: -@drag-margin;
+				cursor: default;
+				border: dotted 1px #888;
+				box-sizing: border-box;
+				.cross-icon(#444);
+				background-size: contain;
+				background-position: center;
+				background-repeat: no-repeat;
+				&:hover {
+					border-color: #D88;
+					.cross-icon(#C44);
+					&:active {
+						background-position: 50% ~"calc(50% + 1px)";
+					}
+				}
+			}
+		}
+		@media print {
+			& > [draggable] {
+				display: none;
+			}
+		}
+	}
+}
