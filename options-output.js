@@ -94,7 +94,7 @@ class OptionsOutput {
 			const listId=generateId()
 			return option.$=$("<div class='option'>").append(
 				this.getLeadLabel(id,i18n,option),
-				$("<input type='text' id='"+id+"' list='"+listId+"' />")
+				$("<input type='text' id='"+id+"' list='"+listId+"'>")
 					.val(option.value)
 					.on('input change',function(){
 						option.value=this.value
