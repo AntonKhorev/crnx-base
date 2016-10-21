@@ -1,15 +1,15 @@
-details {
+details.polyfill {
 	display: block;
-	&.polyfill:not([open]) > :not(summary) {
+	summary {
+		display: block;
+	}
+	&:not([open]) > :not(summary) {
 		display: none;
 	}
-	&.polyfill > summary::before {
+	& > summary::before {
 		content: "▸ ";
 	}
-	&.polyfill[open] > summary::before {
+	&[open] > summary::before {
 		content: "▾ ";
 	}
-}
-summary {
-	display: block;
 }
