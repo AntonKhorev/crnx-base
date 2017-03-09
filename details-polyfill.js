@@ -14,6 +14,7 @@ module.exports=function(){ // to be called in .each()
 		} else {
 			$details.removeAttr('open')
 		}
+		$details.trigger('toggle') // TODO coalesce toggle events
 	}
 	const keyCodeEnter=13
 	const keyCodeSpace=32
